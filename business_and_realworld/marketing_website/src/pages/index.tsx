@@ -1,7 +1,7 @@
 import React from "react";
 
-export default function Home() {
-  const hoge = "hello";
-
+const Home: React.FC = () => {
   return <h1>Hello Gatsby!</h1>;
-}
+};
+
+export default Home;
