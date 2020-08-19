@@ -10,9 +10,14 @@ type ImageProps = {
     | "feature2_sturdy"
     | "feature3_transparency"
     | "product";
+  variant: "fixed" | "fluid";
 };
 
-export const Image: React.FC<ImageProps> = ({ className, filename }) => {
+export const Image: React.FC<ImageProps> = ({
+  className,
+  filename,
+  variant,
+}) => {
   const data: ImagesQuery = useStaticQuery(graphql`
     query Images {
       allFile {
@@ -21,7 +26,11 @@ export const Image: React.FC<ImageProps> = ({ className, filename }) => {
             relativePath
             name
             childImageSharp {
-              fixed(width: 1200) {
+              fluid(maxWidth: 1300, quality: 100) {
+                ...GatsbyImageSharpFluid
+                ...GatsbyImageSharpFluidLimitPresentationSize
+              }
+              fixed(width: 400, height: 260) {
                 ...GatsbyImageSharpFixed
               }
             }
@@ -38,5 +47,11 @@ export const Image: React.FC<ImageProps> = ({ className, filename }) => {
     return null;
   }
 
-  return <Img className={className} fixed={image.node.childImageSharp.fixed} />;
+  return (
+    <Img
+      className={className}
+      fluid={variant === "fluid" && image.node.childImageSharp.fluid}
+      fixed={variant == "fixed" && image.node.childImageSharp.fixed}
+    />
+  );
 };

@@ -2,21 +2,24 @@ import React from "react";
 import { Image } from "./image";
 import styled from "styled-components";
 
+const ProductRoot = styled.div`
+  display: grid;
+  place-items: center;
+`;
+
 const ProductImage = styled(Image)`
-  margin: 0 auto;
   width: 100%;
 `;
 
 const ProductName = styled.div`
-  text-align: center;
   font-size: 3rem;
 `;
 
 export const Product: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={className}>
+    <ProductRoot className={className}>
       <ProductName>DRONE</ProductName>
-      <ProductImage filename="product" />
-    </div>
+      <ProductImage filename="product" variant="fluid" />
+    </ProductRoot>
   );
 };

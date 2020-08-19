@@ -2403,7 +2403,10 @@ export type ImagesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ImagesQuery = { allFile: { edges: Array<{ node: (
         Pick<File, 'relativePath' | 'name'>
-        & { childImageSharp?: Maybe<{ fixed?: Maybe<GatsbyImageSharpFixedFragment> }> }
+        & { childImageSharp?: Maybe<{ fluid?: Maybe<(
+            GatsbyImageSharpFluidFragment
+            & GatsbyImageSharpFluidLimitPresentationSizeFragment
+          )>, fixed?: Maybe<GatsbyImageSharpFixedFragment> }> }
       ) }> } };
 
 export type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
