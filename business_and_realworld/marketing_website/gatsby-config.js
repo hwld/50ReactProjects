@@ -1,8 +1,18 @@
+require("dotenv").config({
+  path: `.env`,
+});
+
 module.exports = {
   plugins: [
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-styled-components`,
+    {
+      resolve: `gatsby-plugin-graphql-codegen`,
+      options: {
+        fileName: `types/graphql-types.d.ts`,
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -11,9 +21,10 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-graphql-codegen`,
+      resolve: `gatsby-source-contentful`,
       options: {
-        fileName: `types/graphql-types.d.ts`,
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       },
     },
   ],

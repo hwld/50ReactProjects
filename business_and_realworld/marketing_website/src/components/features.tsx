@@ -18,10 +18,7 @@ const FeaturesContainer = styled.div`
   justify-content: space-around;
 `;
 
-const FeatureImage = styled(Image)`
-  width: 400px;
-  height: 260px;
-`;
+const FeatureImage = styled(Image)``;
 
 export const Features: React.FC = () => {
   return (
