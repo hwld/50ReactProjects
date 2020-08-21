@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require("dotenv").config({
   path: `.env`,
 });
@@ -5,6 +6,7 @@ require("dotenv").config({
 module.exports = {
   plugins: [
     `gatsby-transformer-sharp`,
+    `gatsby-transformer-remark`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-styled-components`,
     {

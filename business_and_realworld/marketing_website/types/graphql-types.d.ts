@@ -675,16 +675,17 @@ export type ContentfulFeature = Node & {
   parent?: Maybe<Node>;
   children: Array<Node>;
   internal: Internal;
-  feature?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
   image?: Maybe<ContentfulAsset>;
-  description?: Maybe<ContentfulFeatureDescriptionRichTextNode>;
+  description?: Maybe<ContentfulFeatureDescriptionTextNode>;
   spaceId?: Maybe<Scalars['String']>;
   contentful_id?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['Date']>;
   updatedAt?: Maybe<Scalars['Date']>;
   sys?: Maybe<ContentfulFeatureSys>;
   node_locale?: Maybe<Scalars['String']>;
-  childContentfulFeatureDescriptionRichTextNode?: Maybe<ContentfulFeatureDescriptionRichTextNode>;
+  childContentfulFeatureDescriptionTextNode?: Maybe<ContentfulFeatureDescriptionTextNode>;
 };
 
 
@@ -724,74 +725,43 @@ export type ContentfulFeatureConnectionGroupArgs = {
   field: ContentfulFeatureFieldsEnum;
 };
 
-export type ContentfulFeatureDescriptionRichTextNode = Node & {
+export type ContentfulFeatureDescriptionTextNode = Node & {
   id: Scalars['ID'];
   parent?: Maybe<Node>;
   children: Array<Node>;
   internal: Internal;
-  /** @deprecated This field is deprecated, please use 'json' instead. */
-  nodeType?: Maybe<Scalars['String']>;
-  content?: Maybe<Array<Maybe<ContentfulFeatureDescriptionRichTextNodeContent>>>;
   description?: Maybe<Scalars['String']>;
-  json?: Maybe<Scalars['JSON']>;
+  childMarkdownRemark?: Maybe<MarkdownRemark>;
 };
 
-export type ContentfulFeatureDescriptionRichTextNodeConnection = {
+export type ContentfulFeatureDescriptionTextNodeConnection = {
   totalCount: Scalars['Int'];
-  edges: Array<ContentfulFeatureDescriptionRichTextNodeEdge>;
-  nodes: Array<ContentfulFeatureDescriptionRichTextNode>;
+  edges: Array<ContentfulFeatureDescriptionTextNodeEdge>;
+  nodes: Array<ContentfulFeatureDescriptionTextNode>;
   pageInfo: PageInfo;
   distinct: Array<Scalars['String']>;
-  group: Array<ContentfulFeatureDescriptionRichTextNodeGroupConnection>;
+  group: Array<ContentfulFeatureDescriptionTextNodeGroupConnection>;
 };
 
 
-export type ContentfulFeatureDescriptionRichTextNodeConnectionDistinctArgs = {
-  field: ContentfulFeatureDescriptionRichTextNodeFieldsEnum;
+export type ContentfulFeatureDescriptionTextNodeConnectionDistinctArgs = {
+  field: ContentfulFeatureDescriptionTextNodeFieldsEnum;
 };
 
 
-export type ContentfulFeatureDescriptionRichTextNodeConnectionGroupArgs = {
+export type ContentfulFeatureDescriptionTextNodeConnectionGroupArgs = {
   skip?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
-  field: ContentfulFeatureDescriptionRichTextNodeFieldsEnum;
+  field: ContentfulFeatureDescriptionTextNodeFieldsEnum;
 };
 
-export type ContentfulFeatureDescriptionRichTextNodeContent = {
-  nodeType?: Maybe<Scalars['String']>;
-  content?: Maybe<Array<Maybe<ContentfulFeatureDescriptionRichTextNodeContentContent>>>;
+export type ContentfulFeatureDescriptionTextNodeEdge = {
+  next?: Maybe<ContentfulFeatureDescriptionTextNode>;
+  node: ContentfulFeatureDescriptionTextNode;
+  previous?: Maybe<ContentfulFeatureDescriptionTextNode>;
 };
 
-export type ContentfulFeatureDescriptionRichTextNodeContentContent = {
-  nodeType?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeContentContentFilterInput = {
-  nodeType?: Maybe<StringQueryOperatorInput>;
-  value?: Maybe<StringQueryOperatorInput>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeContentContentFilterListInput = {
-  elemMatch?: Maybe<ContentfulFeatureDescriptionRichTextNodeContentContentFilterInput>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeContentFilterInput = {
-  nodeType?: Maybe<StringQueryOperatorInput>;
-  content?: Maybe<ContentfulFeatureDescriptionRichTextNodeContentContentFilterListInput>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeContentFilterListInput = {
-  elemMatch?: Maybe<ContentfulFeatureDescriptionRichTextNodeContentFilterInput>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeEdge = {
-  next?: Maybe<ContentfulFeatureDescriptionRichTextNode>;
-  node: ContentfulFeatureDescriptionRichTextNode;
-  previous?: Maybe<ContentfulFeatureDescriptionRichTextNode>;
-};
-
-export type ContentfulFeatureDescriptionRichTextNodeFieldsEnum = 
+export type ContentfulFeatureDescriptionTextNodeFieldsEnum = 
   | 'id'
   | 'parent___id'
   | 'parent___parent___id'
@@ -878,37 +848,81 @@ export type ContentfulFeatureDescriptionRichTextNodeFieldsEnum =
   | 'internal___mediaType'
   | 'internal___owner'
   | 'internal___type'
-  | 'nodeType'
-  | 'content'
-  | 'content___nodeType'
-  | 'content___content'
-  | 'content___content___nodeType'
-  | 'content___content___value'
   | 'description'
-  | 'json';
+  | 'childMarkdownRemark___id'
+  | 'childMarkdownRemark___frontmatter___title'
+  | 'childMarkdownRemark___excerpt'
+  | 'childMarkdownRemark___rawMarkdownBody'
+  | 'childMarkdownRemark___html'
+  | 'childMarkdownRemark___htmlAst'
+  | 'childMarkdownRemark___excerptAst'
+  | 'childMarkdownRemark___headings'
+  | 'childMarkdownRemark___headings___id'
+  | 'childMarkdownRemark___headings___value'
+  | 'childMarkdownRemark___headings___depth'
+  | 'childMarkdownRemark___timeToRead'
+  | 'childMarkdownRemark___tableOfContents'
+  | 'childMarkdownRemark___wordCount___paragraphs'
+  | 'childMarkdownRemark___wordCount___sentences'
+  | 'childMarkdownRemark___wordCount___words'
+  | 'childMarkdownRemark___parent___id'
+  | 'childMarkdownRemark___parent___parent___id'
+  | 'childMarkdownRemark___parent___parent___children'
+  | 'childMarkdownRemark___parent___children'
+  | 'childMarkdownRemark___parent___children___id'
+  | 'childMarkdownRemark___parent___children___children'
+  | 'childMarkdownRemark___parent___internal___content'
+  | 'childMarkdownRemark___parent___internal___contentDigest'
+  | 'childMarkdownRemark___parent___internal___description'
+  | 'childMarkdownRemark___parent___internal___fieldOwners'
+  | 'childMarkdownRemark___parent___internal___ignoreType'
+  | 'childMarkdownRemark___parent___internal___mediaType'
+  | 'childMarkdownRemark___parent___internal___owner'
+  | 'childMarkdownRemark___parent___internal___type'
+  | 'childMarkdownRemark___children'
+  | 'childMarkdownRemark___children___id'
+  | 'childMarkdownRemark___children___parent___id'
+  | 'childMarkdownRemark___children___parent___children'
+  | 'childMarkdownRemark___children___children'
+  | 'childMarkdownRemark___children___children___id'
+  | 'childMarkdownRemark___children___children___children'
+  | 'childMarkdownRemark___children___internal___content'
+  | 'childMarkdownRemark___children___internal___contentDigest'
+  | 'childMarkdownRemark___children___internal___description'
+  | 'childMarkdownRemark___children___internal___fieldOwners'
+  | 'childMarkdownRemark___children___internal___ignoreType'
+  | 'childMarkdownRemark___children___internal___mediaType'
+  | 'childMarkdownRemark___children___internal___owner'
+  | 'childMarkdownRemark___children___internal___type'
+  | 'childMarkdownRemark___internal___content'
+  | 'childMarkdownRemark___internal___contentDigest'
+  | 'childMarkdownRemark___internal___description'
+  | 'childMarkdownRemark___internal___fieldOwners'
+  | 'childMarkdownRemark___internal___ignoreType'
+  | 'childMarkdownRemark___internal___mediaType'
+  | 'childMarkdownRemark___internal___owner'
+  | 'childMarkdownRemark___internal___type';
 
-export type ContentfulFeatureDescriptionRichTextNodeFilterInput = {
+export type ContentfulFeatureDescriptionTextNodeFilterInput = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
   children?: Maybe<NodeFilterListInput>;
   internal?: Maybe<InternalFilterInput>;
-  nodeType?: Maybe<StringQueryOperatorInput>;
-  content?: Maybe<ContentfulFeatureDescriptionRichTextNodeContentFilterListInput>;
   description?: Maybe<StringQueryOperatorInput>;
-  json?: Maybe<JsonQueryOperatorInput>;
+  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
 };
 
-export type ContentfulFeatureDescriptionRichTextNodeGroupConnection = {
+export type ContentfulFeatureDescriptionTextNodeGroupConnection = {
   totalCount: Scalars['Int'];
-  edges: Array<ContentfulFeatureDescriptionRichTextNodeEdge>;
-  nodes: Array<ContentfulFeatureDescriptionRichTextNode>;
+  edges: Array<ContentfulFeatureDescriptionTextNodeEdge>;
+  nodes: Array<ContentfulFeatureDescriptionTextNode>;
   pageInfo: PageInfo;
   field: Scalars['String'];
   fieldValue?: Maybe<Scalars['String']>;
 };
 
-export type ContentfulFeatureDescriptionRichTextNodeSortInput = {
-  fields?: Maybe<Array<Maybe<ContentfulFeatureDescriptionRichTextNodeFieldsEnum>>>;
+export type ContentfulFeatureDescriptionTextNodeSortInput = {
+  fields?: Maybe<Array<Maybe<ContentfulFeatureDescriptionTextNodeFieldsEnum>>>;
   order?: Maybe<Array<Maybe<SortOrderEnum>>>;
 };
 
@@ -1005,7 +1019,8 @@ export type ContentfulFeatureFieldsEnum =
   | 'internal___mediaType'
   | 'internal___owner'
   | 'internal___type'
-  | 'feature'
+  | 'name'
+  | 'slug'
   | 'image___id'
   | 'image___parent___id'
   | 'image___parent___parent___id'
@@ -1185,14 +1200,36 @@ export type ContentfulFeatureFieldsEnum =
   | 'description___internal___mediaType'
   | 'description___internal___owner'
   | 'description___internal___type'
-  | 'description___nodeType'
-  | 'description___content'
-  | 'description___content___nodeType'
-  | 'description___content___content'
-  | 'description___content___content___nodeType'
-  | 'description___content___content___value'
   | 'description___description'
-  | 'description___json'
+  | 'description___childMarkdownRemark___id'
+  | 'description___childMarkdownRemark___frontmatter___title'
+  | 'description___childMarkdownRemark___excerpt'
+  | 'description___childMarkdownRemark___rawMarkdownBody'
+  | 'description___childMarkdownRemark___html'
+  | 'description___childMarkdownRemark___htmlAst'
+  | 'description___childMarkdownRemark___excerptAst'
+  | 'description___childMarkdownRemark___headings'
+  | 'description___childMarkdownRemark___headings___id'
+  | 'description___childMarkdownRemark___headings___value'
+  | 'description___childMarkdownRemark___headings___depth'
+  | 'description___childMarkdownRemark___timeToRead'
+  | 'description___childMarkdownRemark___tableOfContents'
+  | 'description___childMarkdownRemark___wordCount___paragraphs'
+  | 'description___childMarkdownRemark___wordCount___sentences'
+  | 'description___childMarkdownRemark___wordCount___words'
+  | 'description___childMarkdownRemark___parent___id'
+  | 'description___childMarkdownRemark___parent___children'
+  | 'description___childMarkdownRemark___children'
+  | 'description___childMarkdownRemark___children___id'
+  | 'description___childMarkdownRemark___children___children'
+  | 'description___childMarkdownRemark___internal___content'
+  | 'description___childMarkdownRemark___internal___contentDigest'
+  | 'description___childMarkdownRemark___internal___description'
+  | 'description___childMarkdownRemark___internal___fieldOwners'
+  | 'description___childMarkdownRemark___internal___ignoreType'
+  | 'description___childMarkdownRemark___internal___mediaType'
+  | 'description___childMarkdownRemark___internal___owner'
+  | 'description___childMarkdownRemark___internal___type'
   | 'spaceId'
   | 'contentful_id'
   | 'createdAt'
@@ -1203,68 +1240,91 @@ export type ContentfulFeatureFieldsEnum =
   | 'sys___contentType___sys___id'
   | 'sys___contentType___sys___contentful_id'
   | 'node_locale'
-  | 'childContentfulFeatureDescriptionRichTextNode___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___parent___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___parent___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___children___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___children___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___content'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___contentDigest'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___description'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___fieldOwners'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___ignoreType'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___mediaType'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___owner'
-  | 'childContentfulFeatureDescriptionRichTextNode___parent___internal___type'
-  | 'childContentfulFeatureDescriptionRichTextNode___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___parent___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___parent___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___children___id'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___children___children'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___content'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___contentDigest'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___description'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___fieldOwners'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___ignoreType'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___mediaType'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___owner'
-  | 'childContentfulFeatureDescriptionRichTextNode___children___internal___type'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___content'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___contentDigest'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___description'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___fieldOwners'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___ignoreType'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___mediaType'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___owner'
-  | 'childContentfulFeatureDescriptionRichTextNode___internal___type'
-  | 'childContentfulFeatureDescriptionRichTextNode___nodeType'
-  | 'childContentfulFeatureDescriptionRichTextNode___content'
-  | 'childContentfulFeatureDescriptionRichTextNode___content___nodeType'
-  | 'childContentfulFeatureDescriptionRichTextNode___content___content'
-  | 'childContentfulFeatureDescriptionRichTextNode___content___content___nodeType'
-  | 'childContentfulFeatureDescriptionRichTextNode___content___content___value'
-  | 'childContentfulFeatureDescriptionRichTextNode___description'
-  | 'childContentfulFeatureDescriptionRichTextNode___json';
+  | 'childContentfulFeatureDescriptionTextNode___id'
+  | 'childContentfulFeatureDescriptionTextNode___parent___id'
+  | 'childContentfulFeatureDescriptionTextNode___parent___parent___id'
+  | 'childContentfulFeatureDescriptionTextNode___parent___parent___children'
+  | 'childContentfulFeatureDescriptionTextNode___parent___children'
+  | 'childContentfulFeatureDescriptionTextNode___parent___children___id'
+  | 'childContentfulFeatureDescriptionTextNode___parent___children___children'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___content'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___contentDigest'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___description'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___fieldOwners'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___ignoreType'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___mediaType'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___owner'
+  | 'childContentfulFeatureDescriptionTextNode___parent___internal___type'
+  | 'childContentfulFeatureDescriptionTextNode___children'
+  | 'childContentfulFeatureDescriptionTextNode___children___id'
+  | 'childContentfulFeatureDescriptionTextNode___children___parent___id'
+  | 'childContentfulFeatureDescriptionTextNode___children___parent___children'
+  | 'childContentfulFeatureDescriptionTextNode___children___children'
+  | 'childContentfulFeatureDescriptionTextNode___children___children___id'
+  | 'childContentfulFeatureDescriptionTextNode___children___children___children'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___content'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___contentDigest'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___description'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___fieldOwners'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___ignoreType'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___mediaType'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___owner'
+  | 'childContentfulFeatureDescriptionTextNode___children___internal___type'
+  | 'childContentfulFeatureDescriptionTextNode___internal___content'
+  | 'childContentfulFeatureDescriptionTextNode___internal___contentDigest'
+  | 'childContentfulFeatureDescriptionTextNode___internal___description'
+  | 'childContentfulFeatureDescriptionTextNode___internal___fieldOwners'
+  | 'childContentfulFeatureDescriptionTextNode___internal___ignoreType'
+  | 'childContentfulFeatureDescriptionTextNode___internal___mediaType'
+  | 'childContentfulFeatureDescriptionTextNode___internal___owner'
+  | 'childContentfulFeatureDescriptionTextNode___internal___type'
+  | 'childContentfulFeatureDescriptionTextNode___description'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___id'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___frontmatter___title'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___excerpt'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___rawMarkdownBody'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___html'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___htmlAst'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___excerptAst'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___headings'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___headings___id'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___headings___value'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___headings___depth'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___timeToRead'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___tableOfContents'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___wordCount___paragraphs'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___wordCount___sentences'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___wordCount___words'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___parent___id'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___parent___children'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___children'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___children___id'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___children___children'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___content'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___contentDigest'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___description'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___fieldOwners'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___ignoreType'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___mediaType'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___owner'
+  | 'childContentfulFeatureDescriptionTextNode___childMarkdownRemark___internal___type';
 
 export type ContentfulFeatureFilterInput = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
   children?: Maybe<NodeFilterListInput>;
   internal?: Maybe<InternalFilterInput>;
-  feature?: Maybe<StringQueryOperatorInput>;
+  name?: Maybe<StringQueryOperatorInput>;
+  slug?: Maybe<StringQueryOperatorInput>;
   image?: Maybe<ContentfulAssetFilterInput>;
-  description?: Maybe<ContentfulFeatureDescriptionRichTextNodeFilterInput>;
+  description?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
   spaceId?: Maybe<StringQueryOperatorInput>;
   contentful_id?: Maybe<StringQueryOperatorInput>;
   createdAt?: Maybe<DateQueryOperatorInput>;
   updatedAt?: Maybe<DateQueryOperatorInput>;
   sys?: Maybe<ContentfulFeatureSysFilterInput>;
   node_locale?: Maybe<StringQueryOperatorInput>;
-  childContentfulFeatureDescriptionRichTextNode?: Maybe<ContentfulFeatureDescriptionRichTextNodeFilterInput>;
+  childContentfulFeatureDescriptionTextNode?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
 };
 
 export type ContentfulFeatureGroupConnection = {
@@ -3086,6 +3146,259 @@ export type JsonQueryOperatorInput = {
   glob?: Maybe<Scalars['JSON']>;
 };
 
+export type MarkdownExcerptFormats = 
+  | 'PLAIN'
+  | 'HTML'
+  | 'MARKDOWN';
+
+export type MarkdownHeading = {
+  id?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+  depth?: Maybe<Scalars['Int']>;
+};
+
+export type MarkdownHeadingFilterInput = {
+  id?: Maybe<StringQueryOperatorInput>;
+  value?: Maybe<StringQueryOperatorInput>;
+  depth?: Maybe<IntQueryOperatorInput>;
+};
+
+export type MarkdownHeadingFilterListInput = {
+  elemMatch?: Maybe<MarkdownHeadingFilterInput>;
+};
+
+export type MarkdownHeadingLevels = 
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6';
+
+export type MarkdownRemark = Node & {
+  id: Scalars['ID'];
+  frontmatter?: Maybe<MarkdownRemarkFrontmatter>;
+  excerpt?: Maybe<Scalars['String']>;
+  rawMarkdownBody?: Maybe<Scalars['String']>;
+  html?: Maybe<Scalars['String']>;
+  htmlAst?: Maybe<Scalars['JSON']>;
+  excerptAst?: Maybe<Scalars['JSON']>;
+  headings?: Maybe<Array<Maybe<MarkdownHeading>>>;
+  timeToRead?: Maybe<Scalars['Int']>;
+  tableOfContents?: Maybe<Scalars['String']>;
+  wordCount?: Maybe<MarkdownWordCount>;
+  parent?: Maybe<Node>;
+  children: Array<Node>;
+  internal: Internal;
+};
+
+
+export type MarkdownRemarkExcerptArgs = {
+  pruneLength?: Maybe<Scalars['Int']>;
+  truncate?: Maybe<Scalars['Boolean']>;
+  format?: Maybe<MarkdownExcerptFormats>;
+};
+
+
+export type MarkdownRemarkExcerptAstArgs = {
+  pruneLength?: Maybe<Scalars['Int']>;
+  truncate?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MarkdownRemarkHeadingsArgs = {
+  depth?: Maybe<MarkdownHeadingLevels>;
+};
+
+
+export type MarkdownRemarkTableOfContentsArgs = {
+  absolute?: Maybe<Scalars['Boolean']>;
+  pathToSlugField?: Maybe<Scalars['String']>;
+  maxDepth?: Maybe<Scalars['Int']>;
+  heading?: Maybe<Scalars['String']>;
+};
+
+export type MarkdownRemarkConnection = {
+  totalCount: Scalars['Int'];
+  edges: Array<MarkdownRemarkEdge>;
+  nodes: Array<MarkdownRemark>;
+  pageInfo: PageInfo;
+  distinct: Array<Scalars['String']>;
+  group: Array<MarkdownRemarkGroupConnection>;
+};
+
+
+export type MarkdownRemarkConnectionDistinctArgs = {
+  field: MarkdownRemarkFieldsEnum;
+};
+
+
+export type MarkdownRemarkConnectionGroupArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+  field: MarkdownRemarkFieldsEnum;
+};
+
+export type MarkdownRemarkEdge = {
+  next?: Maybe<MarkdownRemark>;
+  node: MarkdownRemark;
+  previous?: Maybe<MarkdownRemark>;
+};
+
+export type MarkdownRemarkFieldsEnum = 
+  | 'id'
+  | 'frontmatter___title'
+  | 'excerpt'
+  | 'rawMarkdownBody'
+  | 'html'
+  | 'htmlAst'
+  | 'excerptAst'
+  | 'headings'
+  | 'headings___id'
+  | 'headings___value'
+  | 'headings___depth'
+  | 'timeToRead'
+  | 'tableOfContents'
+  | 'wordCount___paragraphs'
+  | 'wordCount___sentences'
+  | 'wordCount___words'
+  | 'parent___id'
+  | 'parent___parent___id'
+  | 'parent___parent___parent___id'
+  | 'parent___parent___parent___children'
+  | 'parent___parent___children'
+  | 'parent___parent___children___id'
+  | 'parent___parent___children___children'
+  | 'parent___parent___internal___content'
+  | 'parent___parent___internal___contentDigest'
+  | 'parent___parent___internal___description'
+  | 'parent___parent___internal___fieldOwners'
+  | 'parent___parent___internal___ignoreType'
+  | 'parent___parent___internal___mediaType'
+  | 'parent___parent___internal___owner'
+  | 'parent___parent___internal___type'
+  | 'parent___children'
+  | 'parent___children___id'
+  | 'parent___children___parent___id'
+  | 'parent___children___parent___children'
+  | 'parent___children___children'
+  | 'parent___children___children___id'
+  | 'parent___children___children___children'
+  | 'parent___children___internal___content'
+  | 'parent___children___internal___contentDigest'
+  | 'parent___children___internal___description'
+  | 'parent___children___internal___fieldOwners'
+  | 'parent___children___internal___ignoreType'
+  | 'parent___children___internal___mediaType'
+  | 'parent___children___internal___owner'
+  | 'parent___children___internal___type'
+  | 'parent___internal___content'
+  | 'parent___internal___contentDigest'
+  | 'parent___internal___description'
+  | 'parent___internal___fieldOwners'
+  | 'parent___internal___ignoreType'
+  | 'parent___internal___mediaType'
+  | 'parent___internal___owner'
+  | 'parent___internal___type'
+  | 'children'
+  | 'children___id'
+  | 'children___parent___id'
+  | 'children___parent___parent___id'
+  | 'children___parent___parent___children'
+  | 'children___parent___children'
+  | 'children___parent___children___id'
+  | 'children___parent___children___children'
+  | 'children___parent___internal___content'
+  | 'children___parent___internal___contentDigest'
+  | 'children___parent___internal___description'
+  | 'children___parent___internal___fieldOwners'
+  | 'children___parent___internal___ignoreType'
+  | 'children___parent___internal___mediaType'
+  | 'children___parent___internal___owner'
+  | 'children___parent___internal___type'
+  | 'children___children'
+  | 'children___children___id'
+  | 'children___children___parent___id'
+  | 'children___children___parent___children'
+  | 'children___children___children'
+  | 'children___children___children___id'
+  | 'children___children___children___children'
+  | 'children___children___internal___content'
+  | 'children___children___internal___contentDigest'
+  | 'children___children___internal___description'
+  | 'children___children___internal___fieldOwners'
+  | 'children___children___internal___ignoreType'
+  | 'children___children___internal___mediaType'
+  | 'children___children___internal___owner'
+  | 'children___children___internal___type'
+  | 'children___internal___content'
+  | 'children___internal___contentDigest'
+  | 'children___internal___description'
+  | 'children___internal___fieldOwners'
+  | 'children___internal___ignoreType'
+  | 'children___internal___mediaType'
+  | 'children___internal___owner'
+  | 'children___internal___type'
+  | 'internal___content'
+  | 'internal___contentDigest'
+  | 'internal___description'
+  | 'internal___fieldOwners'
+  | 'internal___ignoreType'
+  | 'internal___mediaType'
+  | 'internal___owner'
+  | 'internal___type';
+
+export type MarkdownRemarkFilterInput = {
+  id?: Maybe<StringQueryOperatorInput>;
+  frontmatter?: Maybe<MarkdownRemarkFrontmatterFilterInput>;
+  excerpt?: Maybe<StringQueryOperatorInput>;
+  rawMarkdownBody?: Maybe<StringQueryOperatorInput>;
+  html?: Maybe<StringQueryOperatorInput>;
+  htmlAst?: Maybe<JsonQueryOperatorInput>;
+  excerptAst?: Maybe<JsonQueryOperatorInput>;
+  headings?: Maybe<MarkdownHeadingFilterListInput>;
+  timeToRead?: Maybe<IntQueryOperatorInput>;
+  tableOfContents?: Maybe<StringQueryOperatorInput>;
+  wordCount?: Maybe<MarkdownWordCountFilterInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+};
+
+export type MarkdownRemarkFrontmatter = {
+  title?: Maybe<Scalars['String']>;
+};
+
+export type MarkdownRemarkFrontmatterFilterInput = {
+  title?: Maybe<StringQueryOperatorInput>;
+};
+
+export type MarkdownRemarkGroupConnection = {
+  totalCount: Scalars['Int'];
+  edges: Array<MarkdownRemarkEdge>;
+  nodes: Array<MarkdownRemark>;
+  pageInfo: PageInfo;
+  field: Scalars['String'];
+  fieldValue?: Maybe<Scalars['String']>;
+};
+
+export type MarkdownRemarkSortInput = {
+  fields?: Maybe<Array<Maybe<MarkdownRemarkFieldsEnum>>>;
+  order?: Maybe<Array<Maybe<SortOrderEnum>>>;
+};
+
+export type MarkdownWordCount = {
+  paragraphs?: Maybe<Scalars['Int']>;
+  sentences?: Maybe<Scalars['Int']>;
+  words?: Maybe<Scalars['Int']>;
+};
+
+export type MarkdownWordCountFilterInput = {
+  paragraphs?: Maybe<IntQueryOperatorInput>;
+  sentences?: Maybe<IntQueryOperatorInput>;
+  words?: Maybe<IntQueryOperatorInput>;
+};
+
 /** Node Interface */
 export type Node = {
   id: Scalars['ID'];
@@ -3146,14 +3459,16 @@ export type Query = {
   allSite: SiteConnection;
   imageSharp?: Maybe<ImageSharp>;
   allImageSharp: ImageSharpConnection;
+  markdownRemark?: Maybe<MarkdownRemark>;
+  allMarkdownRemark: MarkdownRemarkConnection;
   contentfulAsset?: Maybe<ContentfulAsset>;
   allContentfulAsset: ContentfulAssetConnection;
-  contentfulProduct?: Maybe<ContentfulProduct>;
-  allContentfulProduct: ContentfulProductConnection;
-  contentfulFeatureDescriptionRichTextNode?: Maybe<ContentfulFeatureDescriptionRichTextNode>;
-  allContentfulFeatureDescriptionRichTextNode: ContentfulFeatureDescriptionRichTextNodeConnection;
+  contentfulFeatureDescriptionTextNode?: Maybe<ContentfulFeatureDescriptionTextNode>;
+  allContentfulFeatureDescriptionTextNode: ContentfulFeatureDescriptionTextNodeConnection;
   contentfulFeature?: Maybe<ContentfulFeature>;
   allContentfulFeature: ContentfulFeatureConnection;
+  contentfulProduct?: Maybe<ContentfulProduct>;
+  allContentfulProduct: ContentfulProductConnection;
   contentfulContentType?: Maybe<ContentfulContentType>;
   allContentfulContentType: ContentfulContentTypeConnection;
   siteBuildMetadata?: Maybe<SiteBuildMetadata>;
@@ -3275,6 +3590,7 @@ export type QuerySitePageArgs = {
   children?: Maybe<NodeFilterListInput>;
   internal?: Maybe<InternalFilterInput>;
   isCreatedByStatefulCreatePages?: Maybe<BooleanQueryOperatorInput>;
+  context?: Maybe<SitePageContextFilterInput>;
   pluginCreator?: Maybe<SitePluginFilterInput>;
   pluginCreatorId?: Maybe<StringQueryOperatorInput>;
   componentPath?: Maybe<StringQueryOperatorInput>;
@@ -3332,6 +3648,32 @@ export type QueryAllImageSharpArgs = {
 };
 
 
+export type QueryMarkdownRemarkArgs = {
+  id?: Maybe<StringQueryOperatorInput>;
+  frontmatter?: Maybe<MarkdownRemarkFrontmatterFilterInput>;
+  excerpt?: Maybe<StringQueryOperatorInput>;
+  rawMarkdownBody?: Maybe<StringQueryOperatorInput>;
+  html?: Maybe<StringQueryOperatorInput>;
+  htmlAst?: Maybe<JsonQueryOperatorInput>;
+  excerptAst?: Maybe<JsonQueryOperatorInput>;
+  headings?: Maybe<MarkdownHeadingFilterListInput>;
+  timeToRead?: Maybe<IntQueryOperatorInput>;
+  tableOfContents?: Maybe<StringQueryOperatorInput>;
+  wordCount?: Maybe<MarkdownWordCountFilterInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+};
+
+
+export type QueryAllMarkdownRemarkArgs = {
+  filter?: Maybe<MarkdownRemarkFilterInput>;
+  sort?: Maybe<MarkdownRemarkSortInput>;
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryContentfulAssetArgs = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
@@ -3363,6 +3705,51 @@ export type QueryAllContentfulAssetArgs = {
 };
 
 
+export type QueryContentfulFeatureDescriptionTextNodeArgs = {
+  id?: Maybe<StringQueryOperatorInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+  description?: Maybe<StringQueryOperatorInput>;
+  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
+};
+
+
+export type QueryAllContentfulFeatureDescriptionTextNodeArgs = {
+  filter?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
+  sort?: Maybe<ContentfulFeatureDescriptionTextNodeSortInput>;
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryContentfulFeatureArgs = {
+  id?: Maybe<StringQueryOperatorInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+  name?: Maybe<StringQueryOperatorInput>;
+  slug?: Maybe<StringQueryOperatorInput>;
+  image?: Maybe<ContentfulAssetFilterInput>;
+  description?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
+  spaceId?: Maybe<StringQueryOperatorInput>;
+  contentful_id?: Maybe<StringQueryOperatorInput>;
+  createdAt?: Maybe<DateQueryOperatorInput>;
+  updatedAt?: Maybe<DateQueryOperatorInput>;
+  sys?: Maybe<ContentfulFeatureSysFilterInput>;
+  node_locale?: Maybe<StringQueryOperatorInput>;
+  childContentfulFeatureDescriptionTextNode?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
+};
+
+
+export type QueryAllContentfulFeatureArgs = {
+  filter?: Maybe<ContentfulFeatureFilterInput>;
+  sort?: Maybe<ContentfulFeatureSortInput>;
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryContentfulProductArgs = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
@@ -3382,52 +3769,6 @@ export type QueryContentfulProductArgs = {
 export type QueryAllContentfulProductArgs = {
   filter?: Maybe<ContentfulProductFilterInput>;
   sort?: Maybe<ContentfulProductSortInput>;
-  skip?: Maybe<Scalars['Int']>;
-  limit?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryContentfulFeatureDescriptionRichTextNodeArgs = {
-  id?: Maybe<StringQueryOperatorInput>;
-  parent?: Maybe<NodeFilterInput>;
-  children?: Maybe<NodeFilterListInput>;
-  internal?: Maybe<InternalFilterInput>;
-  nodeType?: Maybe<StringQueryOperatorInput>;
-  content?: Maybe<ContentfulFeatureDescriptionRichTextNodeContentFilterListInput>;
-  description?: Maybe<StringQueryOperatorInput>;
-  json?: Maybe<JsonQueryOperatorInput>;
-};
-
-
-export type QueryAllContentfulFeatureDescriptionRichTextNodeArgs = {
-  filter?: Maybe<ContentfulFeatureDescriptionRichTextNodeFilterInput>;
-  sort?: Maybe<ContentfulFeatureDescriptionRichTextNodeSortInput>;
-  skip?: Maybe<Scalars['Int']>;
-  limit?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryContentfulFeatureArgs = {
-  id?: Maybe<StringQueryOperatorInput>;
-  parent?: Maybe<NodeFilterInput>;
-  children?: Maybe<NodeFilterListInput>;
-  internal?: Maybe<InternalFilterInput>;
-  feature?: Maybe<StringQueryOperatorInput>;
-  image?: Maybe<ContentfulAssetFilterInput>;
-  description?: Maybe<ContentfulFeatureDescriptionRichTextNodeFilterInput>;
-  spaceId?: Maybe<StringQueryOperatorInput>;
-  contentful_id?: Maybe<StringQueryOperatorInput>;
-  createdAt?: Maybe<DateQueryOperatorInput>;
-  updatedAt?: Maybe<DateQueryOperatorInput>;
-  sys?: Maybe<ContentfulFeatureSysFilterInput>;
-  node_locale?: Maybe<StringQueryOperatorInput>;
-  childContentfulFeatureDescriptionRichTextNode?: Maybe<ContentfulFeatureDescriptionRichTextNodeFilterInput>;
-};
-
-
-export type QueryAllContentfulFeatureArgs = {
-  filter?: Maybe<ContentfulFeatureFilterInput>;
-  sort?: Maybe<ContentfulFeatureSortInput>;
   skip?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
 };
@@ -3818,6 +4159,7 @@ export type SitePage = Node & {
   children: Array<Node>;
   internal: Internal;
   isCreatedByStatefulCreatePages?: Maybe<Scalars['Boolean']>;
+  context?: Maybe<SitePageContext>;
   pluginCreator?: Maybe<SitePlugin>;
   pluginCreatorId?: Maybe<Scalars['String']>;
   componentPath?: Maybe<Scalars['String']>;
@@ -3842,6 +4184,40 @@ export type SitePageConnectionGroupArgs = {
   skip?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
   field: SitePageFieldsEnum;
+};
+
+export type SitePageContext = {
+  feature?: Maybe<SitePageContextFeature>;
+};
+
+export type SitePageContextFeature = {
+  slug?: Maybe<Scalars['String']>;
+  description?: Maybe<SitePageContextFeatureDescription>;
+};
+
+export type SitePageContextFeatureDescription = {
+  childMarkdownRemark?: Maybe<SitePageContextFeatureDescriptionChildMarkdownRemark>;
+};
+
+export type SitePageContextFeatureDescriptionChildMarkdownRemark = {
+  html?: Maybe<Scalars['String']>;
+};
+
+export type SitePageContextFeatureDescriptionChildMarkdownRemarkFilterInput = {
+  html?: Maybe<StringQueryOperatorInput>;
+};
+
+export type SitePageContextFeatureDescriptionFilterInput = {
+  childMarkdownRemark?: Maybe<SitePageContextFeatureDescriptionChildMarkdownRemarkFilterInput>;
+};
+
+export type SitePageContextFeatureFilterInput = {
+  slug?: Maybe<StringQueryOperatorInput>;
+  description?: Maybe<SitePageContextFeatureDescriptionFilterInput>;
+};
+
+export type SitePageContextFilterInput = {
+  feature?: Maybe<SitePageContextFeatureFilterInput>;
 };
 
 export type SitePageEdge = {
@@ -3943,6 +4319,7 @@ export type SitePageFieldsEnum =
   | 'internal___owner'
   | 'internal___type'
   | 'isCreatedByStatefulCreatePages'
+  | 'context___feature___slug'
   | 'pluginCreator___id'
   | 'pluginCreator___parent___id'
   | 'pluginCreator___parent___parent___id'
@@ -4024,6 +4401,7 @@ export type SitePageFilterInput = {
   children?: Maybe<NodeFilterListInput>;
   internal?: Maybe<InternalFilterInput>;
   isCreatedByStatefulCreatePages?: Maybe<BooleanQueryOperatorInput>;
+  context?: Maybe<SitePageContextFilterInput>;
   pluginCreator?: Maybe<SitePluginFilterInput>;
   pluginCreatorId?: Maybe<StringQueryOperatorInput>;
   componentPath?: Maybe<StringQueryOperatorInput>;
@@ -4336,6 +4714,14 @@ export type StringQueryOperatorInput = {
   regex?: Maybe<Scalars['String']>;
   glob?: Maybe<Scalars['String']>;
 };
+
+export type FeaturesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FeaturesQuery = { allContentfulFeature: { edges: Array<{ node: (
+        Pick<ContentfulFeature, 'name' | 'slug'>
+        & { image?: Maybe<{ fixed?: Maybe<GatsbyContentfulFixedFragment> }> }
+      ) }> } };
 
 export type ImagesQueryVariables = Exact<{ [key: string]: never; }>;
 
