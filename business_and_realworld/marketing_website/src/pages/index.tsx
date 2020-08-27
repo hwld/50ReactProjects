@@ -2,21 +2,18 @@ import React from "react";
 import { Product } from "../components/product";
 import styled from "styled-components";
 import { Features } from "../components/features";
-
-const PageRoot = styled.div``;
+import { Layout } from "../components/layout";
 
 const StyledProduct = styled(Product)`
-  margin: 30px;
+  margin-bottom: 30px;
 `;
-
-const StyledFeatures = styled(Features)``;
 
 const Home: React.FC = () => {
   return (
-    <PageRoot>
+    <Layout>
       <StyledProduct />
       <Features />
-    </PageRoot>
+    </Layout>
   );
 };
 
