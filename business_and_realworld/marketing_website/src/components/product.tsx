@@ -49,7 +49,6 @@ export const Product: React.FC<{ className?: string }> = ({ className }) => {
         {data.contentfulProduct.description.description}
       </ProductDescription>
       <ProductImage fluid={data.contentfulProduct.image.fluid} />
-      <ContactButton />
     </ProductRoot>
   );
 };
