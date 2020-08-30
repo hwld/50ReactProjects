@@ -8,6 +8,20 @@ const OpenDialogButton = styled(Button)`
   height: 50px;
 `;
 
+const Modal = styled(ReactModal)`
+  position: absolute;
+  padding: 8px;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #16161a;
+  width: 30%;
+  height: auto;
+
+  @media (max-width: 1000px) {
+    width: 80%;
+  }
+`;
+
 const Dialog = styled.div`
   height: 100%;
   display: flex;
@@ -25,20 +39,36 @@ const DialogContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 30px;
 `;
 
 const DialogAction = styled.div`
+  padding: 8px;
   flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
 `;
 
 const Form = styled.form`
-  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const FormContent = styled.div`
-  margin-top: 20px;
+  width: 100%;
+`;
+
+const FormInput = styled.input`
+  box-sizing: border-box;
+  width: 100%;
+`;
+
+const FormTextArea = styled.textarea`
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 10rem;
 `;
 
 const SubmitButton = styled(Button)``;
@@ -61,19 +91,17 @@ export const ContactButton: React.FC = () => {
   return (
     <>
       <OpenDialogButton onClick={OpenDialog}>Contact us</OpenDialogButton>
-      <ReactModal
+      <Modal
         isOpen={isOpen}
         onRequestClose={closeDialog}
         style={{
-          overlay: { backgroundColor: "#ffffff80" },
-          content: {
-            padding: "30px",
-            backgroundColor: "#16161a",
-            margin: "auto",
-            width: "30%",
-            height: "auto",
-            overflowY: "auto",
-            overflowX: "auto",
+          overlay: {
+            backgroundColor: "#ffffff80",
+            padding: "10x 24px",
+
+            // contentを中央に配置するためのCSS
+            display: "grid",
+            placeItems: "center",
           },
         }}
       >
@@ -83,21 +111,21 @@ export const ContactButton: React.FC = () => {
             <Form>
               <FormContent>
                 <div>
-                  <label>Name</label>
+                  <label>Name:</label>
                 </div>
-                <input />
+                <FormInput />
               </FormContent>
               <FormContent>
                 <div>
-                  <label>Email</label>
+                  <label>Email:</label>
                 </div>
-                <input />
+                <FormInput />
               </FormContent>
               <FormContent>
                 <div>
-                  <label>Comment</label>
+                  <label>Comment:</label>
                 </div>
-                <input />
+                <FormTextArea />
               </FormContent>
             </Form>
           </DialogContent>
@@ -106,7 +134,7 @@ export const ContactButton: React.FC = () => {
             <CancelButton onClick={closeDialog}>Cancel</CancelButton>
           </DialogAction>
         </Dialog>
-      </ReactModal>
+      </Modal>
     </>
   );
 };

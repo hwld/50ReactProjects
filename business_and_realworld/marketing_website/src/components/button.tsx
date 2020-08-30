@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
@@ -26,8 +26,20 @@ export const Button: React.FC<{ className?: string; onClick?: () => void }> = ({
   className,
   onClick,
 }) => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const handleClick = () => {
+    buttonRef.current.blur();
+    onClick();
+  };
+
   return (
-    <StyledButton tabIndex={0} className={className} onClick={onClick}>
+    <StyledButton
+      ref={buttonRef}
+      tabIndex={0}
+      className={className}
+      onClick={handleClick}
+    >
       <ButtonContent>{children}</ButtonContent>
     </StyledButton>
   );
