@@ -3,10 +3,7 @@ import styled from "styled-components";
 import ReactModal from "react-modal";
 import { Button } from "./button";
 
-const OpenDialogButton = styled(Button)`
-  width: 200px;
-  height: 50px;
-`;
+const OpenDialogButton = styled(Button)``;
 
 const Modal = styled(ReactModal)`
   position: absolute;
@@ -60,11 +57,14 @@ const FormContent = styled.div`
 `;
 
 const FormInput = styled.input`
+  padding: 4px 8px;
   box-sizing: border-box;
   width: 100%;
+  height: 2rem;
 `;
 
 const FormTextArea = styled.textarea`
+  padding: 4px 8px;
   box-sizing: border-box;
   resize: none;
   width: 100%;

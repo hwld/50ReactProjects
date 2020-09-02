@@ -2,14 +2,16 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
-  font-weight: bold;
-  font-size: 1.2rem;
   outline: none;
   color: #ffffffff;
   background-color: #7f5af0ff;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
+  margin: 8px;
   padding: 6px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.75;
 
   &:hover,
   &:focus {
