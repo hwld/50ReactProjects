@@ -3,14 +3,16 @@ import styled from "styled-components";
 import ReactModal from "react-modal";
 import { Button } from "./button";
 
-const OpenDialogButton = styled(Button)``;
+const OpenDialogButton = styled(Button)`
+  font-size: 2rem;
+`;
 
 const Modal = styled(ReactModal)`
   position: absolute;
   padding: 8px;
   overflow-y: auto;
   overflow-x: auto;
-  background-color: #16161a;
+  background-color: rgb(53, 53, 53);
   width: 30%;
   height: auto;
 
@@ -26,6 +28,7 @@ const Dialog = styled.div`
 `;
 
 const DialogTitle = styled.div`
+  margin: 10px 10px;
   text-align: center;
   flex: 0 0 auto;
   font-size: 2rem;
@@ -54,21 +57,35 @@ const Form = styled.form`
 
 const FormContent = styled.div`
   width: 100%;
+  margin-bottom: 20px;
 `;
 
 const FormInput = styled.input`
-  padding: 4px 8px;
+  margin-top: 5px;
+  padding: 10px 8px;
+  font-size: 1.2rem;
   box-sizing: border-box;
   width: 100%;
-  height: 2rem;
+  outline: none;
+  border: none;
+  border-radius: 5px 5px 0px 0px;
+  background-color: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
 `;
 
 const FormTextArea = styled.textarea`
-  padding: 4px 8px;
+  margin-top: 5px;
+  font-family: inherit;
+  font-size: 1.2rem;
+  padding: 10px 8px;
   box-sizing: border-box;
   resize: none;
   width: 100%;
-  height: 10rem;
+  outline: none;
+  border: none;
+  border-radius: 5px 5px 0px 0px;
+  background-color: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
 `;
 
 const SubmitButton = styled(Button)``;
@@ -125,7 +142,7 @@ export const ContactButton: React.FC = () => {
                 <div>
                   <label>Comment:</label>
                 </div>
-                <FormTextArea />
+                <FormTextArea rows={10} />
               </FormContent>
             </Form>
           </DialogContent>

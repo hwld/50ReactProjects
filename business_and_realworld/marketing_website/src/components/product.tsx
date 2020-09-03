@@ -3,7 +3,6 @@ import Img, { GatsbyImageFluidProps } from "gatsby-image";
 import styled from "styled-components";
 import { useStaticQuery, graphql } from "gatsby";
 import { ProductQuery } from "../../types/graphql-types";
-import { ContactButton } from "./contact-button";
 
 const ProductRoot = styled.div`
   display: grid;
