@@ -91,6 +91,7 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
         </div>
         <FormTextArea name="comment" rows={10} onChange={handleChange} />
       </FormContent>
+      <button type="submit">Send</button>
     </Form>
   );
 };
