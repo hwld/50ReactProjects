@@ -97,8 +97,6 @@ export const ContactButton: React.FC = () => {
               name="contact"
               method="post"
               id="contact"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit}
             />
           </DialogContent>
