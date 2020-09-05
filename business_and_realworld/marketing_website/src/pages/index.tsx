@@ -23,7 +23,7 @@ const Home: React.FC = () => {
       >
         <input type="hidden" name="name" />
         <input type="hidden" name="email" />
-        <textarea type="hidden " name="comment"></textarea>
+        <textarea name="comment" hidden></textarea>
       </form>
     </>
   );
