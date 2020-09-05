@@ -25,7 +25,6 @@ const Home: React.FC = () => {
         <input name="email" />
         <input name="name2" />
         <input name="name3" />
-        <textarea name="comment"></textarea>
         <input name="name4" />
       </form>
     </>
