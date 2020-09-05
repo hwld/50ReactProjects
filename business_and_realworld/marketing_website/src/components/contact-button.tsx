@@ -93,16 +93,16 @@ export const ContactButton: React.FC = () => {
           <DialogTitle>Contact Form</DialogTitle>
           <DialogContent>
             <ContactForm
-              name="contact-form"
+              name="contact"
               method="post"
-              id="contact-form"
+              id="contact"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit}
             />
           </DialogContent>
           <DialogAction>
-            <SubmitButton type="submit" form="contact-form" value="contact">
+            <SubmitButton type="submit" form="contact">
               Submit
             </SubmitButton>
             <CancelButton onClick={closeDialog}>Cancel</CancelButton>
