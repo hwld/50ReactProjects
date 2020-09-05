@@ -6,8 +6,8 @@ export const ContactFormPrerender: React.FC<FormHTMLAttributes<
 >> = ({ ...props }) => {
   return (
     <form {...props} hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
+      <input name="name" />
+      <input name="hoge" />
       <textarea name="comment" />
     </form>
   );
