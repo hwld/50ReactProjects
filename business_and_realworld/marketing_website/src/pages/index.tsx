@@ -15,17 +15,6 @@ const Home: React.FC = () => {
         <StyledProduct />
         <Features />
       </Layout>
-      <form
-        name="contact"
-        data-netlify="true"
-        data-netlify-honeypot="bot-field"
-        hidden
-      >
-        <input type="hidden" name="form-name" value="contact" />
-        <input type="text" name="name" />
-        <input type="email" name="email" />
-        <textarea name="comment" hidden></textarea>
-      </form>
     </>
   );
 };

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ReactModal from "react-modal";
 import { Button } from "./button";
 import { ContactForm } from "./contact-form";
-import { ContactFormPrerender } from "./contact-form-prerender";
+import { ContactFormStatic } from "./contact-form-static";
 
 const OpenDialogButton = styled(Button)`
   font-size: 2rem;
@@ -108,6 +108,7 @@ export const ContactButton: React.FC = () => {
           </DialogAction>
         </Dialog>
       </Modal>
+      <ContactFormStatic name="contact" />
     </>
   );
 };
