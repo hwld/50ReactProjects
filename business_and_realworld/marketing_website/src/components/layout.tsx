@@ -8,7 +8,8 @@ const LayoutRoot = styled.div`
   flex-direction: column;
   padding-top: 30px;
   box-sizing: border-box;
-  overflow-y: scroll;
+  /* スクロールバーの有無によってContactButtonの位置がずれないようにする */
+  overflow-x: hidden;
 `;
 
 const Content = styled.div`
@@ -20,6 +21,7 @@ const Footer = styled.div`
   padding: 10px 0px;
   display: flex;
   justify-content: center;
+  width: 100vw;
   background-color: rgb(77, 77, 77);
 `;
 
