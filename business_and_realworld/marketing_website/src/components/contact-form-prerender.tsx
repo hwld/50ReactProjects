@@ -6,7 +6,7 @@ export const ContactFormPrerender: React.FC = () => {
     <form
       name="contact"
       data-netlify="true"
-      data-netlify-honeypot="bot-hield"
+      data-netlify-honeypot="bot-field"
       hidden
     >
       <input name="name" />
