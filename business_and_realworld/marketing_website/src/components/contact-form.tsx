@@ -68,6 +68,8 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: encode({ "form-name": name, ...state }),
     });
+
+    if (props.onSubmit) props.onSubmit(e);
   };
 
   return (
@@ -91,7 +93,6 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
         </div>
         <FormTextArea name="comment" rows={10} onChange={handleChange} />
       </FormContent>
-      <button type="submit">Send</button>
     </Form>
   );
 };

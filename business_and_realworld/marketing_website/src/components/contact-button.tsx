@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ReactModal from "react-modal";
 import { Button } from "./button";
 import { ContactForm } from "./contact-form";
+import { ContactFormPrerender } from "./contact-form-prerender";
 
 const OpenDialogButton = styled(Button)`
   font-size: 2rem;
@@ -109,6 +110,11 @@ export const ContactButton: React.FC = () => {
           </DialogAction>
         </Dialog>
       </Modal>
+      <ContactFormPrerender
+        name="contact"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+      />
     </>
   );
 };
