@@ -14,7 +14,7 @@ export const ContactFormPrerender: React.FC = () => {
       <input name="name2" />
       <input name="name3" />
       <input name="name4" />
-      <textarea name="comment" />
+      <textarea name="comment"></textarea>
     </form>
   );
 };
