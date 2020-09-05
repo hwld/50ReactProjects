@@ -75,18 +75,17 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
   return (
     <Form name={name} {...props} onSubmit={handleSubmit}>
       <input type="hidden" name="form-name" value={name} />
-      <input name="bot-field" hidden />
       <FormContent>
         <div>
           <label>Name:</label>
         </div>
-        <FormInput name="name" onChange={handleChange} />
+        <FormInput type="text" name="name" onChange={handleChange} />
       </FormContent>
       <FormContent>
         <div>
           <label>Email:</label>
         </div>
-        <FormInput name="email" onChange={handleChange} />
+        <FormInput type="email" name="email" onChange={handleChange} />
       </FormContent>
       <FormContent>
         <div>
