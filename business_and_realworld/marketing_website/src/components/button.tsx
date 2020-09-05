@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, HTMLProps, ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
@@ -23,20 +23,24 @@ const StyledButton = styled.button`
 
 const ButtonContent = styled.span``;
 
-export const Button: React.FC<{ className?: string; onClick?: () => void }> = ({
+export const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
   children,
   className,
   onClick,
+  ...props
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleClick = () => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     buttonRef.current.blur();
-    onClick();
+    onClick(event);
   };
 
   return (
     <StyledButton
+      {...props}
       ref={buttonRef}
       tabIndex={0}
       className={className}

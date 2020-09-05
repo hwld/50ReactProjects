@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormHTMLAttributes } from "react";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -40,9 +40,11 @@ const FormTextArea = styled.textarea`
   color: #ffffff;
 `;
 
-export const ContactForm: React.FC = () => {
+export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
+  ...props
+}) => {
   return (
-    <Form>
+    <Form {...props}>
       <FormContent>
         <div>
           <label>Name:</label>
