@@ -108,11 +108,7 @@ export const ContactButton: React.FC = () => {
           </DialogAction>
         </Dialog>
       </Modal>
-      <ContactFormPrerender
-        name="contact"
-        data-netlify="true"
-        data-netlify-honeypot="bot-field"
-      />
+      <ContactFormPrerender />
     </>
   );
 };

@@ -9,8 +9,7 @@ export const ContactFormPrerender: React.FC = () => {
       data-netlify-honeypot="bot-hield"
       hidden
     >
-      <input name="name" hidden />
-      <input name="email" />
+      <input name="name" />
       <input name="email" />
       <textarea name="comment" />
     </form>
