@@ -45,23 +45,24 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
 }) => {
   return (
     <Form {...props}>
+      <input type="hidden" value={props.name} />
       <FormContent>
         <div>
           <label>Name:</label>
         </div>
-        <FormInput />
+        <FormInput name="name" />
       </FormContent>
       <FormContent>
         <div>
           <label>Email:</label>
         </div>
-        <FormInput />
+        <FormInput name="email" />
       </FormContent>
       <FormContent>
         <div>
           <label>Comment:</label>
         </div>
-        <FormTextArea rows={10} />
+        <FormTextArea name="comment" rows={10} />
       </FormContent>
     </Form>
   );

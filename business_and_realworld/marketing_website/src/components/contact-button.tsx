@@ -89,6 +89,7 @@ export const ContactButton: React.FC = () => {
           <DialogTitle>Contact Form</DialogTitle>
           <DialogContent>
             <ContactForm
+              name="contact-form"
               method="post"
               id="contact-form"
               data-netlify="true"
