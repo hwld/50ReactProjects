@@ -21,11 +21,9 @@ const Home: React.FC = () => {
         data-netlify-honeypot="bot-field"
         hidden
       >
-        <input name="name1" />
-        <input name="email" />
-        <input name="name2" />
-        <input name="name3" />
-        <input name="name4" />
+        <input type="hidden" name="name" />
+        <input type="hidden" name="email" />
+        <textarea type="hidden " name="comment"></textarea>
       </form>
     </>
   );
