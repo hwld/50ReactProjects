@@ -75,6 +75,7 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
   return (
     <Form name={name} {...props} onSubmit={handleSubmit}>
       <input type="hidden" name="form-name" value={name} />
+      <input type="hidden" name="bot-field" />
       <FormContent>
         <div>
           <label>Name:</label>
