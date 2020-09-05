@@ -22,6 +22,7 @@ const Home: React.FC = () => {
         hidden
       >
         <input type="hidden" name="form-name" value="contact" />
+        <input name="bot-field" />
         <input name="name" />
         <input name="email" />
         <textarea name="comment" hidden></textarea>
