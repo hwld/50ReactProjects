@@ -10,10 +10,25 @@ const StyledProduct = styled(Product)`
 
 const Home: React.FC = () => {
   return (
-    <Layout>
-      <StyledProduct />
-      <Features />
-    </Layout>
+    <>
+      <Layout>
+        <StyledProduct />
+        <Features />
+      </Layout>
+      <form
+        name="contact"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+        hidden
+      >
+        <input name="name1" />
+        <input name="email" />
+        <input name="name2" />
+        <input name="name3" />
+        <textarea name="comment"></textarea>
+        <input name="name4" />
+      </form>
+    </>
   );
 };
 

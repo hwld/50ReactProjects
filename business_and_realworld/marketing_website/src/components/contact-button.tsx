@@ -108,7 +108,6 @@ export const ContactButton: React.FC = () => {
           </DialogAction>
         </Dialog>
       </Modal>
-      <ContactFormPrerender />
     </>
   );
 };
