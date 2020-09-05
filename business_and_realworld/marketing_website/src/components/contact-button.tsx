@@ -68,6 +68,10 @@ export const ContactButton: React.FC = () => {
     setIsOpen(false);
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    closeDialog();
+  };
+
   return (
     <>
       <OpenDialogButton onClick={OpenDialog}>Contact us</OpenDialogButton>
@@ -94,15 +98,11 @@ export const ContactButton: React.FC = () => {
               id="contact-form"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
+              onSubmit={handleSubmit}
             />
           </DialogContent>
           <DialogAction>
-            <SubmitButton
-              type="submit"
-              form="contact-form"
-              onClick={closeDialog}
-              value="contact"
-            >
+            <SubmitButton type="submit" form="contact-form" value="contact">
               Submit
             </SubmitButton>
             <CancelButton onClick={closeDialog}>Cancel</CancelButton>

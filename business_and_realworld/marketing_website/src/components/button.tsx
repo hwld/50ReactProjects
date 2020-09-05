@@ -26,7 +26,8 @@ const ButtonContent = styled.span``;
 export const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
   children,
   className,
-  onClick,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onClick = () => {},
   ...props
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);

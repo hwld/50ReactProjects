@@ -1,4 +1,4 @@
-import React, { FormHTMLAttributes } from "react";
+import React, { FormHTMLAttributes, useState } from "react";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -41,28 +41,55 @@ const FormTextArea = styled.textarea`
 `;
 
 export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
+  name,
   ...props
 }) => {
+  const [state, setState] = useState({});
+
+  const encode = (data: Record<string, string | number | boolean>) => {
+    return Object.keys(data)
+      .map(
+        (key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+      )
+      .join("&");
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode({ "form-name": name, ...state }),
+    });
+  };
+
   return (
-    <Form {...props}>
-      <input type="hidden" value={props.name} />
+    <Form name={name} {...props} onSubmit={handleSubmit}>
+      <input type="hidden" name="form-name" value={name} />
       <FormContent>
         <div>
           <label>Name:</label>
         </div>
-        <FormInput name="name" />
+        <FormInput name="name" onChange={handleChange} />
       </FormContent>
       <FormContent>
         <div>
           <label>Email:</label>
         </div>
-        <FormInput name="email" />
+        <FormInput name="email" onChange={handleChange} />
       </FormContent>
       <FormContent>
         <div>
           <label>Comment:</label>
         </div>
-        <FormTextArea name="comment" rows={10} />
+        <FormTextArea name="comment" rows={10} onChange={handleChange} />
       </FormContent>
     </Form>
   );
