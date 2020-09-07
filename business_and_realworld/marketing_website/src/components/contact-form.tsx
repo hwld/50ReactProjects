@@ -62,7 +62,7 @@ export const ContactForm: React.FC<
   });
 
   return (
-    <Form name={name} {...props} onSubmit={onSubmit}>
+    <Form name={name} {...props} onSubmit={onSubmit} autoComplete="off">
       <input type="hidden" name="form-name" />
       <FormContent>
         <div>
