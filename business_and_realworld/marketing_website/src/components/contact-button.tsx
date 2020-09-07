@@ -66,7 +66,6 @@ export type ContactFormData = {
 
 Modal.setAppElement("#___gatsby");
 export const ContactButton: React.FC = () => {
-  console.log("レンダリング");
   const [isOpen, setIsOpen] = useState(false);
   const methods = useForm<ContactFormData>();
 
