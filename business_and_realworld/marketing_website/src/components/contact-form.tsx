@@ -1,7 +1,8 @@
-import React, { FormHTMLAttributes, useState } from "react";
+import React, { FormHTMLAttributes } from "react";
 import styled from "styled-components";
 import { encode } from "../util/encode";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
+import { ContactFormData } from "./contact-button";
 
 const Form = styled.form`
   display: flex;
@@ -42,25 +43,22 @@ const FormTextArea = styled.textarea`
   color: #ffffff;
 `;
 
-type ContactFormData = {
-  name: string;
-  email: string;
-  comment: string;
-};
+const ErrorMessage = styled.p`
+  color: #ff0000;
+`;
 
-export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
-  name,
-  ...props
-}) => {
-  const { register, handleSubmit } = useForm<ContactFormData>();
+export const ContactForm: React.FC<
+  FormHTMLAttributes<HTMLFormElement> & { afterSubmit?: () => void }
+> = ({ name, afterSubmit, ...props }) => {
+  const { register, handleSubmit, errors } = useFormContext<ContactFormData>();
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = handleSubmit((data, e) => {
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: encode({ "form-name": name, ...data }),
     });
+    afterSubmit();
   });
 
   return (
@@ -70,19 +68,35 @@ export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
         <div>
           <label>Name:</label>
         </div>
-        <FormInput type="text" name="name" ref={register} />
+        <FormInput name="name" ref={register({ maxLength: 100 })} />
+        {errors.name?.type === "maxLength" && (
+          <ErrorMessage>100文字以内で入力してください</ErrorMessage>
+        )}
       </FormContent>
       <FormContent>
         <div>
           <label>Email:</label>
         </div>
-        <FormInput type="email" name="email" ref={register} />
+        <FormInput name="email" ref={register({ maxLength: 254 })} />
+        {errors.email?.type === "maxLength" && (
+          <ErrorMessage>254文字以内で入力してください</ErrorMessage>
+        )}
       </FormContent>
       <FormContent>
         <div>
           <label>Comment:</label>
         </div>
-        <FormTextArea name="comment" rows={10} ref={register} />
+        <FormTextArea
+          name="comment"
+          rows={10}
+          ref={register({ maxLength: 1000, required: true })}
+        />
+        {errors.comment?.type === "maxLength" && (
+          <ErrorMessage>1000文字以内で入力してください</ErrorMessage>
+        )}
+        {errors.comment?.type === "required" && (
+          <ErrorMessage>必須項目です</ErrorMessage>
+        )}
       </FormContent>
     </Form>
   );

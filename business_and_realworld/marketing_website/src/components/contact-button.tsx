@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import styled from "styled-components";
 import ReactModal from "react-modal";
 import { Button } from "./button";
 import { ContactForm } from "./contact-form";
 import { ContactFormStatic } from "./contact-form-static";
+import { FormProvider, useForm } from "react-hook-form";
 
 const OpenDialogButton = styled(Button)`
   font-size: 2rem;
@@ -57,9 +58,17 @@ const CancelButton = styled(Button)`
   margin-left: 10px;
 `;
 
+export type ContactFormData = {
+  name: string;
+  email: string;
+  comment: string;
+};
+
 Modal.setAppElement("#___gatsby");
 export const ContactButton: React.FC = () => {
+  console.log("レンダリング");
   const [isOpen, setIsOpen] = useState(false);
+  const methods = useForm<ContactFormData>();
 
   const OpenDialog = () => {
     setIsOpen(true);
@@ -69,9 +78,9 @@ export const ContactButton: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    closeDialog();
-  };
+  const isValidationError = useMemo(() => {
+    return Object.keys(methods.errors).length !== 0;
+  }, [methods]);
 
   return (
     <>
@@ -90,23 +99,29 @@ export const ContactButton: React.FC = () => {
           },
         }}
       >
-        <Dialog>
-          <DialogTitle>Contact Form</DialogTitle>
-          <DialogContent>
-            <ContactForm
-              name="contact"
-              method="post"
-              id="contact"
-              onSubmit={handleSubmit}
-            />
-          </DialogContent>
-          <DialogAction>
-            <SubmitButton type="submit" form="contact">
-              Submit
-            </SubmitButton>
-            <CancelButton onClick={closeDialog}>Cancel</CancelButton>
-          </DialogAction>
-        </Dialog>
+        <FormProvider {...methods}>
+          <Dialog>
+            <DialogTitle>Contact Form</DialogTitle>
+            <DialogContent>
+              <ContactForm
+                name="contact"
+                method="post"
+                id="contact"
+                afterSubmit={closeDialog}
+              />
+            </DialogContent>
+            <DialogAction>
+              <SubmitButton
+                type="submit"
+                form="contact"
+                disabled={isValidationError}
+              >
+                Submit
+              </SubmitButton>
+              <CancelButton onClick={closeDialog}>Cancel</CancelButton>
+            </DialogAction>
+          </Dialog>
+        </FormProvider>
       </Modal>
       <ContactFormStatic name="contact" />
     </>

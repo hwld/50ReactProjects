@@ -1,4 +1,4 @@
-import React, { useRef, HTMLProps, ButtonHTMLAttributes } from "react";
+import React, { useRef, ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
@@ -18,6 +18,12 @@ const StyledButton = styled.button`
     cursor: pointer;
     background-color: #7f5af0aa;
     color: #ffffffaa;
+  }
+
+  &:disabled {
+    cursor: auto;
+    background-color: #7f5af05f;
+    color: #ffffff5f;
   }
 `;
 
