@@ -9,7 +9,6 @@ const Root = styled.div`
 `;
 
 const Content = styled.div`
-  text-align: center;
   word-break: break-all;
   word-wrap: break-word;
   width: 80%;

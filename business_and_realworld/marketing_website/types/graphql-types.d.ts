@@ -3802,14 +3802,14 @@ export type Query = {
   allImageSharp: ImageSharpConnection;
   markdownRemark?: Maybe<MarkdownRemark>;
   allMarkdownRemark: MarkdownRemarkConnection;
-  contentfulAsset?: Maybe<ContentfulAsset>;
-  allContentfulAsset: ContentfulAssetConnection;
   contentfulFeatureDescriptionTextNode?: Maybe<ContentfulFeatureDescriptionTextNode>;
   allContentfulFeatureDescriptionTextNode: ContentfulFeatureDescriptionTextNodeConnection;
-  contentfulFeature?: Maybe<ContentfulFeature>;
-  allContentfulFeature: ContentfulFeatureConnection;
   contentfulProductDescriptionTextNode?: Maybe<ContentfulProductDescriptionTextNode>;
   allContentfulProductDescriptionTextNode: ContentfulProductDescriptionTextNodeConnection;
+  contentfulAsset?: Maybe<ContentfulAsset>;
+  allContentfulAsset: ContentfulAssetConnection;
+  contentfulFeature?: Maybe<ContentfulFeature>;
+  allContentfulFeature: ContentfulFeatureConnection;
   contentfulProduct?: Maybe<ContentfulProduct>;
   allContentfulProduct: ContentfulProductConnection;
   contentfulContentType?: Maybe<ContentfulContentType>;
@@ -4017,6 +4017,42 @@ export type QueryAllMarkdownRemarkArgs = {
 };
 
 
+export type QueryContentfulFeatureDescriptionTextNodeArgs = {
+  id?: Maybe<StringQueryOperatorInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+  description?: Maybe<StringQueryOperatorInput>;
+  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
+};
+
+
+export type QueryAllContentfulFeatureDescriptionTextNodeArgs = {
+  filter?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
+  sort?: Maybe<ContentfulFeatureDescriptionTextNodeSortInput>;
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryContentfulProductDescriptionTextNodeArgs = {
+  id?: Maybe<StringQueryOperatorInput>;
+  parent?: Maybe<NodeFilterInput>;
+  children?: Maybe<NodeFilterListInput>;
+  internal?: Maybe<InternalFilterInput>;
+  description?: Maybe<StringQueryOperatorInput>;
+  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
+};
+
+
+export type QueryAllContentfulProductDescriptionTextNodeArgs = {
+  filter?: Maybe<ContentfulProductDescriptionTextNodeFilterInput>;
+  sort?: Maybe<ContentfulProductDescriptionTextNodeSortInput>;
+  skip?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryContentfulAssetArgs = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
@@ -4048,24 +4084,6 @@ export type QueryAllContentfulAssetArgs = {
 };
 
 
-export type QueryContentfulFeatureDescriptionTextNodeArgs = {
-  id?: Maybe<StringQueryOperatorInput>;
-  parent?: Maybe<NodeFilterInput>;
-  children?: Maybe<NodeFilterListInput>;
-  internal?: Maybe<InternalFilterInput>;
-  description?: Maybe<StringQueryOperatorInput>;
-  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
-};
-
-
-export type QueryAllContentfulFeatureDescriptionTextNodeArgs = {
-  filter?: Maybe<ContentfulFeatureDescriptionTextNodeFilterInput>;
-  sort?: Maybe<ContentfulFeatureDescriptionTextNodeSortInput>;
-  skip?: Maybe<Scalars['Int']>;
-  limit?: Maybe<Scalars['Int']>;
-};
-
-
 export type QueryContentfulFeatureArgs = {
   id?: Maybe<StringQueryOperatorInput>;
   parent?: Maybe<NodeFilterInput>;
@@ -4088,24 +4106,6 @@ export type QueryContentfulFeatureArgs = {
 export type QueryAllContentfulFeatureArgs = {
   filter?: Maybe<ContentfulFeatureFilterInput>;
   sort?: Maybe<ContentfulFeatureSortInput>;
-  skip?: Maybe<Scalars['Int']>;
-  limit?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryContentfulProductDescriptionTextNodeArgs = {
-  id?: Maybe<StringQueryOperatorInput>;
-  parent?: Maybe<NodeFilterInput>;
-  children?: Maybe<NodeFilterListInput>;
-  internal?: Maybe<InternalFilterInput>;
-  description?: Maybe<StringQueryOperatorInput>;
-  childMarkdownRemark?: Maybe<MarkdownRemarkFilterInput>;
-};
-
-
-export type QueryAllContentfulProductDescriptionTextNodeArgs = {
-  filter?: Maybe<ContentfulProductDescriptionTextNodeFilterInput>;
-  sort?: Maybe<ContentfulProductDescriptionTextNodeSortInput>;
   skip?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
 };
