@@ -1,5 +1,7 @@
 import React, { FormHTMLAttributes, useState } from "react";
 import styled from "styled-components";
+import { encode } from "../util/encode";
+import { useForm } from "react-hook-form";
 
 const Form = styled.form`
   display: flex;
@@ -40,58 +42,47 @@ const FormTextArea = styled.textarea`
   color: #ffffff;
 `;
 
+type ContactFormData = {
+  name: string;
+  email: string;
+  comment: string;
+};
+
 export const ContactForm: React.FC<FormHTMLAttributes<HTMLFormElement>> = ({
   name,
   ...props
 }) => {
-  const [state, setState] = useState({});
+  const { register, handleSubmit } = useForm<ContactFormData>();
 
-  const encode = (data: Record<string, string | number | boolean>) => {
-    return Object.keys(data)
-      .map(
-        (key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
-      )
-      .join("&");
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = handleSubmit((data) => {
+    console.log(data);
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: encode({ "form-name": name, ...state }),
+      body: encode({ "form-name": name, ...data }),
     });
-
-    if (props.onSubmit) props.onSubmit(e);
-  };
+  });
 
   return (
-    <Form name={name} {...props} onSubmit={handleSubmit}>
-      <input type="hidden" name="form-name" value={name} />
+    <Form name={name} {...props} onSubmit={onSubmit}>
+      <input type="hidden" name="form-name" />
       <FormContent>
         <div>
           <label>Name:</label>
         </div>
-        <FormInput type="text" name="name" onChange={handleChange} />
+        <FormInput type="text" name="name" ref={register} />
       </FormContent>
       <FormContent>
         <div>
           <label>Email:</label>
         </div>
-        <FormInput type="email" name="email" onChange={handleChange} />
+        <FormInput type="email" name="email" ref={register} />
       </FormContent>
       <FormContent>
         <div>
           <label>Comment:</label>
         </div>
-        <FormTextArea name="comment" rows={10} onChange={handleChange} />
+        <FormTextArea name="comment" rows={10} ref={register} />
       </FormContent>
     </Form>
   );
