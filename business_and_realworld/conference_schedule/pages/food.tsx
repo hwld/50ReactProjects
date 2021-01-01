@@ -4,7 +4,7 @@ import { Header } from "../components/Header";
 const Food: React.FC = () => {
   return (
     <>
-      <Header />
+      <Header currentPage="food" />
       <main>food</main>
     </>
   );
