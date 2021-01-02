@@ -6,21 +6,15 @@ import {
   Image,
   Heading,
   Box,
+  Link,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React from "react";
+import { Speaker } from "../pages/speakers/[id]";
 
-export const HomeMain: React.FC = () => {
-  const speakers = [
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-    { name: "Sample" },
-  ];
+type HomeMainProps = { speakers: Speaker[] };
 
+export const HomeMain: React.FC<HomeMainProps> = ({ speakers }) => {
   return (
     <Box maxW="1300px" mx="auto">
       <Flex
@@ -41,9 +35,9 @@ export const HomeMain: React.FC = () => {
           align="center"
           color="yellow.200"
         >
-          A conference about bananas for hot monkeys.
+          A conference about bananas for cool monkeys.
           <br /> Discovery of new banana species, new banana dishes, new banana
-          benefits.
+          benefits, etc...
         </Text>
       </Flex>
 
@@ -58,14 +52,14 @@ export const HomeMain: React.FC = () => {
         <Input
           mt={10}
           w="50%"
-          placeholder="Name"
+          placeholder="name"
           borderRadius="0"
           focusBorderColor="yellow.300"
         />
         <Input
           mt={5}
           w="50%"
-          placeholder="Email-address"
+          placeholder="email-address"
           borderRadius="0"
           focusBorderColor="yellow.300"
         />
@@ -83,29 +77,49 @@ export const HomeMain: React.FC = () => {
         </Button>
       </Flex>
 
-      <Text mt="50px" textAlign="center" fontSize="4xl" fontWeight="bold">
+      <Text
+        mt="50px"
+        textAlign="center"
+        fontSize="4xl"
+        fontWeight="bold"
+        color="green.300"
+      >
         Speakers
       </Text>
       <Flex mt="5px" w="100%" wrap="wrap" justify="center">
-        {speakers.map(({ name }, i) => {
+        {speakers.map((speaker) => {
           return (
-            <Flex
-              direction="column"
-              align="center"
-              justify="center"
-              boxSize="300px"
-              m="3"
-              key={i}
-            >
-              <Image
-                border="2px"
-                borderRadius="full"
-                borderColor="white"
-                boxSize="250px"
-                src="https://cdn.dribbble.com/users/418188/screenshots/3719574/whizzly_mascot_logo_design_tubik.png?compress=1&resize=400x300"
-              />
-              <Text fontSize="xl">{`${name}${i}`}</Text>
-            </Flex>
+            <NextLink href={`speakers/${speaker.id}`}>
+              <Link _hover={{ bg: "gray.900" }}>
+                <Flex
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  w="300px"
+                  m="3"
+                  key={speaker.id}
+                >
+                  <Image
+                    border="2px"
+                    borderRadius="full"
+                    borderColor="white"
+                    boxSize="250px"
+                    src={speaker.avatar}
+                  />
+
+                  <Text fontSize="xl" color="green.400" fontWeight="bold">
+                    {speaker.name}
+                  </Text>
+                  <Text
+                    textAlign="center"
+                    wordBreak="break-all"
+                    color="green.200"
+                  >
+                    {speaker.theme}
+                  </Text>
+                </Flex>
+              </Link>
+            </NextLink>
           );
         })}
       </Flex>
