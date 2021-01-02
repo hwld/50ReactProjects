@@ -4,7 +4,7 @@ import { HomeMain } from "../components/HomeMain";
 const Home: React.FC = () => {
   return (
     <>
-      <Header currentPage="home" />
+      <Header />
       <HomeMain />
     </>
   );

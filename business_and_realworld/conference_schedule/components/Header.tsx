@@ -1,13 +1,8 @@
-import { Box, Heading, HStack, Spacer, Text } from "@chakra-ui/react";
+import { Box, Heading, HStack, Spacer } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
-import { NavItem } from "./NavItem";
 
-type HeaderProps = {
-  currentPage: "home" | "location" | "food";
-};
-
-export const Header: React.FC<HeaderProps> = ({ currentPage }) => {
+export const Header: React.FC = () => {
   return (
     <Box
       as="header"
@@ -22,14 +17,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPage }) => {
           </Box>
         </NextLink>
         <Spacer />
-
-        <NavItem href="./location" isCurrent={currentPage === "location"}>
-          Location
-        </NavItem>
-
-        <NavItem href="./food" isCurrent={currentPage === "food"}>
-          Food
-        </NavItem>
       </HStack>
     </Box>
   );
