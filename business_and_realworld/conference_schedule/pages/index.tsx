@@ -7,6 +7,8 @@ import {
   Text,
   Link,
   Image,
+  VStack,
+  Center,
 } from "@chakra-ui/react";
 import { GetStaticProps, NextPage } from "next";
 import React from "react";
@@ -21,41 +23,26 @@ const Home: NextPage<HomePageProps> = ({ speakers }) => {
   return (
     <>
       <Header />
-      <Box maxW="1300px" mx="auto">
-        <Flex
-          mt="30px"
-          p="50px"
-          w="100%"
-          justify="center"
-          align="center"
-          direction="column"
-        >
+      <VStack spacing={10} mx="auto" maxW="1300px">
+        <Center py="50px" flexDir="column">
           <Heading size="4xl" color="yellow.300">
             🍌BananaConf
           </Heading>
           <Text
-            mt="5"
-            fontSize="2xl"
-            maxW="600px"
+            mt={5}
             align="center"
+            maxW="600px"
+            fontSize="2xl"
             color="yellow.200"
           >
             A conference about bananas for cool monkeys.
             <br /> Discovery of new banana species, new banana dishes, new
             banana benefits, etc...
           </Text>
-        </Flex>
+        </Center>
 
-        <Flex
-          bg="gray.900"
-          mt="30px"
-          w="100%"
-          direction="column"
-          align="center"
-          justify="center"
-        >
+        <Center flexDir="column" w="100%" bg="gray.900" py={10}>
           <Input
-            mt={10}
             w="50%"
             placeholder="name"
             borderRadius="0"
@@ -69,65 +56,59 @@ const Home: NextPage<HomePageProps> = ({ speakers }) => {
             focusBorderColor="yellow.300"
           />
           <Button
+            mt={8}
             bg="yellow.300"
-            _hover={{ bg: "yellow.200" }}
-            _active={{ bg: "yellow.400" }}
+            borderRadius="0"
             color="black"
             pb="2px"
-            mt={5}
-            mb={10}
-            borderRadius="0"
+            _hover={{ bg: "yellow.200" }}
+            _active={{ bg: "yellow.400" }}
           >
             Buy a Ticket
           </Button>
-        </Flex>
+        </Center>
 
-        <Text
-          mt="50px"
-          textAlign="center"
-          fontSize="4xl"
-          fontWeight="bold"
-          color="green.300"
-        >
-          Speakers
-        </Text>
-        <Flex mt="5px" w="100%" wrap="wrap" justify="center">
-          {speakers.map((speaker) => {
-            return (
-              <NextLink href={`speakers/${speaker.id}`} key={speaker.id}>
-                <Link _hover={{ bg: "gray.600" }}>
-                  <Flex
-                    direction="column"
-                    align="center"
-                    justify="center"
-                    w="300px"
-                    m="3"
-                  >
-                    <Image
-                      border="2px"
-                      borderRadius="full"
-                      borderColor="white"
-                      boxSize="250px"
-                      src={speaker.avatar}
-                    />
+        <Box>
+          <Text
+            textAlign="center"
+            fontSize="4xl"
+            fontWeight="bold"
+            color="green.300"
+          >
+            Speakers
+          </Text>
+          <Flex mt={2} wrap="wrap" justify="center">
+            {speakers.map((speaker) => {
+              return (
+                <NextLink href={`speakers/${speaker.id}`} key={speaker.id}>
+                  <Link _hover={{ bg: "gray.600" }}>
+                    <Center m={3} flexDir="column" w="300px">
+                      <Image
+                        border="2px"
+                        borderRadius="full"
+                        borderColor="white"
+                        boxSize="250px"
+                        src={speaker.avatar}
+                      />
 
-                    <Text fontSize="xl" color="green.400" fontWeight="bold">
-                      {speaker.name}
-                    </Text>
-                    <Text
-                      textAlign="center"
-                      wordBreak="break-all"
-                      color="green.200"
-                    >
-                      {speaker.theme}
-                    </Text>
-                  </Flex>
-                </Link>
-              </NextLink>
-            );
-          })}
-        </Flex>
-      </Box>
+                      <Text fontSize="xl" color="green.400" fontWeight="bold">
+                        {speaker.name}
+                      </Text>
+                      <Text
+                        textAlign="center"
+                        wordBreak="break-all"
+                        color="green.200"
+                      >
+                        {speaker.theme}
+                      </Text>
+                    </Center>
+                  </Link>
+                </NextLink>
+              );
+            })}
+          </Flex>
+        </Box>
+      </VStack>
     </>
   );
 };

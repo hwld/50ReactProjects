@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { Header } from "../../components/Header";
 import { fetchAllSpeakers } from "../../fetch/fetchAllSpeakers";
-import { Text, Image, Flex, Box } from "@chakra-ui/react";
+import { Text, Image, Flex, Box, VStack } from "@chakra-ui/react";
 import { fetchSpeaker } from "../../fetch/fetchSpeaker";
 import React from "react";
 
@@ -23,31 +23,31 @@ const SpeakerDetail: NextPage<SpeakerDetailPageProps> = ({ speaker }) => {
     <>
       <Header />
       <Flex
-        mt="30px"
-        maxW="1300px"
+        mt={8}
         mx="auto"
+        maxW="1300px"
         justify="center"
         wordBreak="break-all"
         whiteSpace="pre-wrap"
       >
-        <Image mt="50px" boxSize="250px" src={speaker.avatar} />
-        <Box ml="30px" maxW="800px">
-          <Text fontSize="5xl" fontWeight="bold">
+        <Image boxSize="300px" src={speaker.avatar} />
+        <VStack ml="30px" spacing={5} maxW="800px">
+          <Text w="100%" fontSize="5xl" fontWeight="bold">
             {speaker.name}
           </Text>
-          <Box mt="3" p="5" bg="gray.600">
+          <Box p="5" bg="gray.600">
             <Text fontWeight="bold" fontSize="3xl">
               Bio
             </Text>
-            <Text mt="2">{speaker.bio}</Text>
+            <Text mt={2}>{speaker.bio}</Text>
           </Box>
-          <Box mt="3" p="5" bg="gray.600">
-            <Text fontSize="3xl" fontWeight="bold">
+          <Box p="5" bg="gray.600">
+            <Text fontWeight="bold" fontSize="3xl">
               {speaker.theme}
             </Text>
-            <Text mt="2">{speaker.themeDesc}</Text>
+            <Text mt={2}>{speaker.themeDesc}</Text>
           </Box>
-        </Box>
+        </VStack>
       </Flex>
     </>
   );
