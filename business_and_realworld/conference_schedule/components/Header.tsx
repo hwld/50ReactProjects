@@ -1,17 +1,18 @@
-import { Box, Heading, HStack, Spacer } from "@chakra-ui/react";
+import { Box, chakra, Heading, HStack, Spacer } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 
-export const Header: React.FC = () => {
+const Component: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <Box
       as="header"
       bg="gray.900"
       borderTopWidth="6px"
       borderTopColor="yellow.300"
+      className={className}
     >
       <HStack as="nav" maxW="1300px" mx="auto" p={1}>
-        <NextLink href="./">
+        <NextLink href="/">
           <Box p="2" cursor="pointer">
             <Heading color="yellow.300">🍌BananConf</Heading>
           </Box>
@@ -21,3 +22,5 @@ export const Header: React.FC = () => {
     </Box>
   );
 };
+
+export const Header = chakra(Component);
