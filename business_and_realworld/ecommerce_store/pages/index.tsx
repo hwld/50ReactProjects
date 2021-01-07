@@ -1,10 +1,22 @@
 import { Box, Grid, Heading, Link, Image, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import React from "react";
 import { Header } from "../components/Header";
+import Game from "./games/[id]";
+import { fetchAllGames } from "../lib/fetchAllGames";
 
-const Home: NextPage = () => {
+export type Game = {
+  id: string;
+  name: string;
+  price: number;
+  aboutThisGame: string;
+  moreDetails: string;
+};
+
+type HomeProps = { games: Game[] };
+
+const Home: NextPage<HomeProps> = ({ games }) => {
   return (
     <>
       <Header />
@@ -18,14 +30,14 @@ const Home: NextPage = () => {
           mt={5}
           gap={3}
         >
-          {[...Array(30)].map((_, i) => (
-            <Box _hover={{ opacity: 0.6 }}>
-              <NextLink key={i} href="/games/1">
+          {games.map((game) => (
+            <Box key={game.id} _hover={{ opacity: 0.6 }}>
+              <NextLink href={`/games/${game.id}`}>
                 <Link>
                   <Image src="/game.jpg" h="200px" w="100%" fit="cover" />
                 </Link>
               </NextLink>
-              <Text textAlign="center">GameName</Text>
+              <Text textAlign="center">{game.name}</Text>
             </Box>
           ))}
         </Grid>
@@ -35,3 +47,8 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const games = await fetchAllGames();
+  return { props: { games } };
+};
