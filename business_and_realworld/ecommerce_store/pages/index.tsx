@@ -1,4 +1,4 @@
-import { Box, Grid, Link } from "@chakra-ui/react";
+import { Box, Grid, Heading, Link, Image, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { NextPage } from "next";
 import React from "react";
@@ -9,19 +9,24 @@ const Home: NextPage = () => {
     <>
       <Header />
       <Box mx="auto" maxW="1300px">
-        <Box my={14} bg="blue.500" height="300px"></Box>
+        <Image my={14} src="/banner.jpg" w="100%" h="40%" />
+        <Heading textAlign="center">Games</Heading>
         <Grid
           justifyContent="center"
           templateColumns="repeat(auto-fill, 300px)"
-          autoRows="200px"
+          autoRows="250px"
+          mt={5}
           gap={3}
         >
           {[...Array(30)].map((_, i) => (
-            <NextLink key={i} href="/games/1">
-              <Link>
-                <Box boxSize="100%" bg="blue.500" />
-              </Link>
-            </NextLink>
+            <Box _hover={{ opacity: 0.6 }}>
+              <NextLink key={i} href="/games/1">
+                <Link>
+                  <Image src="/game.jpg" h="200px" w="100%" fit="cover" />
+                </Link>
+              </NextLink>
+              <Text textAlign="center">GameName</Text>
+            </Box>
           ))}
         </Grid>
       </Box>

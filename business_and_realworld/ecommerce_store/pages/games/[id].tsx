@@ -14,22 +14,23 @@ import {
   ModalOverlay,
   Spinner,
   Text,
+  Image,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { StripeCardElementOptions, StripeError } from "@stripe/stripe-js";
+import { StripeCardElementOptions } from "@stripe/stripe-js";
 import { NextPage } from "next";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Header } from "../../components/Header";
 
 const Game: NextPage = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [clientSecret, setClientSecret] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [succeeded, setSucceeded] = useState(false);
+  const toast = useToast();
 
   const CARD_OPTIONS: StripeCardElementOptions = {
     iconStyle: "solid",
@@ -45,12 +46,10 @@ const Game: NextPage = () => {
   const handleClose = () => {
     onClose();
     setError(null);
-    setSucceeded(false);
   };
 
   const handleClick = async () => {
     setError(null);
-    setSucceeded(false);
     setProcessing(true);
 
     if (!stripe || !elements) {
@@ -64,6 +63,16 @@ const Game: NextPage = () => {
       return;
     }
 
+    const res = await fetch("/api/create-payment-intent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ itemId: "" }),
+    });
+    const data = await res.json();
+    const clientSecret = data.clientSecret;
+
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card,
@@ -75,38 +84,34 @@ const Game: NextPage = () => {
       setProcessing(false);
     } else {
       if (result.paymentIntent?.status === "succeeded") {
-        setSucceeded(true);
+        onClose();
         setError(null);
         setProcessing(false);
+        toast({
+          title: "Payment successful.",
+          description: "Credit card payment was successful.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
       }
     }
   };
-
-  useEffect(() => {
-    fetch("/api/create-payment-intent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ itemId: "" }),
-    })
-      .then((r) => r.json())
-      .then((data) => setClientSecret(data.clientSecret));
-  }, []);
 
   return (
     <>
       <Header />
       <Box maxW="1300px" mt={10} mx="auto">
         <Flex w="100%" wrap="wrap">
-          <Box ml={10} boxSize="400px" bg="blue.500" />
+          <Image ml={10} boxSize="400px" src="/game.jpg" />
           <Box maxW="50%" mx={10} whiteSpace="pre-wrap">
             <Heading mt={10}>GameTitle</Heading>
-            <Text
-              mt={6}
-            >{`SampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSample`}</Text>
+            <Text ml={3} mt={1} fontSize="xl">
+              ￥3000
+            </Text>
             <Button
-              mt={6}
+              ml={3}
+              mt={3}
               pb={1}
               borderRadius="0"
               bg="blue.500"
@@ -116,6 +121,9 @@ const Game: NextPage = () => {
             >
               Buy Now
             </Button>
+            <Text
+              mt={6}
+            >{`SampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSampleSample`}</Text>
           </Box>
         </Flex>
         <Box mt={10} mx={10}>
@@ -138,12 +146,6 @@ const Game: NextPage = () => {
               <Alert mb={5} status="error">
                 <AlertIcon />
                 {error}
-              </Alert>
-            )}
-            {succeeded && (
-              <Alert mb={5} status="success">
-                <AlertIcon />
-                支払いに成功しました
               </Alert>
             )}
             <CardElement options={CARD_OPTIONS} />

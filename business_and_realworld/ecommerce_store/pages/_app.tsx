@@ -9,7 +9,7 @@ import "../theme/stripe.css";
 
 const MyApp: NextPage<AppProps> = ({ Component, pageProps }) => {
   const stripePromise = loadStripe(
-    "pk_test_51I697rHlDyodDRVgYUVKIKwrOEKxOb2i05EK74BALLlyPzYsoivFPXtHaWXkBzZEyGcyg7FA0VQJxYjPEJzBFTqb00x5livLdd"
+    process.env.NEXT_PUBLIC_STRIPVE_PUBLIC as string
   );
 
   return (

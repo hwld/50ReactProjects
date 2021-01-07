@@ -4,7 +4,7 @@ import React from "react";
 
 const Component: React.FC = () => {
   return (
-    <Box bg="gray.900" p={3}>
+    <Box bg="purple.600" p={3}>
       <Box maxW="1300px" mx="auto">
         <NextLink href="/">
           <Link display="block" _hover={{ opacity: 0.8 }}>
