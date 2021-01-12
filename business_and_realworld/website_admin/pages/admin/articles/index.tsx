@@ -1,7 +1,8 @@
-import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import React from "react";
 import { AdminLayout } from "../../../components/admin/AdminLayout";
 import { ArticlesTable } from "../../../components/admin/ArticlesTable";
+import { auth0 } from "../../../lib/auth0";
 
 export default function ArticlePage(): JSX.Element {
   return (
@@ -10,3 +11,11 @@ export default function ArticlePage(): JSX.Element {
     </AdminLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await auth0.getSession(req);
+  if (!session || !session.user) {
+    return { redirect: { destination: "/api/login", permanent: false } };
+  }
+  return { props: {} };
+};

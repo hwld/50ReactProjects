@@ -1,6 +1,8 @@
 import { Box, Button, Flex, Input, Text, Textarea } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import { auth0 } from "../../../lib/auth0";
 
 export default function EditPage(): JSX.Element {
   return (
@@ -34,3 +36,11 @@ export default function EditPage(): JSX.Element {
     </Box>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await auth0.getSession(req);
+  if (!session || !session.user) {
+    return { redirect: { destination: "/api/login", permanent: false } };
+  }
+  return { props: {} };
+};
