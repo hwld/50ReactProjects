@@ -27,7 +27,12 @@ export default function AdminPage(): JSX.Element {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session = await auth0.getSession(req);
   if (!session || !session.user) {
-    return { redirect: { destination: "/api/login", permanent: false } };
+    return {
+      redirect: {
+        destination: "/api/login?redirectTo=/admin",
+        permanent: false,
+      },
+    };
   }
   return { props: {} };
 };
