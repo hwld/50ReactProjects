@@ -1,9 +1,19 @@
 import { auth0 } from "../../../lib/auth0";
 
-export type Article = { title: string; text: string };
+export type Article = {
+  title: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default auth0.requireAuthentication(async (req, res) => {
-  const article: Article = { title: req.body.title, text: req.body.text };
+  const article: Article = {
+    title: req.body.title,
+    text: req.body.text,
+    createdAt: req.body.createdAt,
+    updatedAt: req.body.updatedAt,
+  };
 
   try {
     await fetch("https://website-admin.microcms.io/api/v1/articles", {

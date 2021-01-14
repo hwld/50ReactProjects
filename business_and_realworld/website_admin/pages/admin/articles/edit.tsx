@@ -13,14 +13,21 @@ export default function EditPage(): JSX.Element {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (typeof id === "string") {
-      patchArticle(id, {
+      await patchArticle(id, {
         title: "p222222222atch",
         text: "p22222222222atch",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
     } else {
-      postArticle({ title, text });
+      await postArticle({
+        title,
+        text,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     }
     router.push("/admin/articles");
   };

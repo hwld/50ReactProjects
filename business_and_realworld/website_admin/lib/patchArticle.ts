@@ -4,8 +4,13 @@ export const patchArticle = async (
   id: string,
   data: Article
 ): Promise<void> => {
-  const article: Article = { title: data.title, text: data.text };
-  fetch("/api/articles/update", {
+  const article: Article = {
+    title: data.title,
+    text: data.text,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+  };
+  await fetch("/api/articles/update", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

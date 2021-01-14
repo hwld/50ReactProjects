@@ -1,9 +1,14 @@
 import { Box, Heading, VStack, Text, Image } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import React from "react";
 import { Header } from "../components/Header";
+import { fetchArticles } from "../lib/fetchArticles";
+import { Article } from "./api/articles/create";
 
-export default function Home(): JSX.Element {
+type HomeProps = { articles: (Article & { id: string })[] };
+
+export default function Home({ articles }: HomeProps): JSX.Element {
   return (
     <>
       <Header>
@@ -12,19 +17,18 @@ export default function Home(): JSX.Element {
         <Image src="egg.png" w="200px" />
       </Header>
       <VStack maxW="1000px" mt={5} mx="auto" spacing={6}>
-        {[...Array(10)].map((_, i) => {
+        {articles.map((a) => {
           return (
-            <NextLink href="/articles/1" key={i}>
+            <NextLink href={`/articles/${a.id}`} key={a.id}>
               <Box
                 p={5}
                 bg="yellow.400"
+                w="100%"
                 _hover={{ bg: "yellow.300" }}
                 borderRadius="15px"
               >
-                <Heading>{`記事${i + 1}`}</Heading>
-                <Text
-                  mt={3}
-                >{`テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト`}</Text>
+                <Heading>{`${a.title}`}</Heading>
+                <Text mt={3} whiteSpace="pre-wrap">{`${a.text}`}</Text>
               </Box>
             </NextLink>
           );
@@ -33,3 +37,8 @@ export default function Home(): JSX.Element {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const articles = await fetchArticles();
+  return { props: { articles } };
+};

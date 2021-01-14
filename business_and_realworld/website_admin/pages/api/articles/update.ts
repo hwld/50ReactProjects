@@ -5,6 +5,8 @@ export default auth0.requireAuthentication(async (req, res) => {
   const articleData: Article = {
     title: req.body.article.title,
     text: req.body.article.text,
+    createdAt: req.body.article.createdAt,
+    updatedAt: req.body.article.updatedAt,
   };
 
   try {
