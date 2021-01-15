@@ -6,28 +6,22 @@ import { useRouter } from "next/router";
 import { auth0 } from "../../../lib/server/auth0";
 import { postArticle } from "../../../lib/client/postArticle";
 import { patchArticle } from "../../../lib/client/patchArticle";
+import { fetchArticle } from "../../../lib/server/fetchArticle";
+import { Article } from "../../../types/article";
 
-export default function EditPage(): JSX.Element {
+type EditPageProps = { article: Article | null };
+
+export default function EditPage({ article }: EditPageProps): JSX.Element {
   const router = useRouter();
   const id = router.query.id;
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
+  const [title, setTitle] = useState(article?.title || "");
+  const [text, setText] = useState(article?.text || "");
 
   const handleClick = async () => {
     if (typeof id === "string") {
-      await patchArticle(id, {
-        title: "p222222222atch",
-        text: "p22222222222atch",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
+      await patchArticle(id, { title, text });
     } else {
-      await postArticle({
-        title,
-        text,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
+      await postArticle({ title, text });
     }
     router.push("/admin/articles");
   };
@@ -87,7 +81,10 @@ export default function EditPage(): JSX.Element {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps<EditPageProps> = async ({
+  req,
+  query,
+}) => {
   const session = await auth0.getSession(req);
   if (!session || !session.user) {
     return {
@@ -97,5 +94,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       },
     };
   }
-  return { props: {} };
+
+  const articleId = query.id;
+  if (typeof articleId === "string") {
+    const article = await fetchArticle(articleId);
+    if (article) {
+      return { props: { article } };
+    } else {
+      return { redirect: { destination: "/404", permanent: false } };
+    }
+  }
+  return { props: { article: null } };
 };

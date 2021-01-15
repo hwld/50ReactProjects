@@ -4,9 +4,9 @@ import NextLink from "next/link";
 import React from "react";
 import { Header } from "../components/Header";
 import { fetchArticles } from "../lib/server/fetchArticles";
-import { Article } from "./api/articles/create";
+import { Article } from "../types/article";
 
-type HomeProps = { articles: (Article & { id: string })[] };
+type HomeProps = { articles: Article[] };
 
 export default function Home({ articles }: HomeProps): JSX.Element {
   return (

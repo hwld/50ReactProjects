@@ -11,19 +11,15 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
+import { Article } from "../../types/article";
 import { ArticleTableRow } from "./ArticleTableRow";
 
-type Article = {
-  title: string;
-  text: string;
-};
-
 type Props = {
-  articles?: Article[];
+  articles: Article[];
   className?: string;
 };
 
-const Component: React.FC<Props> = ({ className }) => {
+const Component: React.FC<Props> = ({ className, articles }) => {
   return (
     <Flex direction="column" className={className}>
       <Link href="/admin/articles/edit">
@@ -40,15 +36,15 @@ const Component: React.FC<Props> = ({ className }) => {
       <Table>
         <Thead>
           <Tr bg="gray.400">
-            <Th w="700px">タイトル</Th>
+            <Th>タイトル</Th>
             <Th>作成日</Th>
             <Th>更新日</Th>
             <Th>操作</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {[...Array(10)].map((_, i) => (
-            <ArticleTableRow key={i} />
+          {articles.map((a) => (
+            <ArticleTableRow article={a} key={a.id} />
           ))}
         </Tbody>
       </Table>

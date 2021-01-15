@@ -1,11 +1,9 @@
-import { Article } from "../../pages/api/articles/create";
+import { ArticleBase } from "../../types/article";
 
-export const postArticle = async (data: Article): Promise<void> => {
-  const article: Article = {
+export const postArticle = async (data: ArticleBase): Promise<void> => {
+  const article: ArticleBase = {
     title: data.title,
     text: data.text,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
   };
   await fetch("/api/articles/create", {
     method: "POST",

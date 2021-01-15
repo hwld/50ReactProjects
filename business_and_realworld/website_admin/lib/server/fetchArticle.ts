@@ -1,6 +1,7 @@
-import { Article } from "../../pages/api/articles/create";
+import { Article } from "../../types/article";
 
-export const fetchArticle = async (id: string): Promise<Article> => {
+
+export const fetchArticle = async (id: string): Promise<Article | null> => {
   if (typeof window !== "undefined") {
     throw new Error("fetchArticle: クライアント側からは使用できません");
   }
@@ -13,12 +14,19 @@ export const fetchArticle = async (id: string): Promise<Article> => {
   );
   const data = await res.json();
 
-  const article: Article = {
-    title: data.title,
-    text: data.text,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
-  };
+  if (data) {
+    const article: Article = {
+      id: data.id,
+      title: data.title,
+      text: data.text,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      publishedAt: data.publishedAt,
+      revisedAt: data.revisedAt,
+    };
 
-  return article;
+    return article;
+  } else {
+    return null;
+  }
 };

@@ -12,19 +12,33 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useRef } from "react";
+import { deleteArticle } from "../../lib/client/deleteArticle";
+import { Article } from "../../types/article";
 
-const Component: React.FC = () => {
+type Props = { article: Article };
+
+const Component: React.FC<Props> = ({ article }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
+
+  const handleClick = async () => {
+    await deleteArticle(article.id);
+    onClose();
+  };
 
   return (
     <>
       <Tr>
-        <Td>記事1</Td>
-        <Td>2020/01/10 00:00</Td>
-        <Td>2020/01/10 00:00</Td>
+        <Td>{article.title}</Td>
+        <Td>{article.createdAt}</Td>
+        <Td>{article.updatedAt}</Td>
         <Td>
-          <Link href={{ pathname: "/admin/articles/edit", query: { id: "1" } }}>
+          <Link
+            href={{
+              pathname: "/admin/articles/edit",
+              query: { id: article.id },
+            }}
+          >
             <Button colorScheme="blue">編集</Button>
           </Link>
           <Button colorScheme="red" ml={3} onClick={onOpen}>
@@ -50,7 +64,7 @@ const Component: React.FC = () => {
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={onClose} ml={3}>
+            <Button colorScheme="red" onClick={handleClick} ml={3}>
               Delete
             </Button>
           </AlertDialogFooter>

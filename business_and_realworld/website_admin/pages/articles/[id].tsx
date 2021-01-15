@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import { Header } from "../../components/Header";
 import { fetchArticle } from "../../lib/server/fetchArticle";
-import { Article } from "../api/articles/create";
+import { Article } from "../../types/article";
 
 type ArticlePageProps = { article: Article };
 
@@ -42,5 +42,8 @@ export const getServerSideProps: GetServerSideProps<ArticlePageProps> = async ({
     throw new Error("不正なパラメータ");
   }
   const article = await fetchArticle(id);
+  if (!article) {
+    return { redirect: { destination: "/404", permanent: false } };
+  }
   return { props: { article } };
 };

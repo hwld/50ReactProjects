@@ -1,8 +1,7 @@
-import { Article } from "../../pages/api/articles/create";
+import { Article } from "../../types/article";
 
-export const fetchArticles = async (): Promise<
-  (Article & { id: string })[]
-> => {
+
+export const fetchArticles = async (): Promise<Article[]> => {
   if (typeof window !== "undefined") {
     throw new Error("fetchArticles: クライアント側からは使用できません");
   }
