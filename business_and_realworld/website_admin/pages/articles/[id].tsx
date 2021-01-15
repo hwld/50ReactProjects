@@ -2,7 +2,7 @@ import { Box, Heading, Text, Image } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React from "react";
 import { Header } from "../../components/Header";
-import { fetchArticle } from "../../lib/fetchArticle";
+import { fetchArticle } from "../../lib/server/fetchArticle";
 import { Article } from "../api/articles/create";
 
 type ArticlePageProps = { article: Article };

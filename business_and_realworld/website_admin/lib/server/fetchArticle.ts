@@ -1,4 +1,4 @@
-import { Article } from "../pages/api/articles/create";
+import { Article } from "../../pages/api/articles/create";
 
 export const fetchArticle = async (id: string): Promise<Article> => {
   if (typeof window !== "undefined") {

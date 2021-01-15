@@ -1,4 +1,4 @@
-import { auth0 } from "../../../lib/auth0";
+import { auth0 } from "../../../lib/server/auth0";
 import { Article } from "./create";
 
 export default auth0.requireAuthentication(async (req, res) => {

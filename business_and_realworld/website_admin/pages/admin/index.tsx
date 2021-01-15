@@ -3,7 +3,7 @@ import React from "react";
 import NextLink from "next/link";
 import { AdminLayout } from "../../components/admin/AdminLayout";
 import { GetServerSideProps } from "next";
-import { auth0 } from "../../lib/auth0";
+import { auth0 } from "../../lib/server/auth0";
 
 export default function AdminPage(): JSX.Element {
   return (

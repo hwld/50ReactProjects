@@ -1,4 +1,4 @@
-import { auth0 } from "../../../lib/auth0";
+import { auth0 } from "../../../lib/server/auth0";
 
 export type Article = {
   title: string;

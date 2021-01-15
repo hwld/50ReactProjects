@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import { AdminLayout } from "../../../components/admin/AdminLayout";
 import { ArticlesTable } from "../../../components/admin/ArticlesTable";
-import { auth0 } from "../../../lib/auth0";
+import { auth0 } from "../../../lib/server/auth0";
 
 export default function ArticlePage(): JSX.Element {
   return (

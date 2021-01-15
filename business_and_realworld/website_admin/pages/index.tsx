@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import React from "react";
 import { Header } from "../components/Header";
-import { fetchArticles } from "../lib/fetchArticles";
+import { fetchArticles } from "../lib/server/fetchArticles";
 import { Article } from "./api/articles/create";
 
 type HomeProps = { articles: (Article & { id: string })[] };

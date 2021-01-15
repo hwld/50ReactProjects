@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { auth0 } from "../../../lib/auth0";
-import { postArticle } from "../../../lib/postArticle";
-import { patchArticle } from "../../../lib/patchArticle";
+import { auth0 } from "../../../lib/server/auth0";
+import { postArticle } from "../../../lib/client/postArticle";
+import { patchArticle } from "../../../lib/client/patchArticle";
 
 export default function EditPage(): JSX.Element {
   const router = useRouter();

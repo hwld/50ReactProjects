@@ -1,4 +1,4 @@
-import { Article } from "../pages/api/articles/create";
+import { Article } from "../../pages/api/articles/create";
 
 export const fetchArticles = async (): Promise<
   (Article & { id: string })[]
