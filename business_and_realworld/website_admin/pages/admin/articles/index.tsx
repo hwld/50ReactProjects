@@ -13,7 +13,7 @@ export default function ArticlePage({
 }: ArticlePageProps): JSX.Element {
   return (
     <AdminLayout current="articles">
-      <ArticlesTable articles={articles} w="1300px" mt={5} mx="auto" />
+      <ArticlesTable articles={articles} w="80%" mt={5} mx="auto" />
     </AdminLayout>
   );
 }
@@ -31,6 +31,6 @@ export const getServerSideProps: GetServerSideProps<ArticlePageProps> = async ({
     };
   }
 
-  const articles = await fetchArticles();
+  const articles = await fetchArticles("publishedAt");
   return { props: { articles } };
 };

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint pages lib components --ext .ts,.tsx",
+    "check": "yarn run type-check && yarn run lint"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^0.16.0",

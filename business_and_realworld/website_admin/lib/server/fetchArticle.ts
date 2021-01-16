@@ -1,6 +1,5 @@
 import { Article } from "../../types/article";
 
-
 export const fetchArticle = async (id: string): Promise<Article | null> => {
   if (typeof window !== "undefined") {
     throw new Error("fetchArticle: クライアント側からは使用できません");

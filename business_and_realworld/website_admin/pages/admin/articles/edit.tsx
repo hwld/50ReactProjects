@@ -27,56 +27,54 @@ export default function EditPage({ article }: EditPageProps): JSX.Element {
   };
 
   return (
-    <Box>
-      <Box
-        w="1300px"
-        mt={10}
-        mx="auto"
-        p={10}
-        bg="gray.100"
-        boxShadow="xl"
-        borderRadius="15px"
-      >
-        <Box>
-          <Text>タイトル</Text>
-          <Input
-            mt={3}
-            bg="gray.200"
-            placeholder="タイトル"
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-            }}
-          />
-        </Box>
-        <Box mt={5}>
-          <Text>記事</Text>
-          <Textarea
-            mt={3}
-            h="30em"
-            bg="gray.200"
-            placeholder="記事"
-            value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-            }}
-          />
-        </Box>
-        <Flex mt={10} justify="flex-end">
-          <Link href="/admin/articles">
-            <Button
-              bg="gray.300"
-              _hover={{ bg: "gray.400" }}
-              _active={{ bg: "gray.500" }}
-            >
-              中止
-            </Button>
-          </Link>
-          <Button ml={2} colorScheme="green" onClick={handleClick}>
-            {typeof id === "string" ? "更新" : "作成"}
-          </Button>
-        </Flex>
+    <Box
+      maxW="1300px"
+      my={10}
+      mx="auto"
+      p={10}
+      bg="gray.100"
+      boxShadow="xl"
+      borderRadius="15px"
+    >
+      <Box>
+        <Text>タイトル</Text>
+        <Input
+          mt={3}
+          bg="gray.200"
+          placeholder="タイトル"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+        />
       </Box>
+      <Box mt={5}>
+        <Text>記事</Text>
+        <Textarea
+          mt={3}
+          h="30em"
+          bg="gray.200"
+          placeholder="記事"
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+          }}
+        />
+      </Box>
+      <Flex mt={10} justify="flex-end">
+        <Link href="/admin/articles">
+          <Button
+            bg="gray.300"
+            _hover={{ bg: "gray.400" }}
+            _active={{ bg: "gray.500" }}
+          >
+            中止
+          </Button>
+        </Link>
+        <Button ml={2} colorScheme="green" onClick={handleClick}>
+          {typeof id === "string" ? "更新" : "作成"}
+        </Button>
+      </Flex>
     </Box>
   );
 }

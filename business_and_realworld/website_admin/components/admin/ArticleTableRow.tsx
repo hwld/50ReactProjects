@@ -30,8 +30,8 @@ const Component: React.FC<Props> = ({ article }) => {
     <>
       <Tr>
         <Td>{article.title}</Td>
-        <Td>{article.createdAt}</Td>
-        <Td>{article.updatedAt}</Td>
+        <Td>{new Date(article.publishedAt).toLocaleString()}</Td>
+        <Td>{new Date(article.revisedAt).toLocaleString()}</Td>
         <Td>
           <Link
             href={{

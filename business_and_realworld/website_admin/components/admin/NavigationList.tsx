@@ -1,4 +1,4 @@
-import { List, ListItem } from "@chakra-ui/react";
+import { List } from "@chakra-ui/react";
 import React from "react";
 import { NavigationListItem } from "./NavigationListItem";
 
