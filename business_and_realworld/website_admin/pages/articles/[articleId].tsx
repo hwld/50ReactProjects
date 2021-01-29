@@ -37,7 +37,7 @@ export default function ArticlePage({
 export const getServerSideProps: GetServerSideProps<ArticlePageProps> = async ({
   query,
 }) => {
-  const id = query.id;
+  const id = query.articleId;
   if (typeof id !== "string") {
     throw new Error("不正なパラメータ");
   }

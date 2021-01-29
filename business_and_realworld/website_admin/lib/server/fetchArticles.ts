@@ -1,6 +1,6 @@
 import { Article } from "../../types/article";
 
-export const fetchArticles = async (orders?: string): Promise<Article[]> => {
+export const fetchArticles = async (orders: string): Promise<Article[]> => {
   if (typeof window !== "undefined") {
     throw new Error("fetchArticles: クライアント側からは使用できません");
   }
