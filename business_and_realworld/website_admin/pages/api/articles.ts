@@ -1,10 +1,9 @@
 import { NextApiHandler } from "next";
 import { fetchArticles } from "../../lib/server/fetchArticles";
+import { ArticleOrders } from "../../types/article";
 
 const articles: NextApiHandler = async (req, res) => {
   const { orders } = req.query;
-
-  console.log(orders);
 
   // string[]
   if (typeof orders === "object") {
@@ -12,7 +11,7 @@ const articles: NextApiHandler = async (req, res) => {
     return;
   }
 
-  const articles = await fetchArticles(orders);
+  const articles = await fetchArticles(orders as ArticleOrders);
 
   res.json(articles);
 };

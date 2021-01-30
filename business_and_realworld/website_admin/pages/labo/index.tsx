@@ -12,8 +12,6 @@ const Child: React.FC = () => {
     cacheTime: 1000,
   });
 
-  console.log(`child: ${data}`);
-
   return (
     <VStack bg="gray.500" boxSize="300px" p={3} mt={3}>
       <Text>Child: {data}</Text>
@@ -27,8 +25,6 @@ const Parent: React.FC = () => {
     cacheTime: 1000,
   });
   const [isOpen, setIsOpen] = useState(false);
-
-  console.log(`parent: ${data}`);
 
   return (
     <VStack bg="gray.400" boxSize="400px" p={3} mt={3}>
@@ -50,8 +46,6 @@ const New: React.FC = () => {
     refetchOnMount: false,
     cacheTime: 1000,
   });
-
-  console.log(`new: ${data}`);
 
   return (
     <VStack bg="gray.400" boxSize="400px" p={3} mt={3}>

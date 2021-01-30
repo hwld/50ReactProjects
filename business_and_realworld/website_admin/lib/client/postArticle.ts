@@ -1,7 +1,9 @@
-import { ArticleBase } from "../../types/article";
+import { Article } from "../../types/article";
 
-export const postArticle = async (data: ArticleBase): Promise<void> => {
-  const article: ArticleBase = {
+export const postArticle = async (
+  data: Pick<Article, "title" | "text">
+): Promise<void> => {
+  const article: typeof data = {
     title: data.title,
     text: data.text,
   };

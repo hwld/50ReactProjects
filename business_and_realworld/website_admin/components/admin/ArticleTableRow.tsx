@@ -11,9 +11,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useMutation } from "react-query";
 import { deleteArticle } from "../../lib/client/deleteArticle";
 import { Article } from "../../types/article";
+import { formatDate } from "../../util/formatDate";
 
 type Props = { article: Article };
 
@@ -21,8 +23,10 @@ const Component: React.FC<Props> = ({ article }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
 
+  const deleteMutation = useMutation(deleteArticle);
+
   const handleClick = async () => {
-    await deleteArticle(article.id);
+    deleteMutation.mutate(article.id);
     onClose();
   };
 
@@ -30,8 +34,8 @@ const Component: React.FC<Props> = ({ article }) => {
     <>
       <Tr>
         <Td>{article.title}</Td>
-        <Td>{new Date(article.publishedAt).toLocaleString()}</Td>
-        <Td>{new Date(article.revisedAt).toLocaleString()}</Td>
+        <Td>{formatDate(new Date(article.publishedAt))}</Td>
+        <Td>{formatDate(new Date(article.revisedAt))}</Td>
         <Td>
           <Link
             href={{
@@ -46,6 +50,7 @@ const Component: React.FC<Props> = ({ article }) => {
           </Button>
         </Td>
       </Tr>
+
       <AlertDialog
         isCentered
         isOpen={isOpen}

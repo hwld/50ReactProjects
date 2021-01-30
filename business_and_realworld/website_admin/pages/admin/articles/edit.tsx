@@ -5,23 +5,27 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { auth0 } from "../../../lib/server/auth0";
 import { postArticle } from "../../../lib/client/postArticle";
-import { patchArticle } from "../../../lib/client/patchArticle";
+import { updateArticle } from "../../../lib/client/updateArticle";
 import { fetchArticle } from "../../../lib/server/fetchArticle";
 import { Article } from "../../../types/article";
+import { useMutation } from "react-query";
 
 type EditPageProps = { article: Article | null };
 
 export default function EditPage({ article }: EditPageProps): JSX.Element {
   const router = useRouter();
   const id = router.query.id;
+  const updateMutation = useMutation(updateArticle);
+  const postMutation = useMutation(postArticle);
+
   const [title, setTitle] = useState(article?.title || "");
   const [text, setText] = useState(article?.text || "");
 
   const handleClick = async () => {
     if (typeof id === "string") {
-      await patchArticle(id, { title, text });
+      updateMutation.mutate({ id, title, text });
     } else {
-      await postArticle({ title, text });
+      postMutation.mutate({ title, text });
     }
     router.push("/admin/articles");
   };

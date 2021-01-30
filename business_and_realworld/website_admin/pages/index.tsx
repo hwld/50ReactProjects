@@ -26,6 +26,6 @@ export default function Home({ articles }: HomeProps): JSX.Element {
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const articles = await fetchArticles();
+  const articles = await fetchArticles("-publishedAt");
   return { props: { articles } };
 };

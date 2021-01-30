@@ -1,8 +1,8 @@
 import { auth0 } from "../../../lib/server/auth0";
-import { ArticleBase } from "../../../types/article";
+import { Article } from "../../../types/article";
 
 export default auth0.requireAuthentication(async (req, res) => {
-  const article: ArticleBase = {
+  const article: Pick<Article, "title" | "text"> = {
     title: req.body.title,
     text: req.body.text,
   };
