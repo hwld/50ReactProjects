@@ -1,6 +1,6 @@
 import { Article } from "../../types/article";
 
-export const postArticle = async (
+export const createArticle = async (
   data: Pick<Article, "title" | "text">
 ): Promise<void> => {
   const article: typeof data = {

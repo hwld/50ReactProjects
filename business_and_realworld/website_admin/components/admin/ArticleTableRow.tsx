@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useMutation } from "react-query";
 import { deleteArticle } from "../../lib/client/deleteArticle";
 import { Article } from "../../types/article";

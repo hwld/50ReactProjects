@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   chakra,
   Flex,
   Table,
@@ -9,7 +8,6 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import React from "react";
 import { Article } from "../../types/article";
 import { ArticleTableRow } from "./ArticleTableRow";
@@ -22,17 +20,6 @@ type Props = {
 const Component: React.FC<Props> = ({ className, articles }) => {
   return (
     <Flex direction="column" className={className}>
-      <Link href="/admin/articles/edit">
-        <Button
-          colorScheme="green"
-          color="white"
-          w="150px"
-          alignSelf="flex-end"
-          my={2}
-        >
-          ブログを書く
-        </Button>
-      </Link>
       <Table>
         <Thead>
           <Tr bg="gray.400">
