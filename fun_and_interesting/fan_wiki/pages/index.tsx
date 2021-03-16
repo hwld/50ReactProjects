@@ -1,32 +1,30 @@
-import { Box, Button, Grid, Heading, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Grid,
+  Heading,
+  Image,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
+import NextLink from "next/link";
 import React, { useState } from "react";
+import { Character, fetchCharacters } from "../fetch";
 
-type Character = {
-  id: number;
-  name: string;
-  image: string;
-};
-
-function fetchCharacters(
-  ids: number[] = [...Array(9)].map((_, index) => index + 1)
-) {
-  return fetch(`https://rickandmortyapi.com/api/character/${[...ids]}`).then(
-    async (res) => {
-      return res.json();
-    }
-  );
-}
 type HomeProps = {
   initialCharacters: Character[];
 };
+
 const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
   const [characters, setCharacters] = useState<Character[]>(initialCharacters);
   const [limit] = useState(21);
 
   const readMoreCharacters = async () => {
     const offset = characters.length + 1;
-    const ids = [...Array(limit)].map((id, index) => offset + index);
+    const ids = [...Array(limit)].map((id, index) =>
+      (offset + index).toString()
+    );
     const fetchedCharacters = await fetchCharacters(ids);
     setCharacters((characters) => [...characters, ...fetchedCharacters]);
   };
@@ -42,10 +40,14 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
         gap={5}
       >
         {characters.map((d) => (
-          <Box key={d.id}>
-            <Image src={d.image} boxSize="300px" />
-            <Text>{d.name}</Text>
-          </Box>
+          <NextLink href={`/characters/${d.id}`} key={d.id}>
+            <Link>
+              <Box>
+                <Image src={d.image} boxSize="300px" />
+                <Text>{d.name}</Text>
+              </Box>
+            </Link>
+          </NextLink>
         ))}
       </Grid>
       <Button
