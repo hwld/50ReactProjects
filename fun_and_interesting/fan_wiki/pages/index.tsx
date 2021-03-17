@@ -10,14 +10,17 @@ import {
 import { GetServerSideProps, NextPage } from "next";
 import NextLink from "next/link";
 import React, { useState } from "react";
+import { useCharacters, useSetCharacters } from "../context/CharactersContext";
 import { Character, fetchCharacters } from "../fetch";
 
 type HomeProps = {
   initialCharacters: Character[];
 };
 
-const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
-  const [characters, setCharacters] = useState<Character[]>(initialCharacters);
+const Home: NextPage<HomeProps> = ({}) => {
+  const characters = useCharacters();
+  const setCharacters = useSetCharacters();
+
   const [limit] = useState(21);
 
   const readMoreCharacters = async () => {

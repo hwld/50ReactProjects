@@ -17,7 +17,11 @@ export async function fetchCharacters(
   if (!res.ok) {
     throw new Error();
   }
-  return await res.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let characters: any[] = await res.json();
+  characters = characters.map((c) => ({ ...c, id: c.id.toString() }));
+
+  return characters;
 }
 
 export async function fetchCharacter(id: string): Promise<Character> {
@@ -26,5 +30,7 @@ export async function fetchCharacter(id: string): Promise<Character> {
   if (!res.ok) {
     throw new Error();
   }
-  return await res.json();
+  let character = await res.json();
+  character = { ...character, id: character.id.toString() };
+  return character;
 }
