@@ -7,21 +7,21 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import NextLink from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAppState } from "../context/AppContext";
 import { useCharacters, useSetCharacters } from "../context/CharactersContext";
-import { Character, fetchCharacters } from "../fetch";
+import { fetchCharacters } from "../fetch";
 
-type HomeProps = {
-  initialCharacters: Character[];
-};
-
-const Home: NextPage<HomeProps> = ({}) => {
-  const characters = useCharacters();
-  const setCharacters = useSetCharacters();
-
+const Home: NextPage = () => {
+  const [characters, setCharacters] = [useCharacters(), useSetCharacters()];
+  const { scrollY, setScrollY } = useAppState();
   const [limit] = useState(21);
+
+  const handleLinkClick = () => {
+    setScrollY(window.scrollY);
+  };
 
   const readMoreCharacters = async () => {
     const offset = characters.length + 1;
@@ -29,8 +29,14 @@ const Home: NextPage<HomeProps> = ({}) => {
       (offset + index).toString()
     );
     const fetchedCharacters = await fetchCharacters(ids);
-    setCharacters((characters) => [...characters, ...fetchedCharacters]);
+    if (fetchedCharacters) {
+      setCharacters((characters) => [...characters, ...fetchedCharacters]);
+    }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, scrollY);
+  }, []);
 
   return (
     <Box>
@@ -44,7 +50,7 @@ const Home: NextPage<HomeProps> = ({}) => {
       >
         {characters.map((d) => (
           <NextLink href={`/characters/${d.id}`} key={d.id}>
-            <Link>
+            <Link onClick={handleLinkClick}>
               <Box>
                 <Image src={d.image} boxSize="300px" />
                 <Text>{d.name}</Text>
@@ -67,9 +73,3 @@ const Home: NextPage<HomeProps> = ({}) => {
   );
 };
 export default Home;
-
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const characters = await fetchCharacters();
-
-  return { props: { initialCharacters: characters } };
-};
