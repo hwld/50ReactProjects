@@ -1,20 +1,17 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Heading,
-  Image,
-  Link,
-  Text,
-} from "@chakra-ui/react";
-import { NextPage } from "next";
+import { Box, Button, Grid, Heading, Link, Text } from "@chakra-ui/react";
+import { GetServerSideProps, NextPage } from "next";
 import NextLink from "next/link";
+import NextImage from "next/image";
 import React, { useEffect, useState } from "react";
 import { useAppState } from "../context/AppContext";
 import { useCharacters, useSetCharacters } from "../context/CharactersContext";
-import { fetchCharacters } from "../fetch";
+import { Character, fetchCharacters } from "../fetch";
 
-const Home: NextPage = () => {
+type HomeProps = {
+  initialCharacters: Character[];
+};
+
+const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
   const [characters, setCharacters] = [useCharacters(), useSetCharacters()];
   const { scrollY, setScrollY } = useAppState();
   const [limit] = useState(21);
@@ -34,8 +31,16 @@ const Home: NextPage = () => {
     }
   };
 
+  // スクロール位置の復元
   useEffect(() => {
     window.scrollTo(0, scrollY);
+  }, []);
+
+  // 何も読み込まれていなければinitialCharactersをセット
+  useEffect(() => {
+    if (characters.length === 0) {
+      setCharacters(initialCharacters);
+    }
   }, []);
 
   return (
@@ -52,7 +57,7 @@ const Home: NextPage = () => {
           <NextLink href={`/characters/${d.id}`} key={d.id}>
             <Link onClick={handleLinkClick}>
               <Box>
-                <Image src={d.image} boxSize="300px" />
+                <NextImage src={d.image} width={300} height={300} />
                 <Text>{d.name}</Text>
               </Box>
             </Link>
@@ -72,4 +77,14 @@ const Home: NextPage = () => {
     </Box>
   );
 };
+
 export default Home;
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const characters = await fetchCharacters();
+  if (!characters) {
+    return { props: { initialCharacters: [] } };
+  }
+
+  return { props: { initialCharacters: characters } };
+};

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
+import NextImage from "next/image";
 import { Image, Text } from "@chakra-ui/react";
 import { Character, fetchCharacter } from "../../fetch";
 import { useCharacters } from "../../context/CharactersContext";
@@ -36,7 +37,7 @@ const CharacterPage: NextPage<Props> = ({}) => {
     <div>
       {character && (
         <>
-          <Image src={character.image} boxSize="300px" />
+          <NextImage src={character.image} width={300} height={300} />
           <Text>{character.name}</Text>
           <Text>{character.status}</Text>
           <Text>{character.species}</Text>
