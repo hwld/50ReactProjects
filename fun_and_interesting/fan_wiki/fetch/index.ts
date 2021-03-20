@@ -1,10 +1,10 @@
 export type Character = {
   id: string;
-  name: string;
   image: string;
-  status: string;
+  name: string;
+  status: "Alive" | "Dead" | "unknown";
   species: string;
-  gender: string;
+  gender: "Female" | "Male" | "Genderless" | "unknown";
 };
 
 export async function fetchCharacters(

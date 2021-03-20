@@ -1,11 +1,10 @@
-import { Box, Button, Grid, Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
-import NextLink from "next/link";
-import NextImage from "next/image";
 import React, { useEffect, useState } from "react";
 import { useAppState } from "../context/AppContext";
 import { useCharacters, useSetCharacters } from "../context/CharactersContext";
 import { Character, fetchCharacters } from "../fetch";
+import { CharacterCard } from "../components/CharacterCard";
 
 type HomeProps = {
   initialCharacters: Character[];
@@ -16,7 +15,7 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
   const { scrollY, setScrollY } = useAppState();
   const [limit] = useState(21);
 
-  const handleLinkClick = () => {
+  const saveScrollY = () => {
     setScrollY(window.scrollY);
   };
 
@@ -44,28 +43,23 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
   }, []);
 
   return (
-    <Box>
-      <Heading textAlign="center" my={3}>
-        Character Wiki
-      </Heading>
-      <Grid
-        justifyContent="center"
-        templateColumns="repeat(auto-fill, 300px)"
-        gap={5}
-      >
-        {characters.map((d) => (
-          <NextLink href={`/characters/${d.id}`} key={d.id}>
-            <Link onClick={handleLinkClick}>
-              <Box>
-                <NextImage src={d.image} width={300} height={300} />
-                <Text>{d.name}</Text>
-              </Box>
-            </Link>
-          </NextLink>
+    <Box w="100%">
+      <Center bg="gray.300" h="30vh">
+        <Heading size="4xl" textAlign="center" color="gray.700">
+          The Rick and Morty Characters
+        </Heading>
+      </Center>
+      <Flex justify="center" wrap="wrap" py={5}>
+        {characters.map((c) => (
+          <CharacterCard
+            key={c.id}
+            character={c}
+            onBeforeNavigation={saveScrollY}
+          />
         ))}
-      </Grid>
+      </Flex>
       <Button
-        my={3}
+        mb={10}
         mx="auto"
         display="block"
         bg="gray.500"
