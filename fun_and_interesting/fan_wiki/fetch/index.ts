@@ -1,10 +1,18 @@
+export type Episode = {
+  id: string;
+  name: string;
+};
+
 export type Character = {
   id: string;
   image: string;
   name: string;
   status: "Alive" | "Dead" | "unknown";
   species: string;
-  gender: "Female" | "Male" | "Genderless" | "unknown";
+  origin: { name: string };
+  location: { name: string };
+  // 最後の/にepisodeのidが続く
+  episode: string[];
 };
 
 export async function fetchCharacters(
@@ -13,14 +21,20 @@ export async function fetchCharacters(
   const res = await fetch(
     `https://rickandmortyapi.com/api/character/${[...ids]}`
   );
-
   if (!res.ok) {
     return undefined;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let characters: any[] = await res.json();
-  characters = characters.map((c) => ({ ...c, id: c.id.toString() }));
+  type Fetched = Omit<Character, "id"> & { id: number };
+  let fetched: Fetched[] | Fetched = await res.json();
+  if (!Array.isArray(fetched)) {
+    fetched = [fetched];
+  }
+
+  const characters: Character[] = fetched.map((c) => ({
+    ...c,
+    id: c.id.toString(),
+  }));
 
   return characters;
 }
@@ -29,7 +43,6 @@ export async function fetchCharacter(
   id: string
 ): Promise<Character | undefined> {
   const res = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
-
   if (!res.ok) {
     return undefined;
   }
@@ -37,4 +50,28 @@ export async function fetchCharacter(
   let character = await res.json();
   character = { ...character, id: character.id.toString() };
   return character;
+}
+
+export async function fetchEpisodes(
+  ids: string[]
+): Promise<Episode[] | undefined> {
+  const res = await fetch(
+    `https://rickandmortyapi.com/api/episode/${[...ids]}`
+  );
+  if (!res.ok) {
+    return undefined;
+  }
+
+  type Fetched = Omit<Episode, "id"> & { id: number };
+  let fetched: Fetched[] | Fetched = await res.json();
+  if (!Array.isArray(fetched)) {
+    fetched = [fetched];
+  }
+
+  const episodes: Episode[] = fetched.map((e) => ({
+    ...e,
+    id: e.id.toString(),
+  }));
+
+  return episodes;
 }
