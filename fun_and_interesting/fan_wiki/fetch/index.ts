@@ -1,3 +1,5 @@
+import { QueryFunctionContext } from "react-query";
+
 export type Episode = {
   id: string;
   name: string;
@@ -16,13 +18,17 @@ export type Character = {
 };
 
 export async function fetchCharacters(
-  ids: string[] = [...Array(10)].map((_, index) => (index + 1).toString())
-): Promise<Character[] | undefined> {
+  context: QueryFunctionContext<unknown[], string[]>
+): Promise<Character[]> {
+  const ids =
+    context.pageParam ??
+    [...Array(10)].map((_, index) => (index + 1).toString());
+
   const res = await fetch(
     `https://rickandmortyapi.com/api/character/${[...ids]}`
   );
   if (!res.ok) {
-    return undefined;
+    throw new Error("");
   }
 
   type Fetched = Omit<Character, "id"> & { id: number };

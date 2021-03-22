@@ -2,44 +2,37 @@ import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { useAppState } from "../context/AppContext";
-import { useCharacters, useSetCharacters } from "../context/CharactersContext";
-import { Character, fetchCharacters } from "../fetch";
+import { fetchCharacters } from "../fetch";
 import { CharacterCard } from "../components/CharacterCard";
+import { QueryClient, useInfiniteQuery } from "react-query";
+import { dehydrate } from "react-query/hydration";
 
-type HomeProps = {
-  initialCharacters: Character[];
-};
-
-const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
-  const [characters, setCharacters] = [useCharacters(), useSetCharacters()];
-  const { scrollY, setScrollY } = useAppState();
+const Home: NextPage = () => {
   const [limit] = useState(21);
+  const { data, fetchNextPage } = useInfiniteQuery(
+    "characters",
+    fetchCharacters,
+    {
+      staleTime: Infinity,
+      getNextPageParam: (lastPage, allPages) => {
+        const offset = allPages.flat().length + 1;
+        const ids = [...Array(limit)].map((_, index) =>
+          (offset + index).toString()
+        );
+        return ids;
+      },
+    }
+  );
+  const characters = data?.pages.flat() ?? [];
+  const { scrollY, setScrollY } = useAppState();
 
   const saveScrollY = () => {
     setScrollY(window.scrollY);
   };
 
-  const readMoreCharacters = async () => {
-    const offset = characters.length + 1;
-    const ids = [...Array(limit)].map((id, index) =>
-      (offset + index).toString()
-    );
-    const fetchedCharacters = await fetchCharacters(ids);
-    if (fetchedCharacters) {
-      setCharacters((characters) => [...characters, ...fetchedCharacters]);
-    }
-  };
-
   // スクロール位置の復元
   useEffect(() => {
     window.scrollTo(0, scrollY);
-  }, []);
-
-  // 何も読み込まれていなければinitialCharactersをセット
-  useEffect(() => {
-    if (characters.length === 0) {
-      setCharacters(initialCharacters);
-    }
   }, []);
 
   return (
@@ -50,10 +43,10 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
         </Heading>
       </Center>
       <Flex justify="center" wrap="wrap" py={5}>
-        {characters.map((c) => (
+        {characters.map((character) => (
           <CharacterCard
-            key={c.id}
-            character={c}
+            key={character.id}
+            character={character}
             onBeforeNavigation={saveScrollY}
           />
         ))}
@@ -64,7 +57,7 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
         display="block"
         bg="gray.500"
         _hover={{ bg: "gray.400" }}
-        onClick={readMoreCharacters}
+        onClick={() => fetchNextPage()}
       >
         もっと読み込む
       </Button>
@@ -74,11 +67,15 @@ const Home: NextPage<HomeProps> = ({ initialCharacters }) => {
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const characters = await fetchCharacters();
-  if (!characters) {
-    return { props: { initialCharacters: [] } };
-  }
+export const getServerSideProps: GetServerSideProps = async () => {
+  const queryClient = new QueryClient();
 
-  return { props: { initialCharacters: characters } };
+  await queryClient.prefetchInfiniteQuery("characters", fetchCharacters);
+
+  return {
+    props: {
+      // https://github.com/tannerlinsley/react-query/issues/1458#issuecomment-747716357
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
 };

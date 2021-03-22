@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { Character, Episode, fetchCharacter, fetchEpisodes } from "../../fetch";
-import { useCharacters } from "../../context/CharactersContext";
 import { useRouter } from "next/router";
 import { Image } from "../../components/Image";
 import { CharacterStatusIcon } from "../../components/CharacterStatusIcon";
+import { useInfiniteQuery } from "react-query";
 
 type Props = {
   character: Character;
 };
 
 const CharacterPage: NextPage<Props> = ({}) => {
-  const characters = useCharacters();
   const router = useRouter();
   const { id } = router.query;
-
+  const { data } = useInfiniteQuery<Character[]>("characters");
+  const characters = data?.pages.flat() ?? [];
   const [character, setCharacter] = useState<Character | undefined>(
     characters.find((c) => c.id === id)
   );
