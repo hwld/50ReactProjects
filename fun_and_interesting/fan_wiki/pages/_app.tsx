@@ -4,23 +4,23 @@ import { AppProps } from "next/dist/next-server/lib/router/router";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
-import { AppStateProvider } from "../context/AppContext";
 import { theme } from "../theme";
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   const queryClientRef = React.useRef<QueryClient>();
+  let dehydratedState: unknown;
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient();
+    // queryClientの初期化時にだけdehydrateする
+    dehydratedState = pageProps.dehydratedState;
   }
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps.dehydratedState}>
-        <AppStateProvider>
-          <ChakraProvider theme={theme}>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </AppStateProvider>
+      <Hydrate state={dehydratedState}>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
       </Hydrate>
     </QueryClientProvider>
   );

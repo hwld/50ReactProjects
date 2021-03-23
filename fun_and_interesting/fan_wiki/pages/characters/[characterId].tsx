@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import { Character, Episode, fetchCharacter, fetchEpisodes } from "../../fetch";
+import { Character, Episode, fetchEpisodes } from "../../fetch";
 import { useRouter } from "next/router";
 import { Image } from "../../components/Image";
 import { CharacterStatusIcon } from "../../components/CharacterStatusIcon";
-import { useInfiniteQuery } from "react-query";
+import { useCharacters } from "../../hooks/useCharacters";
+import { useCharacter } from "../../hooks/useCharacter";
 
 type Props = {
   character: Character;
@@ -13,21 +14,23 @@ type Props = {
 
 const CharacterPage: NextPage<Props> = ({}) => {
   const router = useRouter();
-  const { id } = router.query;
-  const { data } = useInfiniteQuery<Character[]>("characters");
-  const characters = data?.pages.flat() ?? [];
-  const [character, setCharacter] = useState<Character | undefined>(
-    characters.find((c) => c.id === id)
-  );
+  const characterId = router.query.characterId as string | undefined;
+  const { characters } = useCharacters();
+  const cachedCharacter = characters.find((c) => c.id === characterId);
+
+  const { character, refetch: refetchCharacter } = useCharacter(characterId, {
+    initialCharacter: cachedCharacter,
+  });
+
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
-  // グローバルステートにキャラクタ情報がなければキャラクタ情報を読み込む
+  // キャラクタ情報がなければキャラクタ情報を読み込む
   useEffect(() => {
-    if (character || typeof id !== "string") {
+    if (character) {
       return;
     }
-    fetchCharacter(id).then((c) => setCharacter(c));
-  }, [character, id]);
+    refetchCharacter();
+  }, [character, characterId]);
 
   // キャラクターが登場したエピソードを読み込む
   useEffect(() => {

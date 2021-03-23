@@ -1,38 +1,20 @@
 import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect, useState } from "react";
-import { useAppState } from "../context/AppContext";
-import { fetchCharacters } from "../fetch";
 import { CharacterCard } from "../components/CharacterCard";
-import { QueryClient, useInfiniteQuery } from "react-query";
+import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
+import { fetchCharacters, useCharacters } from "../hooks/useCharacters";
+import { useScrollY } from "../hooks/useScrollY";
 
 const Home: NextPage = () => {
-  const [limit] = useState(21);
-  const { data, fetchNextPage } = useInfiniteQuery(
-    "characters",
-    fetchCharacters,
-    {
-      staleTime: Infinity,
-      getNextPageParam: (lastPage, allPages) => {
-        const offset = allPages.flat().length + 1;
-        const ids = [...Array(limit)].map((_, index) =>
-          (offset + index).toString()
-        );
-        return ids;
-      },
-    }
-  );
-  const characters = data?.pages.flat() ?? [];
-  const { scrollY, setScrollY } = useAppState();
-
-  const saveScrollY = () => {
-    setScrollY(window.scrollY);
-  };
+  const [limit] = useState(20);
+  const { characters, fetchNextPage } = useCharacters(limit);
+  const { scrollY, saveScrollY } = useScrollY();
 
   // スクロール位置の復元
   useEffect(() => {
-    window.scrollTo(0, scrollY);
+    window.scrollTo(0, scrollY ?? 0);
   }, []);
 
   return (
