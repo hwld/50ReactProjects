@@ -35,6 +35,7 @@ export const useCharacter = (
 
   const result = useQuery(characterQueryKey, characterQueryFn, {
     staleTime: Infinity,
+    enabled: false,
     initialData: option.initialCharacter,
   });
 

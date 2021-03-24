@@ -12,11 +12,7 @@ type Props = {
 
 const Component: React.FC<Props> = ({ character, onBeforeNavigation }) => {
   return (
-    <Link
-      m={3}
-      href={`/characters/${character.id}`}
-      onClick={onBeforeNavigation}
-    >
+    <Link href={`/characters/${character.id}`} onClick={onBeforeNavigation}>
       <Flex w="500px" h="200px" _hover={{ opacity: 0.7 }}>
         <Image
           flexShrink={0}

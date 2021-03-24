@@ -8,10 +8,13 @@ import { theme } from "../theme";
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   const queryClientRef = React.useRef<QueryClient>();
+
   let dehydratedState: unknown;
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient();
-    // queryClientの初期化時にだけdehydrateする
+  }
+
+  if (!queryClientRef.current.getQueryData("characters")) {
     dehydratedState = pageProps.dehydratedState;
   }
 

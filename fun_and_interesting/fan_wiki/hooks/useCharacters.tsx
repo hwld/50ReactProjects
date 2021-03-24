@@ -33,6 +33,7 @@ export const useCharacters = (limit?: number): UseCharactersResult => {
 
   const result = useInfiniteQuery("characters", charactersQueryFn, {
     staleTime: Infinity,
+    enabled: false,
     getNextPageParam: (_, allPages): UseCharactersPageParams => {
       const offset = allPages.flat().length + 1;
       const ids = [...Array(limit ?? 0)].map((_, index) =>

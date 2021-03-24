@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Grid, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { CharacterCard } from "../components/CharacterCard";
@@ -25,7 +25,12 @@ const Home: NextPage = () => {
           The Rick and Morty Characters
         </Heading>
       </Center>
-      <Flex justify="center" wrap="wrap" py={5}>
+      <Grid
+        my={8}
+        gap={8}
+        gridTemplateColumns="repeat(auto-fill, 500px)"
+        justifyContent="center"
+      >
         {characters.map((character) => (
           <CharacterCard
             key={character.id}
@@ -33,7 +38,7 @@ const Home: NextPage = () => {
             onBeforeNavigation={saveScrollY}
           />
         ))}
-      </Flex>
+      </Grid>
       <Button
         mb={10}
         mx="auto"
