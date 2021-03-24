@@ -1,9 +1,9 @@
 import React from "react";
-import { Character } from "../fetch";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { Link } from "./Link";
 import { Image } from "./Image";
 import { CharacterStatusIcon } from "./CharacterStatusIcon";
+import { Character } from "../pages/api/characters/[characterIds]";
 
 type Props = {
   character: Character;

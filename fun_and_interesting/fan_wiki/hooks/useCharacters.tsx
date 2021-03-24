@@ -3,36 +3,9 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
 } from "react-query";
-import { Character } from "../fetch";
+import { Character } from "../pages/api/characters/[characterIds]";
 
-type FetchParams = { ids: string[] };
-export async function fetchCharacters(
-  context: QueryFunctionContext<unknown[], FetchParams>
-): Promise<Character[]> {
-  const ids =
-    context.pageParam?.ids ??
-    [...Array(10)].map((_, index) => (index + 1).toString());
-
-  const res = await fetch(
-    `https://rickandmortyapi.com/api/character/${[...ids]}`
-  );
-  if (!res.ok) {
-    throw new Error("");
-  }
-
-  type Fetched = Omit<Character, "id"> & { id: number };
-  let fetched: Fetched[] | Fetched = await res.json();
-  if (!Array.isArray(fetched)) {
-    fetched = [fetched];
-  }
-
-  const characters: Character[] = fetched.map((c) => ({
-    ...c,
-    id: c.id.toString(),
-  }));
-
-  return characters;
-}
+type UseCharactersPageParams = { ids: string[] };
 
 type UseCharactersResult = Omit<
   UseInfiniteQueryResult<Character[], unknown>,
@@ -40,9 +13,27 @@ type UseCharactersResult = Omit<
 > & { characters: Character[] };
 
 export const useCharacters = (limit?: number): UseCharactersResult => {
-  const result = useInfiniteQuery("characters", fetchCharacters, {
+  const charactersQueryFn = async (
+    context: QueryFunctionContext<unknown[], UseCharactersPageParams>
+  ) => {
+    const ids = context.pageParam?.ids;
+    if (!ids) {
+      return [];
+    }
+
+    const res = await fetch(`/api/characters/${ids}`);
+    if (!res.ok) {
+      throw new Error("");
+    }
+
+    const characters: Character[] = await res.json();
+
+    return characters;
+  };
+
+  const result = useInfiniteQuery("characters", charactersQueryFn, {
     staleTime: Infinity,
-    getNextPageParam: (_, allPages): FetchParams => {
+    getNextPageParam: (_, allPages): UseCharactersPageParams => {
       const offset = allPages.flat().length + 1;
       const ids = [...Array(limit ?? 0)].map((_, index) =>
         (offset + index).toString()

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NextPage } from "next";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import { Character, Episode, fetchEpisodes } from "../../fetch";
 import { useRouter } from "next/router";
 import { Image } from "../../components/Image";
 import { CharacterStatusIcon } from "../../components/CharacterStatusIcon";
 import { useCharacters } from "../../hooks/useCharacters";
 import { useCharacter } from "../../hooks/useCharacter";
+import { Character } from "../api/characters/[characterIds]";
 
 type Props = {
   character: Character;
@@ -22,8 +22,6 @@ const CharacterPage: NextPage<Props> = ({}) => {
     initialCharacter: cachedCharacter,
   });
 
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
-
   // キャラクタ情報がなければキャラクタ情報を読み込む
   useEffect(() => {
     if (character) {
@@ -31,24 +29,6 @@ const CharacterPage: NextPage<Props> = ({}) => {
     }
     refetchCharacter();
   }, [character, characterId]);
-
-  // キャラクターが登場したエピソードを読み込む
-  useEffect(() => {
-    if (episodes.length !== 0 || !character) {
-      return;
-    }
-    const episodeIds = character.episode.map((episodeUrl) => {
-      const paths = episodeUrl.split("/").filter((s) => Boolean(s));
-      return paths[paths.length - 1];
-    });
-
-    fetchEpisodes(episodeIds).then((episodes) => {
-      if (!episodes) {
-        return;
-      }
-      setEpisodes(episodes);
-    });
-  }, [character]);
 
   return (
     <Box overflow="auto">
@@ -99,7 +79,7 @@ const CharacterPage: NextPage<Props> = ({}) => {
             </Text>
 
             <Heading mt={3}>Episodes that appeared</Heading>
-            {episodes.map((episode) => (
+            {character.episodes.map((episode) => (
               <Text
                 key={episode.id}
                 ml={3}

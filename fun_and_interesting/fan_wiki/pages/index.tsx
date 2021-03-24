@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import { CharacterCard } from "../components/CharacterCard";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { fetchCharacters, useCharacters } from "../hooks/useCharacters";
+import { useCharacters } from "../hooks/useCharacters";
 import { useScrollY } from "../hooks/useScrollY";
+import { fetchCharacter } from "../lib/server/fetchCharacter";
 
 const Home: NextPage = () => {
-  const [limit] = useState(20);
-  const { characters, fetchNextPage } = useCharacters(limit);
+  const [limit] = useState(10);
+  const { characters, fetchNextPage, isFetching } = useCharacters(limit);
   const { scrollY, saveScrollY } = useScrollY();
 
   // スクロール位置の復元
@@ -36,10 +37,12 @@ const Home: NextPage = () => {
       <Button
         mb={10}
         mx="auto"
-        display="block"
+        w="150px"
         bg="gray.500"
+        display="flex"
         _hover={{ bg: "gray.400" }}
         onClick={() => fetchNextPage()}
+        isLoading={isFetching}
       >
         もっと読み込む
       </Button>
@@ -52,7 +55,11 @@ export default Home;
 export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchInfiniteQuery("characters", fetchCharacters);
+  await queryClient.prefetchInfiniteQuery("characters", async () => {
+    return fetchCharacter(
+      [...Array(10)].map((_, index) => (index + 1).toString())
+    );
+  });
 
   return {
     props: {

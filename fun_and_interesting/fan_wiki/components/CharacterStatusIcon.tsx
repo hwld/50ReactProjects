@@ -1,6 +1,6 @@
 import { Box, chakra } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Character } from "../fetch";
+import { Character } from "../pages/api/characters/[characterIds]";
 
 type Props = {
   className?: string;
