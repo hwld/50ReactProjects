@@ -1,17 +1,56 @@
-import { Box, Button, Center, Flex, Grid, Heading } from "@chakra-ui/react";
+import { Box, Button, Center, Grid, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CharacterCard } from "../components/CharacterCard";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useCharacters } from "../hooks/useCharacters";
 import { useScrollY } from "../hooks/useScrollY";
 import { fetchCharacter } from "../lib/server/fetchCharacter";
+import { AnimatePresence, Variants } from "framer-motion";
 
 const Home: NextPage = () => {
   const [limit] = useState(10);
   const { characters, fetchNextPage, isFetching } = useCharacters(limit);
   const { scrollY, saveScrollY } = useScrollY();
+  const numOfCharactersBeforeLoadMore = useRef(characters.length);
+
+  const animation: Variants = {
+    enter: (didEnter: boolean) => {
+      return {
+        scale: [didEnter ? 0 : 1, 1],
+        transition: {
+          duration: 0.5,
+          type: "spring",
+        },
+      };
+    },
+    shake: () => {
+      return {
+        y: [10, -10, 10],
+        transition: {
+          repeat: Infinity,
+          delay: Math.random(),
+        },
+      };
+    },
+    hover: {
+      rotate: 360,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    tap: { scale: 3 },
+  };
+
+  const handleBeforeNavigation = () => {
+    saveScrollY();
+  };
+
+  const loadMoreCharacters = () => {
+    numOfCharactersBeforeLoadMore.current = characters.length;
+    fetchNextPage();
+  };
 
   // スクロール位置の復元
   useEffect(() => {
@@ -31,13 +70,23 @@ const Home: NextPage = () => {
         gridTemplateColumns="repeat(auto-fill, 500px)"
         justifyContent="center"
       >
-        {characters.map((character) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            onBeforeNavigation={saveScrollY}
-          />
-        ))}
+        <AnimatePresence>
+          {characters.map((character, index) => {
+            const didEnter = index >= numOfCharactersBeforeLoadMore.current;
+            return (
+              <CharacterCard
+                key={character.id}
+                character={character}
+                onBeforeNavigation={handleBeforeNavigation}
+                custom={didEnter}
+                variants={animation}
+                animate={["enter", "shake"]}
+                whileHover="hover"
+                whileTap="tap"
+              />
+            );
+          })}
+        </AnimatePresence>
       </Grid>
       <Button
         mb={10}
@@ -46,7 +95,7 @@ const Home: NextPage = () => {
         bg="gray.500"
         display="flex"
         _hover={{ bg: "gray.400" }}
-        onClick={() => fetchNextPage()}
+        onClick={loadMoreCharacters}
         isLoading={isFetching}
       >
         もっと読み込む
