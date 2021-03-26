@@ -40,7 +40,7 @@ const Home: NextPage = () => {
         duration: 0.5,
       },
     },
-    tap: { scale: 3 },
+    tap: { scale: 10 },
   };
 
   const handleBeforeNavigation = () => {
