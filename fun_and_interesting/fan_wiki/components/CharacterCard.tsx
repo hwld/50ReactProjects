@@ -16,18 +16,13 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
     return (
       <Box ref={ref} _hover={{ zIndex: 1 }}>
         <Link
-          role="group"
           w="500px"
           h="200px"
           display="block"
           href={`/characters/${character.id}`}
           onClick={onBeforeNavigation}
-          _focus={{ boxShadow: "none" }}
         >
-          <Flex
-            boxSize="100%"
-            _groupFocus={{ boxShadow: "var(--chakra-shadows-outline)" }}
-          >
+          <Flex>
             <Image
               flexShrink={0}
               alignSelf="center"

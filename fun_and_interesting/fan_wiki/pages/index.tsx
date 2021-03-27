@@ -1,17 +1,16 @@
 import { Box, Button, Center, Grid, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { CharacterCard } from "../components/CharacterCard";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { useCharacters } from "../hooks/useCharacters";
 import { useScrollY } from "../hooks/useScrollY";
 import { fetchCharacter } from "../lib/server/fetchCharacter";
-import { AnimatePresence, Variants } from "framer-motion";
+import { Variants } from "framer-motion";
 
 const Home: NextPage = () => {
-  const [limit] = useState(10);
-  const { characters, fetchNextPage, isFetching } = useCharacters(limit);
+  const { characters, fetchNextCharacters, isFetching } = useCharacters(10);
   const { scrollY, saveScrollY } = useScrollY();
   const numOfCharactersBeforeLoadMore = useRef(characters.length);
 
@@ -19,13 +18,9 @@ const Home: NextPage = () => {
     enter: () => {
       return {
         scale: 1,
-        rotate: 360,
         transition: {
           duration: 0.5,
           type: "spring",
-        },
-        transitionEnd: {
-          rotate: 0,
         },
       };
     },
@@ -40,6 +35,7 @@ const Home: NextPage = () => {
     },
     hover: {
       rotate: 360,
+      scale: 1.5,
       transition: {
         duration: 0.3,
       },
@@ -60,7 +56,7 @@ const Home: NextPage = () => {
 
   const loadMoreCharacters = () => {
     numOfCharactersBeforeLoadMore.current = characters.length;
-    fetchNextPage();
+    fetchNextCharacters();
   };
 
   // スクロール位置の復元
@@ -81,23 +77,21 @@ const Home: NextPage = () => {
         gridTemplateColumns="repeat(auto-fill, 500px)"
         justifyContent="center"
       >
-        <AnimatePresence>
-          {characters.map((character, index) => {
-            const doEnter = index >= numOfCharactersBeforeLoadMore.current;
-            return (
-              <CharacterCard
-                key={character.id}
-                character={character}
-                onBeforeNavigation={handleBeforeNavigation}
-                variants={animation}
-                animate={doEnter ? ["enter", "shake"] : "shake"}
-                style={{ scale: doEnter ? 0 : 1 }}
-                whileHover="hover"
-                whileTap="tap"
-              />
-            );
-          })}
-        </AnimatePresence>
+        {characters.map((character, index) => {
+          const doEnter = index >= numOfCharactersBeforeLoadMore.current;
+          return (
+            <CharacterCard
+              key={character.id}
+              character={character}
+              onBeforeNavigation={handleBeforeNavigation}
+              variants={animation}
+              style={{ scale: doEnter ? 0 : 1 }}
+              animate={doEnter ? ["enter", "shake"] : "shake"}
+              whileHover="hover"
+              whileTap="tap"
+            />
+          );
+        })}
       </Grid>
       <Button
         mb={10}
@@ -129,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {
       // https://github.com/tannerlinsley/react-query/issues/1458#issuecomment-747716357
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      prefetchedQueryClient: JSON.parse(JSON.stringify(dehydrate(queryClient))),
     },
   };
 };

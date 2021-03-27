@@ -1,38 +1,34 @@
 import React, { useEffect } from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { Image } from "../../components/Image";
 import { CharacterStatusIcon } from "../../components/CharacterStatusIcon";
 import { useCharacters } from "../../hooks/useCharacters";
 import { useCharacter } from "../../hooks/useCharacter";
-import { Character } from "../api/characters/[characterIds]";
 import { useAnimation } from "framer-motion";
 import { MotionBox } from "../../components/MotionBox";
 
-type Props = {
-  character: Character;
+type CharacterPageProps = {
+  characterId: string;
 };
 
-const CharacterPage: NextPage<Props> = ({}) => {
-  const router = useRouter();
-  const characterId = router.query.characterId as string | undefined;
+const CharacterPage: NextPage<CharacterPageProps> = ({ characterId }) => {
   const { characters } = useCharacters();
   const cachedCharacter = characters.find((c) => c.id === characterId);
 
-  const { character, refetch: refetchCharacter } = useCharacter(characterId, {
+  const { character, fetchCharacter } = useCharacter(characterId, {
     initialCharacter: cachedCharacter,
   });
 
-  const controls = useAnimation();
+  const animationControls = useAnimation();
 
   const animate = async () => {
-    await controls.start({
+    await animationControls.start({
       scale: 1,
       rotate: 0,
       transition: { duration: 0.3 },
     });
-    return controls.start({
+    return animationControls.start({
       y: [0, -100, 0],
       transition: { repeat: Infinity },
     });
@@ -45,7 +41,7 @@ const CharacterPage: NextPage<Props> = ({}) => {
       animate();
       return;
     }
-    refetchCharacter();
+    fetchCharacter();
   }, [character, characterId]);
 
   return (
@@ -66,7 +62,7 @@ const CharacterPage: NextPage<Props> = ({}) => {
           maxW="100%"
           m="auto"
           mt="180px"
-          animate={controls}
+          animate={animationControls}
           initial={{ scale: 10, rotate: 360 }}
         >
           <Flex align="center">
@@ -120,3 +116,17 @@ const CharacterPage: NextPage<Props> = ({}) => {
 };
 
 export default CharacterPage;
+
+export const getServerSideProps: GetServerSideProps<CharacterPageProps> = async ({
+  params,
+}) => {
+  const characterId = params?.characterId;
+
+  // ファイル名に中括弧がないときにundefined
+  // ファイル名の中括弧に3点があるとき( [...slug].tsxなど )にstring[]
+  if (typeof characterId !== "string") {
+    throw new Error("ファイル名は[slug].tsxのような形式にしてください。");
+  }
+
+  return { props: { characterId } };
+};

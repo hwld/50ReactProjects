@@ -10,9 +10,7 @@ export async function fetchEpisodes(ids: string[]): Promise<Episode[]> {
     return [];
   }
 
-  const res = await fetch(
-    `https://rickandmortyapi.com/api/episode/${[...ids]}`
-  );
+  const res = await fetch(`https://rickandmortyapi.com/api/episode/${ids}`);
   const data:
     | EpisodeFromExternalAPI
     | EpisodeFromExternalAPI[] = await res.json();

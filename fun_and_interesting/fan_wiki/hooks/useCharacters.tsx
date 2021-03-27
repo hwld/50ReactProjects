@@ -9,10 +9,11 @@ type UseCharactersPageParams = { ids: string[] };
 
 type UseCharactersResult = Omit<
   UseInfiniteQueryResult<Character[], unknown>,
-  "data"
-> & { characters: Character[] };
+  "data" | "fetchNextPage"
+> & { characters: Character[]; fetchNextCharacters: () => void };
 
 export const useCharacters = (limit?: number): UseCharactersResult => {
+  // getNextPageParamの戻り値とcontextの型を一致させるために関数を定義する
   const charactersQueryFn = async (
     context: QueryFunctionContext<unknown[], UseCharactersPageParams>
   ) => {
@@ -27,7 +28,6 @@ export const useCharacters = (limit?: number): UseCharactersResult => {
     }
 
     const characters: Character[] = await res.json();
-
     return characters;
   };
 
@@ -43,5 +43,9 @@ export const useCharacters = (limit?: number): UseCharactersResult => {
     },
   });
 
-  return { characters: result.data?.pages.flat() ?? [], ...result };
+  return {
+    characters: result.data?.pages.flat() ?? [],
+    fetchNextCharacters: result.fetchNextPage,
+    ...result,
+  };
 };
