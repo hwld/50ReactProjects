@@ -7,6 +7,8 @@ import { CharacterStatusIcon } from "../../components/CharacterStatusIcon";
 import { useCharacters } from "../../hooks/useCharacters";
 import { useCharacter } from "../../hooks/useCharacter";
 import { Character } from "../api/characters/[characterIds]";
+import { useAnimation } from "framer-motion";
+import { MotionBox } from "../../components/MotionBox";
 
 type Props = {
   character: Character;
@@ -22,16 +24,33 @@ const CharacterPage: NextPage<Props> = ({}) => {
     initialCharacter: cachedCharacter,
   });
 
+  const controls = useAnimation();
+
+  const animate = async () => {
+    await controls.start({
+      scale: 1,
+      rotate: 0,
+      transition: { duration: 0.3 },
+    });
+    return controls.start({
+      y: [0, -100, 0],
+      transition: { repeat: Infinity },
+    });
+  };
+
   // キャラクタ情報がなければキャラクタ情報を読み込む
   useEffect(() => {
     if (character) {
+      //キャラクタが読み込まれたときにアニメーションを開始する
+      animate();
       return;
     }
     refetchCharacter();
   }, [character, characterId]);
 
   return (
-    <Box overflow="auto">
+    // marginの相殺でmargin-topが当たらないようにパディングを設定する
+    <Box pt={1}>
       <Box
         bg="gray.500"
         h="30vh"
@@ -42,7 +61,14 @@ const CharacterPage: NextPage<Props> = ({}) => {
         zIndex={-1}
       />
       {character && (
-        <Box w="800px" maxW="100%" m="auto" mt="180px">
+        <MotionBox
+          w="800px"
+          maxW="100%"
+          m="auto"
+          mt="180px"
+          animate={controls}
+          initial={{ scale: 10, rotate: 360 }}
+        >
           <Flex align="center">
             <Image
               src={character.image}
@@ -87,7 +113,7 @@ const CharacterPage: NextPage<Props> = ({}) => {
               >{`Episode${episode.id} - ${episode.name}`}</Text>
             ))}
           </Box>
-        </Box>
+        </MotionBox>
       )}
     </Box>
   );

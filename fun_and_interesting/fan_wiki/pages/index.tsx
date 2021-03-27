@@ -16,12 +16,16 @@ const Home: NextPage = () => {
   const numOfCharactersBeforeLoadMore = useRef(characters.length);
 
   const animation: Variants = {
-    enter: (didEnter: boolean) => {
+    enter: () => {
       return {
-        scale: [didEnter ? 0 : 1, 1],
+        scale: 1,
+        rotate: 360,
         transition: {
           duration: 0.5,
           type: "spring",
+        },
+        transitionEnd: {
+          rotate: 0,
         },
       };
     },
@@ -37,13 +41,20 @@ const Home: NextPage = () => {
     hover: {
       rotate: 360,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
+      },
+      transitionEnd: {
+        rotate: 0,
       },
     },
-    tap: { scale: 10 },
+    tap: {
+      scale: 10,
+      rotate: 360,
+      transition: { duration: 0.3 },
+    },
   };
 
-  const handleBeforeNavigation = () => {
+  const handleBeforeNavigation = async () => {
     saveScrollY();
   };
 
@@ -72,15 +83,15 @@ const Home: NextPage = () => {
       >
         <AnimatePresence>
           {characters.map((character, index) => {
-            const didEnter = index >= numOfCharactersBeforeLoadMore.current;
+            const doEnter = index >= numOfCharactersBeforeLoadMore.current;
             return (
               <CharacterCard
                 key={character.id}
                 character={character}
                 onBeforeNavigation={handleBeforeNavigation}
-                custom={didEnter}
                 variants={animation}
-                animate={["enter", "shake"]}
+                animate={doEnter ? ["enter", "shake"] : "shake"}
+                style={{ scale: doEnter ? 0 : 1 }}
                 whileHover="hover"
                 whileTap="tap"
               />
