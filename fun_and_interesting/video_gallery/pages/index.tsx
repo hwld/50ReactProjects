@@ -1,13 +1,31 @@
 import { Box, Grid, Heading } from "@chakra-ui/react";
 import { GetServerSideProps, NextPage } from "next";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { QueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
 import YouTube from "react-youtube";
+import { useInterSectionObserver } from "../hooks/useIntersectionObservre";
+import { useVideos } from "../hooks/useVideos";
+import { fetchVideos } from "../lib/server/fetchVideos";
+import { QueryKeys } from "../queryKeys";
 
-type HomeProps = {
-  videoIds: string[];
-};
+const Home: NextPage = () => {
+  const bottomElement = useRef<HTMLDivElement | null>(null);
+  const [, rerender] = useState(false);
+  const { videoIds, fetchNextVideoIds } = useVideos();
 
-const Home: NextPage<HomeProps> = ({ videoIds }) => {
+  // 初回レンダリング後に再レンダリングしてuseInterSectionObserverにElementを渡せるようにする
+  useEffect(() => {
+    rerender(true);
+  }, []);
+
+  useInterSectionObserver({
+    target: bottomElement.current,
+    onIntersect: () => {
+      fetchNextVideoIds();
+    },
+  });
+
   return (
     <Box minH="100vh">
       <Box bg="gray.50" p={1} h="200px">
@@ -20,31 +38,33 @@ const Home: NextPage<HomeProps> = ({ videoIds }) => {
         ビデオ
       </Heading>
       <Grid
-        my={5}
-        gap={10}
+        my={3}
+        gap={5}
         gridTemplateColumns="repeat(auto-fill, 600px)"
         justifyContent="center"
       >
         {videoIds.map((id) => (
-          <YouTube opts={{ width: "600" }} videoId={id} key={id} />
+          // レイアウトシフトの防止
+          <Box w="600px" h="360" bg="gray.500" key={id}>
+            <YouTube
+              opts={{ width: "600", height: "360" }}
+              videoId={id}
+              onPlay={() => console.log("play")}
+            />
+          </Box>
         ))}
       </Grid>
+      <Box ref={bottomElement} />
     </Box>
   );
 };
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const PLAYLIST_ID = "PLS6Ups8QGSP3AnyKF_iHC-z78fpm8lHTv";
+export const getServerSideProps: GetServerSideProps = async () => {
+  const queryClient = new QueryClient();
 
-  const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?key=${process.env.API_KEY}&playlistId=${PLAYLIST_ID}&maxResults=50&part=contentDetails&fields=items(contentDetails(videoId))`
-  );
-  const data: {
-    items: { contentDetails: { videoId: string } }[];
-  } = await res.json();
-  const videoIds = data.items.map((item) => item.contentDetails.videoId);
+  queryClient.prefetchInfiniteQuery(QueryKeys.videos, () => fetchVideos({}));
 
-  return { props: { videoIds } };
+  return { props: { prefetchedQueryClient: dehydrate(queryClient) } };
 };
