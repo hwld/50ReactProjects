@@ -36,6 +36,7 @@ export const useVideos = (): UseVideosResult => {
       getNextPageParam: (lastPage): UseVideosPageParam => {
         return { nextPageToken: lastPage.nextPageToken };
       },
+      enabled: false,
     }
   );
 
