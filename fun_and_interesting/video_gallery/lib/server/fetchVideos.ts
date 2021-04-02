@@ -18,16 +18,16 @@ export const fetchVideos: FetchVideos = async ({
     throw new Error("Error: Execution on the client side is not allowed.");
   }
 
-  let url = "https://www.googleapis.com/youtube/v3/playlistItems?";
-  url += "&key=" + process.env.API_KEY;
-  url += "&playlistId=" + process.env.PLAYLIST_ID;
-  url += "&part=contentDetails";
-  url += "&maxResults=" + maxResults;
+  const apiUrl = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
+  apiUrl.searchParams.set("key", process.env.API_KEY ?? "");
+  apiUrl.searchParams.set("playlistId", process.env.PLAYLIST_ID ?? "");
+  apiUrl.searchParams.set("part", "contentDetails");
+  apiUrl.searchParams.set("maxResults", maxResults);
   if (pageToken) {
-    url += "&pageToken=" + pageToken;
+    apiUrl.searchParams.set("pageToken", pageToken);
   }
 
-  const res = await fetch(url);
+  const res = await fetch(apiUrl.href);
   const data: FetchedVideosData = await res.json();
 
   const videoIds = data.items.map((item) => item.contentDetails.videoId);

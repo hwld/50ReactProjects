@@ -20,15 +20,15 @@ export const useVideos = (): UseVideosResult => {
       const maxResults = context.pageParam?.maxResults;
       const nextPageToken = context.pageParam?.nextPageToken;
 
-      let url = "/api/videos?";
+      const apiUrl = new URL("/api/videos", process.env.NEXT_PUBLIC_HOST);
       if (maxResults) {
-        url += "&maxResults=" + maxResults;
+        apiUrl.searchParams.set("maxResults", maxResults);
       }
       if (nextPageToken) {
-        url += "&pageToken=" + nextPageToken;
+        apiUrl.searchParams.set("pageToken", nextPageToken);
       }
 
-      const res = await fetch(url);
+      const res = await fetch(apiUrl.href);
       const videoData: VideosData = await res.json();
       return videoData;
     },

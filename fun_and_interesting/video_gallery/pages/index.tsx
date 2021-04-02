@@ -34,8 +34,13 @@ const Home: NextPage = () => {
 
   return (
     <Box minH="100vh">
-      <Flex bg="gray.50" p={1} h="200px">
-        <Heading mt="4rem" ml="6rem" size="3xl">
+      <Flex
+        // bg="gray.50"
+        pt={1}
+        h="200px"
+        bgGradient="linear(to-b, blue.50 85%, 85%, blue.500)"
+      >
+        <Heading mt="6rem" ml="6rem" size="3xl" flexShrink={0}>
           🐺リモート極地🐧
         </Heading>
       </Flex>
