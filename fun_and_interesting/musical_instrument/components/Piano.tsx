@@ -1,50 +1,60 @@
-import { Box, chakra, ChakraProps, HStack } from "@chakra-ui/react";
+import { Box, Text, chakra, ChakraProps, Flex, Kbd } from "@chakra-ui/react";
 import React from "react";
-import { PianoKey, PianoKeyProps } from "./PianoKey";
+import { useApplicationKeyMap } from "../hooks/useApplicationKeyMap";
+import { getPianoKey, NoteName, NoteNumber, toNote } from "../utils";
+import { PianoKey } from "./PianoKey";
 
-type Props = { className?: string };
-const Component: React.FC<Props> = ({ className }) => {
+type Props = { className?: string; noteNumber: NoteNumber };
+
+const Component: React.FC<Props> = ({ className, noteNumber }) => {
+  const keyMap = useApplicationKeyMap();
+
   const whiteKeyWidth = "50px";
   const whiteKeyMargin = "10px";
   const blackKeyWidth = "45px";
 
-  const whiteKeys: { note: PianoKeyProps["note"] }[] = [
-    { note: "C" },
-    { note: "D" },
-    { note: "E" },
-    { note: "F" },
-    { note: "G" },
-    { note: "A" },
-    { note: "B" },
+  const whiteKeys: { noteName: NoteName }[] = [
+    { noteName: "C" },
+    { noteName: "D" },
+    { noteName: "E" },
+    { noteName: "F" },
+    { noteName: "G" },
+    { noteName: "A" },
+    { noteName: "B" },
   ];
 
   const blackKeys: {
-    note: PianoKeyProps["note"];
+    noteName: NoteName;
     left: ChakraProps["left"];
   }[] = [
-    { note: "C#", left: `calc(${whiteKeyWidth} / 2)` },
+    { noteName: "C#", left: `calc(${whiteKeyWidth} / 2)` },
     {
-      note: "D#",
+      noteName: "D#",
       left: `calc(((${whiteKeyWidth} + ${whiteKeyMargin}) * 2) + (${whiteKeyWidth} / 2) - ${blackKeyWidth})`,
     },
     {
-      note: "E#",
+      noteName: "E#",
       left: `calc(((${whiteKeyWidth} + ${whiteKeyMargin}) * 3) + (${whiteKeyWidth} / 2))`,
     },
     {
-      note: "G#",
+      noteName: "G#",
       left: `calc(((${whiteKeyWidth} + ${whiteKeyMargin}) * 4) + ((${whiteKeyWidth} + (${whiteKeyMargin}) / 2)) - (${blackKeyWidth} / 2))`,
     },
     {
-      note: "A#",
+      noteName: "A#",
       left: `calc(((${whiteKeyWidth} + ${whiteKeyMargin}) * 6) + (${whiteKeyWidth} / 2) - ${blackKeyWidth})`,
     },
   ];
 
   return (
-    <Box className={className} bg="gray.800" p={10}>
-      <Box position="relative">
-        {blackKeys.map(({ note, left }) => (
+    <Box position="relative" className={className}>
+      {blackKeys.map(({ noteName, left }) => {
+        const note = toNote(noteName, noteNumber);
+        let key: string | undefined;
+        if (keyMap) {
+          key = getPianoKey(keyMap, note);
+        }
+        return (
           <PianoKey
             key={note}
             note={note}
@@ -53,25 +63,60 @@ const Component: React.FC<Props> = ({ className }) => {
             w={blackKeyWidth}
             h="160px"
             bg="gray.800"
-            _pressed={{ bg: "yellow.300", borderColor: "yellow.400" }}
-            borderRight="2px solid"
-            borderLeft="2px solid"
-            borderBottom="2px solid"
-          />
-        ))}
-        <HStack spacing={whiteKeyMargin}>
-          {whiteKeys.map(({ note }) => (
+            _pressed={{ bg: "red.500" }}
+            display="flex"
+            flexDir="column"
+            justifyContent="flex-end"
+            alignItems="center"
+            userSelect="none"
+          >
+            <Kbd
+              mb={1}
+              backgroundColor={key ? "green.300" : "red.300"}
+              borderColor={key ? "green.400" : "red.400"}
+            >
+              {key ?? "No"}
+            </Kbd>
+            <Text mb={3} color="gray.50">
+              {note}
+            </Text>
+          </PianoKey>
+        );
+      })}
+      <Flex>
+        {whiteKeys.map(({ noteName }) => {
+          const note = toNote(noteName, noteNumber);
+          let key: string | undefined;
+          if (keyMap) {
+            key = getPianoKey(keyMap, note);
+          }
+          return (
             <PianoKey
               key={note}
               note={note}
+              mr={whiteKeyMargin}
               w={whiteKeyWidth}
               h="250px"
               bg="gray.50"
               _pressed={{ bg: "yellow.300" }}
-            />
-          ))}
-        </HStack>
-      </Box>
+              display="flex"
+              flexDir="column"
+              justifyContent="flex-end"
+              alignItems="center"
+              userSelect="none"
+            >
+              <Kbd
+                mb={1}
+                backgroundColor={key ? "green.300" : "red.300"}
+                borderColor={key ? "green.400" : "red.400"}
+              >
+                {key ?? "No"}
+              </Kbd>
+              <Text mb={3}>{note}</Text>
+            </PianoKey>
+          );
+        })}
+      </Flex>
     </Box>
   );
 };

@@ -1,53 +1,47 @@
 import { Box, chakra } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
-import { now, Synth } from "tone";
+import React, { useState } from "react";
+import { GlobalHotKeys } from "react-hotkeys";
+import { useSynth } from "../hooks/useSynth";
+import { Note } from "../utils";
 
 export type PianoKeyProps = {
   className?: string;
-  note:
-    | "A"
-    | "B"
-    | "C"
-    | "D"
-    | "E"
-    | "F"
-    | "G"
-    | "A#"
-    | "C#"
-    | "D#"
-    | "E#"
-    | "G#";
+  note: Note;
 };
 
-const Component: React.FC<PianoKeyProps> = ({ note, className }) => {
-  const synthRef = useRef<Synth>();
-  useEffect(() => {
-    synthRef.current = new Synth().toDestination();
-  }, []);
-
+const Component: React.FC<PianoKeyProps> = ({ children, className, note }) => {
   const [isPressed, setIsPressed] = useState(false);
+  const synth = useSynth();
 
-  const attack = () => {
+  const press = () => {
     setIsPressed(true);
-    synthRef.current?.triggerAttack(`${note}3`);
+    synth?.triggerAttackRelease(note, "8n");
   };
 
   const release = () => {
     setIsPressed(false);
-    synthRef.current?.triggerRelease();
+  };
+
+  const handlers = {
+    [`${note}_KEYDOWN`]: () => press(),
+    [`${note}_KEYUP`]: () => release(),
   };
 
   return (
-    <Box
-      as="button"
-      tabIndex={-1}
-      className={className}
-      onMouseDown={attack}
-      onMouseUp={release}
-      onMouseLeave={release}
-      _focus={{ outline: "none" }}
-      data-pressed={isPressed ? true : undefined}
-    />
+    <GlobalHotKeys handlers={handlers} allowChanges={true}>
+      <Box
+        as="button"
+        tabIndex={-1}
+        className={className}
+        onMouseDown={press}
+        onMouseUp={release}
+        onMouseLeave={release}
+        _focus={{ outline: "none" }}
+        data-pressed={isPressed ? true : undefined}
+      >
+        {children}
+      </Box>
+    </GlobalHotKeys>
   );
 };
 
