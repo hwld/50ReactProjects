@@ -1,4 +1,10 @@
-import { ApplicationKeyMap, KeyMap, MouseTrapKeySequence } from "react-hotkeys";
+import {
+  ApplicationKeyMap,
+  HotKeysProps,
+  KeyMap,
+  MouseTrapKeySequence,
+} from "react-hotkeys";
+import { Synth } from "tone";
 
 export type NoteName =
   | "A"
@@ -30,25 +36,80 @@ export const toNote = (noteName: NoteName, noteNumber: NoteNumber): Note => {
 };
 
 export type PianoKeys = { [T in NoteName]?: string };
-export type PianoObj = { noteNumber: NoteNumber; keys: PianoKeys };
+export type PianoObj = {
+  noteNumber: NoteNumber;
+  keys: PianoKeys;
+  pressedNoteNames: NoteName[];
+};
 
 type CreatePianoKeyMap = (piano: PianoObj) => KeyMap;
 
 export const createPianoKeyMap: CreatePianoKeyMap = ({ noteNumber, keys }) => {
   const keyMaps: KeyMap = {};
-  for (const note in keys) {
-    const key = keys[note as NoteName] as string;
-    keyMaps[`${note}${noteNumber}_KEYDOWN`] = {
+  for (const noteName in keys) {
+    const key = keys[noteName as NoteName] as string;
+    keyMaps[`${noteName}${noteNumber}_KEYDOWN`] = {
       sequence: key,
       action: "keydown",
     };
-    keyMaps[`${note}${noteNumber}_KEYUP`] = {
+    keyMaps[`${noteName}${noteNumber}_KEYUP`] = {
       sequence: key,
       action: "keyup",
     };
   }
 
   return keyMaps;
+};
+
+type CreatePianoKeyHandlers = (
+  piano: PianoObj,
+  setPianos: React.Dispatch<React.SetStateAction<PianoObj[]>>
+) => HotKeysProps["handlers"];
+export const createPianoKeyHandlers: CreatePianoKeyHandlers = (
+  { noteNumber, keys },
+  setPianos
+) => {
+  let handlers: HotKeysProps["handlers"] = {};
+  for (const property in keys) {
+    const noteName = property as NoteName;
+    handlers = {
+      ...handlers,
+      [`${noteName}${noteNumber}_KEYDOWN`]: () => {
+        new Synth()
+          .toDestination()
+          .triggerAttackRelease(`${noteName}${noteNumber}`, "8n");
+
+        setPianos((pianos) => {
+          return pianos.map((piano) => {
+            if (piano.noteNumber !== noteNumber) {
+              return piano;
+            }
+            return {
+              ...piano,
+              pressedNoteNames: [...piano.pressedNoteNames, noteName],
+            };
+          });
+        });
+      },
+
+      [`${noteName}${noteNumber}_KEYUP`]: () => {
+        setPianos((pianos) => {
+          return pianos.map((piano) => {
+            if (piano.noteNumber !== noteNumber) {
+              return piano;
+            }
+            return {
+              ...piano,
+              pressedNoteNames: piano.pressedNoteNames.filter(
+                (n) => n !== noteName
+              ),
+            };
+          });
+        });
+      },
+    };
+  }
+  return handlers;
 };
 
 export const getPianoKey = (

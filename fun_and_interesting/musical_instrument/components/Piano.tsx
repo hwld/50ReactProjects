@@ -1,12 +1,20 @@
 import { Box, Text, chakra, ChakraProps, Flex, Kbd } from "@chakra-ui/react";
 import React from "react";
+import { Synth } from "tone";
 import { useApplicationKeyMap } from "../hooks/useApplicationKeyMap";
 import { getPianoKey, NoteName, NoteNumber, toNote } from "../utils";
-import { PianoKey } from "./PianoKey";
 
-type Props = { className?: string; noteNumber: NoteNumber };
+type Props = {
+  className?: string;
+  noteNumber: NoteNumber;
+  pressedNoteNames?: NoteName[];
+};
 
-const Component: React.FC<Props> = ({ className, noteNumber }) => {
+const Component: React.FC<Props> = ({
+  className,
+  noteNumber,
+  pressedNoteNames = [],
+}) => {
   const keyMap = useApplicationKeyMap();
 
   const whiteKeyWidth = "50px";
@@ -55,15 +63,21 @@ const Component: React.FC<Props> = ({ className, noteNumber }) => {
           key = getPianoKey(keyMap, note);
         }
         return (
-          <PianoKey
+          <Box
             key={note}
-            note={note}
+            as="button"
+            tabIndex={-1}
+            onMouseDown={() => {
+              new Synth().toDestination().triggerAttackRelease(note, "8n");
+            }}
             position="absolute"
             left={left}
             w={blackKeyWidth}
             h="160px"
             bg="gray.800"
-            _pressed={{ bg: "red.500" }}
+            data-active={pressedNoteNames.includes(noteName) ? true : undefined}
+            _active={{ bg: "red.500" }}
+            _focus={{ outline: "none" }}
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
@@ -80,7 +94,7 @@ const Component: React.FC<Props> = ({ className, noteNumber }) => {
             <Text mb={3} color="gray.50">
               {note}
             </Text>
-          </PianoKey>
+          </Box>
         );
       })}
       <Flex>
@@ -91,14 +105,22 @@ const Component: React.FC<Props> = ({ className, noteNumber }) => {
             key = getPianoKey(keyMap, note);
           }
           return (
-            <PianoKey
+            <Box
               key={note}
-              note={note}
+              as="button"
+              tabIndex={-1}
+              onMouseDown={() => {
+                new Synth().toDestination().triggerAttackRelease(note, "8n");
+              }}
               mr={whiteKeyMargin}
               w={whiteKeyWidth}
               h="250px"
               bg="gray.50"
-              _pressed={{ bg: "yellow.300" }}
+              data-active={
+                pressedNoteNames.includes(noteName) ? true : undefined
+              }
+              _active={{ bg: "yellow.300" }}
+              _focus={{ outline: "none" }}
               display="flex"
               flexDir="column"
               justifyContent="flex-end"
@@ -113,7 +135,7 @@ const Component: React.FC<Props> = ({ className, noteNumber }) => {
                 {key ?? "No"}
               </Kbd>
               <Text mb={3}>{note}</Text>
-            </PianoKey>
+            </Box>
           );
         })}
       </Flex>

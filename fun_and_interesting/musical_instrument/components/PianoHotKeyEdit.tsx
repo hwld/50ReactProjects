@@ -1,8 +1,8 @@
 import { Input, InputGroup, InputLeftElement } from "@chakra-ui/input";
 import { Center, Grid } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/react";
-import React, { SyntheticEvent, useState } from "react";
-import { NoteName, PianoKeys } from "../utils";
+import React from "react";
+import { NoteName } from "../utils";
 
 type Props = {
   className?: string;
