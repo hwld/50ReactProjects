@@ -1,15 +1,15 @@
-import React, { Dispatch, useMemo, useState } from "react";
-import { HotKeys, HotKeysProps, KeyMap } from "react-hotkeys";
-import { Synth } from "tone";
-import { PianosAction } from "../hooks/usePianos";
-import { NoteName, PianoObj } from "../utils";
+import React, { Dispatch } from "react";
+import { HotKeys, HotKeysProps, KeyMapOptions } from "react-hotkeys";
+import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
+import { PianoObj, PianosAction } from "../hooks/usePianos";
+import { Note, NoteName } from "../lib/sound";
 
-type Handlers = HotKeysProps["handlers"];
+export type PianosKeyMap = { [T in string]: KeyMapOptions };
+export type PianosKeyMapForRead = { [T in string]: KeyMapOptions | undefined };
+type Handlers = NonNullable<HotKeysProps["handlers"]>;
 
-type KeyMapAndHandlers = { keyMap: KeyMap; handlers: Handlers };
-
-const createPianoKeyMap = ({ noteNumber, keys }: PianoObj): KeyMap => {
-  const keyMaps: KeyMap = {};
+const createPianoKeyMap = ({ noteNumber, keys }: PianoObj): PianosKeyMap => {
+  const keyMaps: PianosKeyMap = {};
   for (const noteName in keys) {
     const key = keys[noteName as NoteName] as string;
     keyMaps[`${noteName}${noteNumber}_KEYDOWN`] = {
@@ -27,7 +27,8 @@ const createPianoKeyMap = ({ noteNumber, keys }: PianoObj): KeyMap => {
 
 const createPianoKeyHandlers = (
   { noteNumber, keys }: PianoObj,
-  dispatchPianos: Dispatch<PianosAction>
+  dispatchPianos: Dispatch<PianosAction>,
+  playSound: (note: Note) => void
 ): Handlers => {
   let handlers: Handlers = {};
   for (const property in keys) {
@@ -35,13 +36,9 @@ const createPianoKeyHandlers = (
     handlers = {
       ...handlers,
       [`${noteName}${noteNumber}_KEYDOWN`]: () => {
-        new Synth()
-          .toDestination()
-          .triggerAttackRelease(`${noteName}${noteNumber}`, "8n");
-
+        playSound({ noteName, noteNumber });
         dispatchPianos({ type: "keyDown", noteNumber, key: noteName });
       },
-
       [`${noteName}${noteNumber}_KEYUP`]: () => {
         dispatchPianos({ type: "keyUp", noteNumber, key: noteName });
       },
@@ -53,24 +50,36 @@ const createPianoKeyHandlers = (
 type Props = {
   pianos: PianoObj[];
   dispatchToPianos: Dispatch<PianosAction>;
+  playSound?: (note: Note) => void;
 };
 
-const Component: React.FC<Props> = ({ children, pianos, dispatchToPianos }) => {
-  const { keyMap, handlers } = pianos.reduce<KeyMapAndHandlers>(
+const Component: React.FC<Props> = ({
+  children,
+  pianos,
+  dispatchToPianos,
+  playSound = () => {},
+}) => {
+  const { keyMap, handlers } = pianos.reduce<{
+    keyMap: PianosKeyMap;
+    handlers: Handlers;
+  }>(
     ({ keyMap, handlers }, piano) => ({
       keyMap: { ...keyMap, ...createPianoKeyMap(piano) },
       handlers: {
         ...handlers,
-        ...createPianoKeyHandlers(piano, dispatchToPianos),
+        ...createPianoKeyHandlers(piano, dispatchToPianos, playSound),
       },
     }),
     { keyMap: {}, handlers: {} }
   );
 
   return (
-    <HotKeys keyMap={keyMap} handlers={handlers} allowChanges={true}>
-      {children}
-    </HotKeys>
+    // HotKeysのkeyMapとhandlersを取得するのが面倒なので、コンテキストに入れ直す
+    <PianosHotKeysProvider keyMap={keyMap}>
+      <HotKeys keyMap={keyMap} handlers={handlers} allowChanges={true}>
+        {children}
+      </HotKeys>
+    </PianosHotKeysProvider>
   );
 };
 

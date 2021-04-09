@@ -6,14 +6,14 @@ import { AddPianoForm } from "../components/AddPianoForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
 import { PianoHotKeys } from "../components/PianoHotKeys";
-import { usePianos } from "../hooks/usePianos";
-import { NoteNumber, PianoKeys } from "../utils";
+import { PianoKeys, usePianos } from "../hooks/usePianos";
+import { NoteNumber, playSound } from "../lib/sound";
 
 const Home: NextPage = () => {
   const pianoRef = useRef<HTMLDivElement | null>(null);
   const [allPianos, dispatchToAllPianos] = usePianos([
     {
-      noteNumber: 3,
+      noteNumber: "3",
       keys: {
         C: "a",
         D: "s",
@@ -53,7 +53,11 @@ const Home: NextPage = () => {
   return (
     <Box>
       <Center mt={10}>
-        <PianoHotKeys pianos={allPianos} dispatchToPianos={dispatchToAllPianos}>
+        <PianoHotKeys
+          pianos={allPianos}
+          dispatchToPianos={dispatchToAllPianos}
+          playSound={playSound}
+        >
           <Flex
             ref={pianoRef}
             tabIndex={0}
@@ -70,6 +74,7 @@ const Home: NextPage = () => {
                 key={noteNumber}
                 noteNumber={noteNumber}
                 pressedNoteNames={pressedNoteNames}
+                playSound={playSound}
               />
             ))}
           </Flex>

@@ -6,5 +6,9 @@
   "extends": [
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended"
-  ]
+  ],
+  "rules": {
+    "no-empty-function": "off",
+    "@typescript-eslint/no-empty-function": ["error", {"allow": ["arrowFunctions"]}]
+  }
 }

@@ -2,7 +2,7 @@ import { Input, InputGroup, InputLeftElement } from "@chakra-ui/input";
 import { Center, Grid } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/react";
 import React from "react";
-import { NoteName } from "../utils";
+import { ALL_NOTE_NAMES, NoteName } from "../lib/sound";
 
 type Props = {
   className?: string;
@@ -10,21 +10,6 @@ type Props = {
 };
 
 const Component: React.FC<Props> = ({ className, onChange }) => {
-  const noteNames: NoteName[] = [
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "A",
-    "B",
-    "C#",
-    "D#",
-    "E#",
-    "G#",
-    "A#",
-  ];
-
   const handleChange = (noteName: NoteName, key: string) => {
     if (onChange) {
       onChange(noteName, key);
@@ -39,7 +24,7 @@ const Component: React.FC<Props> = ({ className, onChange }) => {
       gap={3}
       justifyContent="center"
     >
-      {noteNames.map((noteName) => (
+      {ALL_NOTE_NAMES.map((noteName) => (
         <InputGroup w="80px" key={noteName}>
           <InputLeftElement
             children={

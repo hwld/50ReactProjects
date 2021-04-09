@@ -1,0 +1,51 @@
+import { Box, chakra, Kbd, Text } from "@chakra-ui/react";
+import React from "react";
+import { usePianoHotKeyName } from "../context/PianosHotKeysContext";
+import { Note } from "../lib/sound";
+
+type Props = {
+  className?: string;
+  note: Note;
+  pressed: boolean;
+  playSound: (note: Note) => void;
+};
+
+const Component: React.FC<Props> = ({
+  className,
+  note,
+  pressed,
+  playSound,
+}) => {
+  const keyName = usePianoHotKeyName(note);
+
+  return (
+    <Box
+      className={className}
+      as="button"
+      tabIndex={-1}
+      onMouseDown={() => {
+        playSound(note);
+      }}
+      bg="gray.50"
+      data-active={pressed ? true : undefined}
+      _active={{ bg: "yellow.300" }}
+      _focus={{ outline: "none" }}
+      display="flex"
+      flexDir="column"
+      justifyContent="flex-end"
+      alignItems="center"
+      userSelect="none"
+    >
+      <Kbd
+        mb={1}
+        backgroundColor={keyName ? "green.300" : "red.300"}
+        borderColor={keyName ? "green.400" : "red.400"}
+      >
+        {keyName ?? "No"}
+      </Kbd>
+      <Text mb={3}>{`${note.noteName}${note.noteNumber}`}</Text>
+    </Box>
+  );
+};
+
+export const PianoWhiteKey = chakra(Component);

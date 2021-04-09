@@ -8,10 +8,9 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  UseCounterProps,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { NoteNumber, stringToNoteNumber } from "../utils";
+import { isNoteNumber, NoteNumber } from "../lib/sound";
 
 type Props = {
   className?: string;
@@ -19,12 +18,11 @@ type Props = {
 };
 
 const Component: React.FC<Props> = ({ className, deletePiano }) => {
-  const [noteNumber, setNoteNumber] = useState<NoteNumber>(0);
+  const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
 
-  const handleChangeNoteNumber: UseCounterProps["onChange"] = (value) => {
-    const noteNumber = stringToNoteNumber(value);
-    if (noteNumber !== undefined) {
-      setNoteNumber(noteNumber);
+  const handleChangeNoteNumber = (value: string) => {
+    if (isNoteNumber(value)) {
+      setNoteNumber(value);
     }
   };
 
