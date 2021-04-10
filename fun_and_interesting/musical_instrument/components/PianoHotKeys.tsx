@@ -73,10 +73,20 @@ const Component: React.FC<Props> = ({
     { keyMap: {}, handlers: {} }
   );
 
+  const handleBlur = () => {
+    dispatchToPianos({ type: "resetPressed" });
+  };
+
   return (
     // HotKeysのkeyMapとhandlersを取得するのが面倒なので、コンテキストに入れ直す
     <PianosHotKeysProvider keyMap={keyMap}>
-      <HotKeys keyMap={keyMap} handlers={handlers} allowChanges={true}>
+      <HotKeys
+        keyMap={keyMap}
+        handlers={handlers}
+        allowChanges={true}
+        tabIndex={-1}
+        onBlur={handleBlur}
+      >
         {children}
       </HotKeys>
     </PianosHotKeysProvider>

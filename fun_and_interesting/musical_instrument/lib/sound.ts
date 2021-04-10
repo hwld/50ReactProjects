@@ -16,7 +16,7 @@ export const ALL_NOTE_NAMES = [
 ] as const;
 export type NoteName = typeof ALL_NOTE_NAMES[number];
 
-const ALL_NOTE_NUMBERS = [
+export const ALL_NOTE_NUMBERS = [
   "0",
   "1",
   "2",

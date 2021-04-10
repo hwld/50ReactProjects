@@ -16,7 +16,8 @@ export type PianosAction =
     }
   | { type: "deletePiano"; noteNumber: NoteNumber }
   | { type: "keyDown"; noteNumber: NoteNumber; key: NoteName }
-  | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName };
+  | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName }
+  | { type: "resetPressed" };
 
 const reducer = (state: PianoObj[], action: PianosAction): PianoObj[] => {
   switch (action.type) {
@@ -58,6 +59,12 @@ const reducer = (state: PianoObj[], action: PianosAction): PianoObj[] => {
             (n) => n !== action.key
           ),
         };
+      });
+    }
+
+    case "resetPressed": {
+      return state.map((piano) => {
+        return { ...piano, pressedNoteNames: [] };
       });
     }
   }

@@ -1,7 +1,7 @@
 import { Center } from "@chakra-ui/layout";
 import { Box, Flex } from "@chakra-ui/react";
 import { NextPage } from "next";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { AddPianoForm } from "../components/AddPianoForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
@@ -10,7 +10,6 @@ import { PianoKeys, usePianos } from "../hooks/usePianos";
 import { NoteNumber, playSound } from "../lib/sound";
 
 const Home: NextPage = () => {
-  const pianoRef = useRef<HTMLDivElement | null>(null);
   const [allPianos, dispatchToAllPianos] = usePianos([
     {
       noteNumber: "3",
@@ -46,10 +45,6 @@ const Home: NextPage = () => {
     dispatchToAllPianos({ type: "deletePiano", noteNumber });
   };
 
-  useEffect(() => {
-    pianoRef.current?.focus();
-  }, []);
-
   return (
     <Box>
       <Center mt={10}>
@@ -59,14 +54,15 @@ const Home: NextPage = () => {
           playSound={playSound}
         >
           <Flex
-            ref={pianoRef}
-            tabIndex={0}
             flexWrap="wrap"
             minW="1000px"
             maxW="1500px"
             justify="center"
             bg="gray.800"
             p={10}
+            tabIndex={0}
+            opacity={0.3}
+            _focusWithin={{ opacity: 1, outline: "none" }}
           >
             {allPianos.map(({ noteNumber, pressedNoteNames }) => (
               <Piano
@@ -91,6 +87,7 @@ const Home: NextPage = () => {
           borderColor="gray.500"
         />
         <DeletePianoForm
+          pianos={allPianos}
           deletePiano={deletePiano}
           flexGrow={1}
           p={5}

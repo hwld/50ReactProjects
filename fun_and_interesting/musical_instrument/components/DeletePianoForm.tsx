@@ -1,33 +1,29 @@
-import {
-  Button,
-  chakra,
-  Flex,
-  Heading,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-} from "@chakra-ui/react";
+import { Button, chakra, Flex, Heading } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { isNoteNumber, NoteNumber } from "../lib/sound";
+import { PianoObj } from "../hooks/usePianos";
+import { NoteNumber } from "../lib/sound";
+import { NoteNumberSelect } from "./NoteNumberSelect";
 
 type Props = {
   className?: string;
+  pianos: PianoObj[];
   deletePiano: (noteNumber: NoteNumber) => void;
 };
 
-const Component: React.FC<Props> = ({ className, deletePiano }) => {
-  const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
+const Component: React.FC<Props> = ({ className, pianos, deletePiano }) => {
+  // 選択されていない状態も持たせる
+  const [selectedNoteNumber, setSelectedNoteNumber] = useState<
+    NoteNumber | undefined
+  >(undefined);
 
-  const handleChangeNoteNumber = (value: string) => {
-    if (isNoteNumber(value)) {
-      setNoteNumber(value);
-    }
+  const handleChangeNoteNumber = (noteNumber: NoteNumber | undefined) => {
+    setSelectedNoteNumber(noteNumber);
   };
 
   const handleClickDeletePianoButton = () => {
-    deletePiano(noteNumber);
+    if (selectedNoteNumber !== undefined) {
+      deletePiano(selectedNoteNumber);
+    }
   };
 
   return (
@@ -35,20 +31,19 @@ const Component: React.FC<Props> = ({ className, deletePiano }) => {
       <Heading mt={5} size="md">
         Note Number
       </Heading>
-      <NumberInput
+      <NoteNumberSelect
+        noteNumbers={pianos.map((p) => p.noteNumber)}
+        selected={selectedNoteNumber}
+        onChange={handleChangeNoteNumber}
         mt={1}
         bg="gray.100"
         w="100px"
-        value={noteNumber}
-        onChange={handleChangeNoteNumber}
+      />
+      <Button
+        mt={10}
+        onClick={handleClickDeletePianoButton}
+        disabled={selectedNoteNumber === undefined}
       >
-        <NumberInputField />
-        <NumberInputStepper>
-          <NumberIncrementStepper />
-          <NumberDecrementStepper />
-        </NumberInputStepper>
-      </NumberInput>
-      <Button mt={10} onClick={handleClickDeletePianoButton}>
         キーボードを削除
       </Button>
     </Flex>
