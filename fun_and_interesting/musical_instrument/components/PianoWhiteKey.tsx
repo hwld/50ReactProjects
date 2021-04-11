@@ -1,7 +1,8 @@
-import { Box, chakra, Kbd, Text } from "@chakra-ui/react";
+import { chakra, Kbd, Text } from "@chakra-ui/react";
 import React from "react";
 import { usePianoHotKeyName } from "../context/PianosHotKeysContext";
 import { Note } from "../lib/sound";
+import { PianoKey } from "./PianoKey";
 
 type Props = {
   className?: string;
@@ -10,6 +11,7 @@ type Props = {
   playSound: (note: Note) => void;
 };
 
+// 実際に音を鳴らす楽器としての白鍵
 const Component: React.FC<Props> = ({
   className,
   note,
@@ -19,22 +21,11 @@ const Component: React.FC<Props> = ({
   const keyName = usePianoHotKeyName(note);
 
   return (
-    <Box
+    <PianoKey
       className={className}
-      as="button"
-      tabIndex={-1}
-      onMouseDown={() => {
-        playSound(note);
-      }}
-      bg="gray.50"
-      data-active={pressed ? true : undefined}
-      _active={{ bg: "yellow.300" }}
-      _focus={{ outline: "none" }}
-      display="flex"
-      flexDir="column"
-      justifyContent="flex-end"
-      alignItems="center"
-      userSelect="none"
+      bg="gray.100"
+      onMouseDown={() => playSound(note)}
+      pressed={pressed}
     >
       <Kbd
         mb={1}
@@ -44,7 +35,7 @@ const Component: React.FC<Props> = ({
         {keyName ?? "No"}
       </Kbd>
       <Text mb={3}>{`${note.noteName}${note.noteNumber}`}</Text>
-    </Box>
+    </PianoKey>
   );
 };
 

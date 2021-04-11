@@ -12,7 +12,7 @@ import {
 import React, { useState } from "react";
 import { PianoKeys } from "../hooks/usePianos";
 import { isNoteNumber, NoteName, NoteNumber } from "../lib/sound";
-import { PianoHotKeyEdit } from "./PianoHotKeyEdit";
+import { EditPianoHotKey } from "./EditPianoHotKey";
 
 type Props = {
   className?: string;
@@ -23,14 +23,14 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
   const [hotKeys, setHotKeys] = useState<PianoKeys>({});
 
-  const changeHotKeys = (noteName: NoteName, key: string) => {
+  const changeHotKeys = (noteName: NoteName, hotKey: string) => {
     setHotKeys((keys) => {
-      if (key === "") {
+      if (hotKey === "") {
         const tmp = { ...keys };
         delete tmp[noteName];
         return tmp;
       }
-      return { ...keys, [noteName]: key };
+      return { ...keys, [noteName]: hotKey };
     });
   };
 
@@ -47,7 +47,12 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
   return (
     <Flex className={className} flexDir="column" align="center">
       <Heading size="md">Hot Keys</Heading>
-      <PianoHotKeyEdit mt={1} onChange={changeHotKeys} />
+      <EditPianoHotKey
+        mt={3}
+        hotKeys={hotKeys}
+        onChange={changeHotKeys}
+        noteNumber={noteNumber}
+      />
       <Heading mt={5} size="md">
         Note Number
       </Heading>

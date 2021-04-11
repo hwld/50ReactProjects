@@ -1,6 +1,6 @@
 import { Synth } from "tone";
 
-export const ALL_NOTE_NAMES = [
+export const ALL_WHITE_NOTE_NAMES = [
   "C",
   "D",
   "E",
@@ -8,11 +8,11 @@ export const ALL_NOTE_NAMES = [
   "G",
   "A",
   "B",
-  "C#",
-  "D#",
-  "E#",
-  "G#",
-  "A#",
+] as const;
+export const ALL_BLACK_NOTE_NAMES = ["C#", "D#", "E#", "G#", "A#"] as const;
+export const ALL_NOTE_NAMES = [
+  ...ALL_BLACK_NOTE_NAMES,
+  ...ALL_WHITE_NOTE_NAMES,
 ] as const;
 export type NoteName = typeof ALL_NOTE_NAMES[number];
 

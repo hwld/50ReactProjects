@@ -1,54 +1,59 @@
 import { Box, chakra, Flex } from "@chakra-ui/react";
 import React from "react";
 import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
-import { Note, NoteName, NoteNumber } from "../lib/sound";
-import { PianoBlackKey } from "./PianoBlackKey";
-import { PianoWhiteKey } from "./PianoWhiteKey";
+import { PianoKeys } from "../hooks/usePianos";
+import { NoteName, NoteNumber } from "../lib/sound";
+import { EditablePianoBlackKey } from "./EditablePianoBlackKey";
+import { EditablePianoWhiteKey } from "./EditablePianoWhiteKey";
 
 type Props = {
   className?: string;
   noteNumber: NoteNumber;
-  pressedNoteNames?: NoteName[];
-  playSound: (note: Note) => void;
+  hotKeys: PianoKeys;
+  onChange?: (noteName: NoteName, key: string) => void;
 };
 
 const Component: React.FC<Props> = ({
   className,
   noteNumber,
-  pressedNoteNames = [],
-  playSound,
+  hotKeys,
+  onChange,
 }) => {
   const { whiteKeys, blackKeys } = usePianoKeysLayout();
+
+  const handleChange = (noteName: NoteName, key: string) => {
+    if (onChange) {
+      onChange(noteName, key);
+    }
+  };
 
   return (
     <Box position="relative" className={className}>
       {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
         return (
-          <PianoBlackKey
+          <EditablePianoBlackKey
             key={`${noteName}${noteNumber}`}
             note={{ noteName, noteNumber }}
-            pressed={pressedNoteNames.includes(noteName)}
-            _active={{ bg: "red.500" }}
-            playSound={playSound}
             position="absolute"
             left={left}
             w={blackKeyWidth}
             h="160px"
+            hotKey={hotKeys[noteName]}
+            onChange={handleChange}
           />
         );
       })}
       <Flex>
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
-            <PianoWhiteKey
+            <EditablePianoWhiteKey
               key={`${noteName}${noteNumber}`}
               note={{ noteName, noteNumber }}
-              pressed={pressedNoteNames.includes(noteName)}
-              _active={{ bg: "yellow.300" }}
-              playSound={playSound}
               mr={whiteKeyMarginRight}
               w={whiteKeyWidth}
               h="250px"
+              hotKey={hotKeys[noteName]}
+              onChange={handleChange}
             />
           );
         })}
@@ -57,4 +62,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const Piano = chakra(Component);
+export const EditPianoHotKey = chakra(Component);
