@@ -22,21 +22,6 @@ const Component: React.FC<Props> = ({
 
   return (
     <Box position="relative" className={className}>
-      {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
-        return (
-          <PianoBlackKey
-            key={`${noteName}${noteNumber}`}
-            note={{ noteName, noteNumber }}
-            pressed={pressedNoteNames.includes(noteName)}
-            _active={{ bg: "red.500" }}
-            playSound={playSound}
-            position="absolute"
-            left={left}
-            w={blackKeyWidth}
-            h="160px"
-          />
-        );
-      })}
       <Flex>
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
@@ -49,6 +34,21 @@ const Component: React.FC<Props> = ({
               mr={whiteKeyMarginRight}
               w={whiteKeyWidth}
               h="250px"
+            />
+          );
+        })}
+        {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
+          return (
+            <PianoBlackKey
+              key={`${noteName}${noteNumber}`}
+              note={{ noteName, noteNumber }}
+              pressed={pressedNoteNames.includes(noteName)}
+              _active={{ bg: "red.500" }}
+              playSound={playSound}
+              position="absolute"
+              left={left}
+              w={blackKeyWidth}
+              h="160px"
             />
           );
         })}

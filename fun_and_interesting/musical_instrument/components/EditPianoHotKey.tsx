@@ -29,20 +29,6 @@ const Component: React.FC<Props> = ({
 
   return (
     <Box position="relative" className={className}>
-      {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
-        return (
-          <EditablePianoBlackKey
-            key={`${noteName}${noteNumber}`}
-            note={{ noteName, noteNumber }}
-            position="absolute"
-            left={left}
-            w={blackKeyWidth}
-            h="160px"
-            hotKey={hotKeys[noteName]}
-            onChange={handleChange}
-          />
-        );
-      })}
       <Flex>
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
@@ -52,6 +38,21 @@ const Component: React.FC<Props> = ({
               mr={whiteKeyMarginRight}
               w={whiteKeyWidth}
               h="250px"
+              hotKey={hotKeys[noteName]}
+              onChange={handleChange}
+            />
+          );
+        })}
+        {/* positionがabsoluteの要素の包含ブロックは、positionがstatic以外の要素になるので、Flexではなくその親のBoxになる */}
+        {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
+          return (
+            <EditablePianoBlackKey
+              key={`${noteName}${noteNumber}`}
+              note={{ noteName, noteNumber }}
+              position="absolute"
+              left={left}
+              w={blackKeyWidth}
+              h="160px"
               hotKey={hotKeys[noteName]}
               onChange={handleChange}
             />
