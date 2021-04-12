@@ -1,3 +1,4 @@
+import { chakra } from "@chakra-ui/react";
 import React, { Dispatch } from "react";
 import { HotKeys, HotKeysProps, KeyMapOptions } from "react-hotkeys";
 import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
@@ -48,16 +49,20 @@ const createPianoKeyHandlers = (
 };
 
 type Props = {
+  className?: string;
   pianos: PianoObj[];
   dispatchToPianos: Dispatch<PianosAction>;
   playSound?: (note: Note) => void;
+  role?: string;
 };
 
 const Component: React.FC<Props> = ({
+  className,
   children,
   pianos,
   dispatchToPianos,
   playSound = () => {},
+  role,
 }) => {
   const { keyMap, handlers } = pianos.reduce<{
     keyMap: PianosKeyMap;
@@ -78,14 +83,16 @@ const Component: React.FC<Props> = ({
   };
 
   return (
-    // HotKeysのkeyMapとhandlersを取得するのが面倒なので、コンテキストに入れ直す
+    // HotKeysのkeyMapを取得するのが面倒なので、コンテキストに入れ直す
     <PianosHotKeysProvider keyMap={keyMap}>
       <HotKeys
+        className={className}
         keyMap={keyMap}
         handlers={handlers}
         allowChanges={true}
         tabIndex={-1}
         onBlur={handleBlur}
+        role={role}
       >
         {children}
       </HotKeys>
@@ -93,4 +100,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const PianoHotKeys = Component;
+export const PianoHotKeys = chakra(Component);

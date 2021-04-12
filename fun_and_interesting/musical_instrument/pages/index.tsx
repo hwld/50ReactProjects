@@ -46,13 +46,17 @@ const Home: NextPage = () => {
   };
 
   return (
-    <Box>
-      <Center mt={10}>
-        <PianoHotKeys
-          pianos={allPianos}
-          dispatchToPianos={dispatchToAllPianos}
-          playSound={playSound}
-        >
+    <PianoHotKeys
+      pianos={allPianos}
+      dispatchToPianos={dispatchToAllPianos}
+      playSound={playSound}
+      role="group"
+      _focus={{ outline: "none" }}
+      // マージンの相殺が起こらないようにする
+      pt={1}
+    >
+      <Box>
+        <Center mt={5}>
           <Flex
             flexWrap="wrap"
             minW="1000px"
@@ -62,6 +66,8 @@ const Home: NextPage = () => {
             p={10}
             tabIndex={0}
             opacity={0.3}
+            _groupFocus={{ opacity: 1, outline: "none" }}
+            _focus={{ opacity: 1, outline: "none" }}
             _focusWithin={{ opacity: 1, outline: "none" }}
           >
             {allPianos.map(({ noteNumber, pressedNoteNames }) => (
@@ -74,27 +80,27 @@ const Home: NextPage = () => {
               />
             ))}
           </Flex>
-        </PianoHotKeys>
-      </Center>
+        </Center>
 
-      <Flex p={10}>
-        <AddPianoForm
-          addPiano={addPiano}
-          flexGrow={1}
-          p={5}
-          bg="gray.400"
-          borderRight="1px solid"
-          borderColor="gray.500"
-        />
-        <DeletePianoForm
-          pianos={allPianos}
-          deletePiano={deletePiano}
-          flexGrow={1}
-          p={5}
-          bg="gray.400"
-        />
-      </Flex>
-    </Box>
+        <Flex p={10}>
+          <AddPianoForm
+            addPiano={addPiano}
+            flexGrow={1}
+            p={5}
+            bg="gray.400"
+            borderRight="1px solid"
+            borderColor="gray.500"
+          />
+          <DeletePianoForm
+            pianos={allPianos}
+            deletePiano={deletePiano}
+            flexGrow={1}
+            p={5}
+            bg="gray.400"
+          />
+        </Flex>
+      </Box>
+    </PianoHotKeys>
   );
 };
 
