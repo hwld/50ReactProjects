@@ -1,18 +1,9 @@
-import {
-  Button,
-  chakra,
-  Flex,
-  Heading,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-} from "@chakra-ui/react";
+import { Button, chakra, Flex, Heading } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { PianoKeys } from "../hooks/usePianos";
-import { isNoteNumber, NoteName, NoteNumber } from "../lib/sound";
-import { EditPianoHotKey } from "./EditPianoHotKey";
+import { NoteName, NoteNumber } from "../lib/sound";
+import { NoteNumberSelect } from "./NoteNumberSelect";
+import { PianoHotKeyEditor } from "./PianoHotKeyEditor";
 
 type Props = {
   className?: string;
@@ -21,22 +12,30 @@ type Props = {
 
 const Component: React.FC<Props> = ({ className, addPiano }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
-  const [hotKeys, setHotKeys] = useState<PianoKeys>({});
+  const [hotKeys, setHotKeys] = useState<PianoKeys>({
+    "A#": "",
+    "C#": "",
+    "D#": "",
+    "E#": "",
+    "G#": "",
+    A: "",
+    B: "",
+    C: "",
+    D: "",
+    E: "",
+    F: "",
+    G: "",
+  });
 
   const changeHotKeys = (noteName: NoteName, hotKey: string) => {
     setHotKeys((keys) => {
-      if (hotKey === "") {
-        const tmp = { ...keys };
-        delete tmp[noteName];
-        return tmp;
-      }
       return { ...keys, [noteName]: hotKey };
     });
   };
 
-  const handleChangeNoteNumber = (value: string) => {
-    if (isNoteNumber(value)) {
-      setNoteNumber(value);
+  const handleChangeNoteNumber = (noteNumber: NoteNumber | undefined) => {
+    if (noteNumber !== undefined) {
+      setNoteNumber(noteNumber);
     }
   };
 
@@ -47,29 +46,23 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
   return (
     <Flex className={className} flexDir="column" align="center">
       <Heading size="md">Hot Keys</Heading>
-      <EditPianoHotKey
+      <PianoHotKeyEditor
         mt={3}
+        noteNumber={noteNumber}
         hotKeys={hotKeys}
         onChange={changeHotKeys}
-        noteNumber={noteNumber}
       />
       <Heading mt={5} size="md">
         Note Number
       </Heading>
-      <NumberInput
-        mt={1}
-        bg="gray.100"
-        w="100px"
-        value={noteNumber}
+      <NoteNumberSelect
+        selected={noteNumber}
         onChange={handleChangeNoteNumber}
-      >
-        <NumberInputField />
-        <NumberInputStepper>
-          <NumberIncrementStepper />
-          <NumberDecrementStepper />
-        </NumberInputStepper>
-      </NumberInput>
-      <Button mt={10} onClick={handleClickAddPianoButton}>
+        mt={1}
+        w="100px"
+        bg="gray.100"
+      />
+      <Button mt={5} onClick={handleClickAddPianoButton}>
         キーボードを追加
       </Button>
     </Flex>

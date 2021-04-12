@@ -5,7 +5,7 @@ import { NoteName } from "../lib/sound";
 type Props = {
   className?: string;
   noteName: NoteName;
-  hotKey: string | undefined;
+  hotKey: string;
   onChange: (noteName: NoteName, hotKey: string) => void;
 };
 

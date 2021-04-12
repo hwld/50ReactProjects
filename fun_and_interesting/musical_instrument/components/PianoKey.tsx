@@ -1,9 +1,12 @@
-import { Box, chakra } from "@chakra-ui/react";
+import { Box, chakra, ChakraProps, Text } from "@chakra-ui/react";
 import React from "react";
+import { Note } from "../lib/sound";
 
 type Props = {
   className?: string;
+  note: Note;
   pressed?: boolean;
+  noteTextStyle?: ChakraProps;
   onMouseDown?: React.MouseEventHandler<HTMLDivElement> &
     React.MouseEventHandler<HTMLButtonElement>;
 };
@@ -11,8 +14,10 @@ type Props = {
 // 視覚要素としてのピアノのキー
 const Component: React.FC<Props> = ({
   children,
+  note,
   className,
   pressed = false,
+  noteTextStyle,
   onMouseDown,
 }) => {
   return (
@@ -30,6 +35,10 @@ const Component: React.FC<Props> = ({
       userSelect="none"
     >
       {children}
+      <Text
+        mb={3}
+        {...noteTextStyle}
+      >{`${note.noteName}${note.noteNumber}`}</Text>
     </Box>
   );
 };

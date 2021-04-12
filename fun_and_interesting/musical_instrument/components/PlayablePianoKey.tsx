@@ -1,4 +1,4 @@
-import { chakra, Kbd, Text } from "@chakra-ui/react";
+import { chakra, ChakraProps, Kbd } from "@chakra-ui/react";
 import React from "react";
 import { Note } from "../lib/sound";
 import { usePianoHotKeyName } from "../context/PianosHotKeysContext";
@@ -8,37 +8,38 @@ type Props = {
   className?: string;
   note: Note;
   pressed: boolean;
+  hotKeyStyle?: ChakraProps;
+  noteTextStyle?: ChakraProps;
   playSound: (note: Note) => void;
 };
 
-// 実際に音を鳴らす楽器としての黒鍵
+// 実際に音を鳴らす楽器としてのピアノのキー
 const Component: React.FC<Props> = ({
   className,
   note,
   pressed,
+  noteTextStyle,
   playSound,
 }) => {
-  const keyName = usePianoHotKeyName(note);
+  const hotKeyName = usePianoHotKeyName(note);
 
   return (
     <PianoKey
       className={className}
-      bg="gray.800"
       onMouseDown={() => playSound(note)}
       pressed={pressed}
+      note={note}
+      noteTextStyle={noteTextStyle}
     >
       <Kbd
         mb={1}
-        backgroundColor={keyName ? "green.300" : "red.300"}
-        borderColor={keyName ? "green.400" : "red.400"}
+        bgColor={hotKeyName ? "green.300" : "red.300"}
+        borderColor={hotKeyName ? "green.400" : "red.400"}
       >
-        {keyName ?? "No"}
+        {hotKeyName || "No"}
       </Kbd>
-      <Text mb={3} color="gray.50">
-        {`${note.noteName}${note.noteNumber}`}
-      </Text>
     </PianoKey>
   );
 };
 
-export const PianoBlackKey = chakra(Component);
+export const PlayablePianoKey = chakra(Component);

@@ -34,7 +34,7 @@ export type NoteNumber = typeof ALL_NOTE_NUMBERS[number];
 
 export type Note = { noteName: NoteName; noteNumber: NoteNumber };
 
-export const isNoteNumber = (arg: string): arg is NoteNumber => {
+export const isNoteNumber = (arg: unknown): arg is NoteNumber => {
   //argを無理やりNoteNumberにしているが、NoteNumberではない可能性もある
   return ALL_NOTE_NUMBERS.includes(arg as NoteNumber);
 };

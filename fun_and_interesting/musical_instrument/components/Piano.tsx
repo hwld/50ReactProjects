@@ -2,8 +2,7 @@ import { Box, chakra, Flex } from "@chakra-ui/react";
 import React from "react";
 import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
 import { Note, NoteName, NoteNumber } from "../lib/sound";
-import { PianoBlackKey } from "./PianoBlackKey";
-import { PianoWhiteKey } from "./PianoWhiteKey";
+import { PlayablePianoKey } from "./PlayablePianoKey";
 
 type Props = {
   className?: string;
@@ -25,30 +24,33 @@ const Component: React.FC<Props> = ({
       <Flex>
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
-            <PianoWhiteKey
+            <PlayablePianoKey
               key={`${noteName}${noteNumber}`}
               note={{ noteName, noteNumber }}
               pressed={pressedNoteNames.includes(noteName)}
-              _active={{ bg: "yellow.300" }}
               playSound={playSound}
+              _active={{ bg: "yellow.300" }}
               mr={whiteKeyMarginRight}
               w={whiteKeyWidth}
               h="250px"
+              bg="gray.100"
             />
           );
         })}
         {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
           return (
-            <PianoBlackKey
+            <PlayablePianoKey
               key={`${noteName}${noteNumber}`}
               note={{ noteName, noteNumber }}
               pressed={pressedNoteNames.includes(noteName)}
-              _active={{ bg: "red.500" }}
               playSound={playSound}
+              _active={{ bg: "red.500" }}
               position="absolute"
               left={left}
               w={blackKeyWidth}
               h="160px"
+              bg="gray.800"
+              noteTextStyle={{ color: "gray.50" }}
             />
           );
         })}

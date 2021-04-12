@@ -1,7 +1,7 @@
 import { Dispatch, useReducer } from "react";
 import { NoteName, NoteNumber } from "../lib/sound";
 
-export type PianoKeys = { [T in NoteName]?: string };
+export type PianoKeys = { [T in NoteName]: string };
 export type PianoObj = {
   noteNumber: NoteNumber;
   keys: PianoKeys;

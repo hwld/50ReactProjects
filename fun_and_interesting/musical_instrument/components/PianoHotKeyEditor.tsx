@@ -3,8 +3,7 @@ import React from "react";
 import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
 import { PianoKeys } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
-import { EditablePianoBlackKey } from "./EditablePianoBlackKey";
-import { EditablePianoWhiteKey } from "./EditablePianoWhiteKey";
+import { EditablePianoKey } from "./EditablePianoKey";
 
 type Props = {
   className?: string;
@@ -32,29 +31,32 @@ const Component: React.FC<Props> = ({
       <Flex>
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
-            <EditablePianoWhiteKey
+            <EditablePianoKey
               key={`${noteName}${noteNumber}`}
               note={{ noteName, noteNumber }}
+              hotKey={hotKeys[noteName]}
+              onChange={handleChange}
               mr={whiteKeyMarginRight}
               w={whiteKeyWidth}
               h="250px"
-              hotKey={hotKeys[noteName]}
-              onChange={handleChange}
+              bg="gray.100"
             />
           );
         })}
         {/* positionがabsoluteの要素の包含ブロックは、positionがstatic以外の要素になるので、Flexではなくその親のBoxになる */}
         {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
           return (
-            <EditablePianoBlackKey
+            <EditablePianoKey
               key={`${noteName}${noteNumber}`}
               note={{ noteName, noteNumber }}
+              hotKey={hotKeys[noteName]}
+              noteTextStyle={{ color: "gray.100" }}
+              onChange={handleChange}
               position="absolute"
               left={left}
               w={blackKeyWidth}
               h="160px"
-              hotKey={hotKeys[noteName]}
-              onChange={handleChange}
+              bg="gray.800"
             />
           );
         })}
@@ -63,4 +65,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const EditPianoHotKey = chakra(Component);
+export const PianoHotKeyEditor = chakra(Component);

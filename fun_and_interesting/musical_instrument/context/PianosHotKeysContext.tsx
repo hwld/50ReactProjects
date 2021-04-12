@@ -17,14 +17,12 @@ export const PianosHotKeysProvider: React.FC<{
 export const usePianosHotKeysKeyMap = (): PianosKeyMapForRead =>
   useContext(KeyMapContext);
 
-export const usePianoHotKeyName = ({
-  noteName,
-  noteNumber,
-}: Note): string | undefined => {
+export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
   const keyMap = usePianosHotKeysKeyMap();
   const key = keyMap[`${noteName}${noteNumber}_KEYDOWN`]?.sequence;
-  if (Array.isArray(key)) {
-    return undefined;
+  if (Array.isArray(key) || key === undefined) {
+    return "";
   }
-  return key?.toUpperCase();
+
+  return key.toUpperCase();
 };
