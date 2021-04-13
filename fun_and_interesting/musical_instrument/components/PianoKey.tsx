@@ -36,7 +36,7 @@ const Component: React.FC<Props> = ({
     >
       {children}
       <Text
-        mb={3}
+        mb={2}
         {...noteTextStyle}
       >{`${note.noteName}${note.noteNumber}`}</Text>
     </Box>

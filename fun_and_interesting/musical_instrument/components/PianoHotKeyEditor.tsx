@@ -3,13 +3,15 @@ import React from "react";
 import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
 import { PianoKeys } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
-import { EditablePianoKey } from "./EditablePianoKey";
+import { PianoHotkeyInput } from "./PianoHotKeyInput";
+import { PianoKey } from "./PianoKey";
 
 type Props = {
   className?: string;
   noteNumber: NoteNumber;
   hotKeys: PianoKeys;
   onChange?: (noteName: NoteName, key: string) => void;
+  errorMessage?: string;
 };
 
 const Component: React.FC<Props> = ({
@@ -27,41 +29,55 @@ const Component: React.FC<Props> = ({
   };
 
   return (
-    <Box position="relative" className={className}>
-      <Flex>
-        {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
-          return (
-            <EditablePianoKey
-              key={`${noteName}${noteNumber}`}
-              note={{ noteName, noteNumber }}
-              hotKey={hotKeys[noteName]}
-              onChange={handleChange}
-              mr={whiteKeyMarginRight}
-              w={whiteKeyWidth}
-              h="250px"
-              bg="gray.100"
-            />
-          );
-        })}
-        {/* positionがabsoluteの要素の包含ブロックは、positionがstatic以外の要素になるので、Flexではなくその親のBoxになる */}
-        {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
-          return (
-            <EditablePianoKey
-              key={`${noteName}${noteNumber}`}
-              note={{ noteName, noteNumber }}
-              hotKey={hotKeys[noteName]}
-              noteTextStyle={{ color: "gray.100" }}
-              onChange={handleChange}
-              position="absolute"
-              left={left}
-              w={blackKeyWidth}
-              h="160px"
-              bg="gray.800"
-            />
-          );
-        })}
-      </Flex>
-    </Box>
+    <>
+      <Box position="relative" className={className}>
+        <Box>
+          <Flex>
+            {whiteKeys.map(
+              ({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
+                return (
+                  <PianoKey
+                    key={noteName}
+                    note={{ noteName, noteNumber }}
+                    mr={whiteKeyMarginRight}
+                    w={whiteKeyWidth}
+                    h="250px"
+                    bg="gray.100"
+                  >
+                    <PianoHotkeyInput
+                      noteName={noteName}
+                      hotKey={hotKeys[noteName]}
+                      onChange={handleChange}
+                    />
+                  </PianoKey>
+                );
+              }
+            )}
+            {/* positionがabsoluteの要素の包含ブロックは、positionがstatic以外の要素になるので、Flexではなくその親のBoxになる */}
+            {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
+              return (
+                <PianoKey
+                  key={noteName}
+                  note={{ noteName, noteNumber }}
+                  noteTextStyle={{ color: "gray.100" }}
+                  position="absolute"
+                  left={left}
+                  w={blackKeyWidth}
+                  h="160px"
+                  bg="gray.800"
+                >
+                  <PianoHotkeyInput
+                    noteName={noteName}
+                    hotKey={hotKeys[noteName]}
+                    onChange={handleChange}
+                  />
+                </PianoKey>
+              );
+            })}
+          </Flex>
+        </Box>
+      </Box>
+    </>
   );
 };
 

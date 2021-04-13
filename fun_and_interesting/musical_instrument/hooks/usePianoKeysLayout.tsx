@@ -27,11 +27,19 @@ export const usePianoKeysLayout = (): PianoKeysLayout => {
   const whiteKeyMarginRight = "10px";
   const blackKeyWidth = "45px";
 
-  const whiteKeys: WhiteKeyLayout[] = ALL_WHITE_NOTE_NAMES.map((noteName) => ({
-    noteName,
-    whiteKeyWidth,
-    whiteKeyMarginRight,
-  }));
+  const whiteKeys: WhiteKeyLayout[] = ALL_WHITE_NOTE_NAMES.map(
+    (noteName, index) => {
+      let marginRight = whiteKeyMarginRight;
+      if (index === ALL_WHITE_NOTE_NAMES.length - 1) {
+        marginRight = "0";
+      }
+      return {
+        noteName,
+        whiteKeyWidth,
+        whiteKeyMarginRight: marginRight,
+      };
+    }
+  );
 
   const blackKeys: BlackKeyLayout[] = ALL_BLACK_NOTE_NAMES.map((noteName) => {
     let left: ChakraProps["left"];

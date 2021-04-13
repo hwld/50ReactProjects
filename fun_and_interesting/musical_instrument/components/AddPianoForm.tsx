@@ -1,7 +1,7 @@
 import { Button, chakra, Flex, Heading } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { PianoKeys } from "../hooks/usePianos";
-import { NoteName, NoteNumber } from "../lib/sound";
+import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
 import { NoteNumberSelect } from "./NoteNumberSelect";
 import { PianoHotKeyEditor } from "./PianoHotKeyEditor";
 
@@ -12,20 +12,12 @@ type Props = {
 
 const Component: React.FC<Props> = ({ className, addPiano }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
-  const [hotKeys, setHotKeys] = useState<PianoKeys>({
-    "A#": "",
-    "C#": "",
-    "D#": "",
-    "E#": "",
-    "G#": "",
-    A: "",
-    B: "",
-    C: "",
-    D: "",
-    E: "",
-    F: "",
-    G: "",
-  });
+  // {}はPianoKeysではないが、結局はreduceのなかで何でも返せるので妥協する
+  const [hotKeys, setHotKeys] = useState(
+    ALL_NOTE_NAMES.reduce((keys, noteName) => {
+      return { ...keys, [noteName]: "" };
+    }, {} as PianoKeys)
+  );
 
   const changeHotKeys = (noteName: NoteName, hotKey: string) => {
     setHotKeys((keys) => {

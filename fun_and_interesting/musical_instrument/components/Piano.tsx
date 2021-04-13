@@ -25,7 +25,7 @@ const Component: React.FC<Props> = ({
         {whiteKeys.map(({ noteName, whiteKeyWidth, whiteKeyMarginRight }) => {
           return (
             <PlayablePianoKey
-              key={`${noteName}${noteNumber}`}
+              key={noteName}
               note={{ noteName, noteNumber }}
               pressed={pressedNoteNames.includes(noteName)}
               playSound={playSound}
@@ -40,7 +40,7 @@ const Component: React.FC<Props> = ({
         {blackKeys.map(({ noteName, left, blackKeyWidth }) => {
           return (
             <PlayablePianoKey
-              key={`${noteName}${noteNumber}`}
+              key={noteName}
               note={{ noteName, noteNumber }}
               pressed={pressedNoteNames.includes(noteName)}
               playSound={playSound}

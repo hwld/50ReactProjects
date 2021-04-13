@@ -1,8 +1,9 @@
-import { chakra, ChakraProps, Kbd } from "@chakra-ui/react";
+import { chakra, ChakraProps } from "@chakra-ui/react";
 import React from "react";
 import { Note } from "../lib/sound";
 import { usePianoHotKeyName } from "../context/PianosHotKeysContext";
 import { PianoKey } from "./PianoKey";
+import { PianoHotKeyIcon } from "./PianoHotKeyIcon";
 
 type Props = {
   className?: string;
@@ -23,21 +24,19 @@ const Component: React.FC<Props> = ({
 }) => {
   const hotKeyName = usePianoHotKeyName(note);
 
+  const handleMouseDown = () => {
+    playSound(note);
+  };
+
   return (
     <PianoKey
       className={className}
-      onMouseDown={() => playSound(note)}
+      onMouseDown={handleMouseDown}
       pressed={pressed}
       note={note}
       noteTextStyle={noteTextStyle}
     >
-      <Kbd
-        mb={1}
-        bgColor={hotKeyName ? "green.300" : "red.300"}
-        borderColor={hotKeyName ? "green.400" : "red.400"}
-      >
-        {hotKeyName || "No"}
-      </Kbd>
+      <PianoHotKeyIcon keyName={hotKeyName} />
     </PianoKey>
   );
 };

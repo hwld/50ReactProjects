@@ -70,9 +70,10 @@ const Home: NextPage = () => {
             _focus={{ opacity: 1, outline: "none" }}
             _focusWithin={{ opacity: 1, outline: "none" }}
           >
-            {allPianos.map(({ noteNumber, pressedNoteNames }) => (
+            {allPianos.map(({ noteNumber, pressedNoteNames }, index) => (
               <Piano
                 mt={5}
+                ml={index === 0 ? 0 : 3}
                 key={noteNumber}
                 noteNumber={noteNumber}
                 pressedNoteNames={pressedNoteNames}

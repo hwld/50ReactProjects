@@ -22,7 +22,7 @@ const Component: React.FC<Props> = ({
   return (
     <Input
       className={className}
-      bg={hotKey?.length === 1 ? "green.300" : "red.300"}
+      bg="green.300"
       border="none"
       boxSize="30px"
       padding="9px"
