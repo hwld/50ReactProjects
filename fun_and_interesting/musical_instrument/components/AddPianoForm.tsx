@@ -1,9 +1,14 @@
 import { Button, chakra, Flex, Heading } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { PianoKeys } from "../hooks/usePianos";
-import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
+import React, { useMemo, useState } from "react";
+import { useAllPianoHotKeyName } from "../context/PianosHotKeysContext";
+import {
+  extractKeyNames,
+  getDefaultPianoKeys,
+  PianoKeys,
+} from "../hooks/usePianos";
+import { NoteName, NoteNumber } from "../lib/sound";
 import { NoteNumberSelect } from "./NoteNumberSelect";
-import { PianoHotKeyEditor } from "./PianoHotKeyEditor";
+import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
 
 type Props = {
   className?: string;
@@ -12,14 +17,42 @@ type Props = {
 
 const Component: React.FC<Props> = ({ className, addPiano }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
-  // {}はPianoKeysではないが、結局はreduceのなかで何でも返せるので妥協する
-  const [hotKeys, setHotKeys] = useState(
-    ALL_NOTE_NAMES.reduce((keys, noteName) => {
-      return { ...keys, [noteName]: "" };
-    }, {} as PianoKeys)
-  );
+  const [hotKeys, setHotKeys] = useState(getDefaultPianoKeys());
+  const existingKeyNames = useAllPianoHotKeyName();
 
-  const changeHotKeys = (noteName: NoteName, hotKey: string) => {
+  const validationRules: ValidationRule[] = [
+    {
+      validate: (key: string) => {
+        if (key === "") {
+          return true;
+        }
+
+        return !existingKeyNames.includes(key);
+      },
+      errorMessage: "すでに設定されているキーです",
+    },
+    {
+      validate: (key: string) => {
+        if (key === "") {
+          return true;
+        }
+
+        return (
+          extractKeyNames(hotKeys).filter((edittingKey) => edittingKey === key)
+            .length === 1
+        );
+      },
+      errorMessage: "設定しようとしているキーが重複しています",
+    },
+  ];
+
+  const isValid = useMemo(() => {
+    return extractKeyNames(hotKeys).every((key) =>
+      validationRules.every(({ validate }) => validate(key))
+    );
+  }, [hotKeys, validationRules]);
+
+  const handleChangeHotKeys = (noteName: NoteName, hotKey: string) => {
     setHotKeys((keys) => {
       return { ...keys, [noteName]: hotKey };
     });
@@ -33,6 +66,7 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
 
   const handleClickAddPianoButton = () => {
     addPiano(noteNumber, hotKeys);
+    setHotKeys(getDefaultPianoKeys());
   };
 
   return (
@@ -42,7 +76,8 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
         mt={3}
         noteNumber={noteNumber}
         hotKeys={hotKeys}
-        onChange={changeHotKeys}
+        onChange={handleChangeHotKeys}
+        validationRules={validationRules}
       />
       <Heading mt={5} size="md">
         Note Number
@@ -54,7 +89,7 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
         w="100px"
         bg="gray.100"
       />
-      <Button mt={5} onClick={handleClickAddPianoButton}>
+      <Button mt={5} onClick={handleClickAddPianoButton} disabled={!isValid}>
         キーボードを追加
       </Button>
     </Flex>

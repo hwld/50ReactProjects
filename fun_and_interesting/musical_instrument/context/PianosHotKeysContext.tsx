@@ -26,3 +26,17 @@ export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
 
   return key.toUpperCase();
 };
+
+export const useAllPianoHotKeyName = (): string[] => {
+  const keyMap = usePianosHotKeysKeyMap();
+
+  const allKeyNames: string[] = [];
+  for (const entry in keyMap) {
+    const keyName = keyMap[entry]?.sequence;
+    if (typeof keyName === "string") {
+      allKeyNames.push(keyName);
+    }
+  }
+
+  return Array.from(new Set(allKeyNames));
+};

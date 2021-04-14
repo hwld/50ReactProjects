@@ -1,5 +1,5 @@
 import { Dispatch, useReducer } from "react";
-import { NoteName, NoteNumber } from "../lib/sound";
+import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
 
 export type PianoKeys = { [T in NoteName]: string };
 export type PianoObj = {
@@ -74,4 +74,21 @@ export const usePianos = (
   initialPianos: PianoObj[]
 ): [PianoObj[], Dispatch<PianosAction>] => {
   return useReducer(reducer, initialPianos);
+};
+
+export const extractKeyNames = (hotKeys: PianoKeys): string[] => {
+  const keys: string[] = [];
+  for (const noteName in hotKeys) {
+    const hotKey = hotKeys[noteName as NoteName];
+    if (hotKey !== "") {
+      keys.push(hotKey);
+    }
+  }
+  return keys;
+};
+
+export const getDefaultPianoKeys = (): PianoKeys => {
+  return ALL_NOTE_NAMES.reduce((keys, noteName): PianoKeys => {
+    return { ...keys, [noteName]: "" };
+  }, {} as PianoKeys);
 };
