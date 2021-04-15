@@ -12,10 +12,15 @@ import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
 
 type Props = {
   className?: string;
+  nonExistentNoteNumbers: readonly NoteNumber[];
   addPiano: (noteNumber: NoteNumber, keys: PianoKeys) => void;
 };
 
-const Component: React.FC<Props> = ({ className, addPiano }) => {
+const Component: React.FC<Props> = ({
+  className,
+  nonExistentNoteNumbers,
+  addPiano,
+}) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
   const [hotKeys, setHotKeys] = useState(getDefaultPianoKeys());
   const existingKeyNames = useAllPianoHotKeyName();
@@ -59,7 +64,7 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
   };
 
   const handleChangeNoteNumber = (noteNumber: NoteNumber | undefined) => {
-    if (noteNumber !== undefined) {
+    if (noteNumber) {
       setNoteNumber(noteNumber);
     }
   };
@@ -71,7 +76,11 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
 
   return (
     <Flex className={className} flexDir="column" align="center">
-      <Heading size="md">Hot Keys</Heading>
+      <Heading size="xl">キーボードの追加</Heading>
+
+      <Heading mt={3} size="md">
+        Hot Keys
+      </Heading>
       <PianoHotKeyEditor
         mt={3}
         noteNumber={noteNumber}
@@ -79,18 +88,25 @@ const Component: React.FC<Props> = ({ className, addPiano }) => {
         onChange={handleChangeHotKeys}
         validationRules={validationRules}
       />
+
       <Heading mt={5} size="md">
         Note Number
       </Heading>
       <NoteNumberSelect
         selected={noteNumber}
+        noteNumbers={nonExistentNoteNumbers}
         onChange={handleChangeNoteNumber}
         mt={1}
         w="100px"
         bg="gray.100"
       />
-      <Button mt={5} onClick={handleClickAddPianoButton} disabled={!isValid}>
-        キーボードを追加
+      <Button
+        mt={5}
+        w="80px"
+        onClick={handleClickAddPianoButton}
+        disabled={!isValid}
+      >
+        追加
       </Button>
     </Flex>
   );

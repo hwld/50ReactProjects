@@ -1,13 +1,13 @@
 import { Center } from "@chakra-ui/layout";
 import { Box, Flex } from "@chakra-ui/react";
 import { NextPage } from "next";
-import React from "react";
+import React, { useMemo } from "react";
 import { AddPianoForm } from "../components/AddPianoForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
 import { PianoHotKeys } from "../components/PianoHotKeys";
 import { PianoKeys, usePianos } from "../hooks/usePianos";
-import { NoteNumber, playSound } from "../lib/sound";
+import { ALL_NOTE_NUMBERS, NoteNumber, playSound } from "../lib/sound";
 
 const Home: NextPage = () => {
   const [allPianos, dispatchToAllPianos] = usePianos([
@@ -30,6 +30,17 @@ const Home: NextPage = () => {
       pressedNoteNames: [],
     },
   ]);
+
+  const existingNoteNumber = useMemo(() => {
+    return allPianos.map(({ noteNumber }) => noteNumber);
+  }, [allPianos]);
+
+  const nonExistentNoteNumber = useMemo(() => {
+    return ALL_NOTE_NUMBERS.filter(
+      (number) =>
+        !allPianos.map(({ noteNumber }) => noteNumber).includes(number)
+    );
+  }, [allPianos]);
 
   const addPiano = (noteNumber: NoteNumber, keys: PianoKeys) => {
     const isDuplicated = Boolean(
@@ -84,21 +95,26 @@ const Home: NextPage = () => {
         </Center>
 
         <Flex p={10}>
-          <AddPianoForm
-            addPiano={addPiano}
-            flexGrow={1}
-            p={5}
-            bg="gray.400"
-            borderRight="1px solid"
-            borderColor="gray.500"
-          />
-          <DeletePianoForm
-            pianos={allPianos}
-            deletePiano={deletePiano}
-            flexGrow={1}
-            p={5}
-            bg="gray.400"
-          />
+          {nonExistentNoteNumber.length !== 0 && (
+            <AddPianoForm
+              nonExistentNoteNumbers={nonExistentNoteNumber}
+              addPiano={addPiano}
+              flexGrow={1}
+              p={5}
+              bg="gray.400"
+              borderRight="1px solid"
+              borderColor="gray.500"
+            />
+          )}
+          {existingNoteNumber.length !== 0 && (
+            <DeletePianoForm
+              existingNoteNumbers={existingNoteNumber}
+              deletePiano={deletePiano}
+              flexGrow={1}
+              p={5}
+              bg="gray.400"
+            />
+          )}
         </Flex>
       </Box>
     </PianoHotKeys>
