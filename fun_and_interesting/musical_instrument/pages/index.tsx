@@ -7,7 +7,7 @@ import { ChangePianoHotKeyForm } from "../components/ChangePianoHotKeyForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
 import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
-import { PianoKeys, usePianos } from "../hooks/usePianos";
+import { getDefaultPianoKeys, PianoKeys, usePianos } from "../hooks/usePianos";
 import { ALL_NOTE_NUMBERS, NoteNumber, playSound } from "../lib/sound";
 
 const Home: NextPage = () => {
@@ -42,6 +42,15 @@ const Home: NextPage = () => {
         !allPianos.map(({ noteNumber }) => noteNumber).includes(number)
     );
   }, [allPianos]);
+
+  const getPianoKeys = (noteNumber: NoteNumber) => {
+    const piano = allPianos.find((piano) => piano.noteNumber === noteNumber);
+    if (!piano) {
+      return getDefaultPianoKeys();
+    }
+
+    return piano.keys;
+  };
 
   const addPiano = (noteNumber: NoteNumber, keys: PianoKeys) => {
     const isDuplicated = Boolean(
@@ -111,6 +120,7 @@ const Home: NextPage = () => {
 
           <ChangePianoHotKeyForm
             existingNoteNumbers={existingNoteNumber}
+            getPianoKeys={getPianoKeys}
             changePianoHotKeys={changePianoHotKeys}
             flexGrow={1}
             p={5}

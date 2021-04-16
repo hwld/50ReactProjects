@@ -2,7 +2,7 @@ import { chakra } from "@chakra-ui/react";
 import React, { createContext, Dispatch, useContext } from "react";
 import { HotKeys, HotKeysProps, KeyMapOptions } from "react-hotkeys";
 import { Piano, PianosAction } from "../hooks/usePianos";
-import { Note, NoteName } from "../lib/sound";
+import { Note, NoteName, NoteNumber } from "../lib/sound";
 
 type PianosKeyMap = { [T in string]: KeyMapOptions };
 type Handlers = NonNullable<HotKeysProps["handlers"]>;
@@ -113,10 +113,13 @@ export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
   return piano.keys[noteName].toUpperCase();
 };
 
-export const useAllPianoHotKeyName = (): string[] => {
+export const useAllPianoHotKeyName = (option?: {
+  excludingNoteNumber: NoteNumber;
+}): string[] => {
   const pianos = usePianosHotKeys();
 
   const allKeyNames = pianos
+    .filter((piano) => piano.noteNumber !== option?.excludingNoteNumber)
     .map(({ keys }) => {
       const keyNames: string[] = [];
       for (const noteName in keys) {

@@ -1,25 +1,57 @@
 import { Button, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { getDefaultPianoKeys, PianoKeys } from "../hooks/usePianos";
+import { useAllPianoHotKeyName } from "../context/PianosHotKeysContext";
+import { extractKeyNames, PianoKeys } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
 import { NoteNumberSelect } from "./NoteNumberSelect";
-import { PianoHotKeyEditor } from "./PianoHotKeyEditor";
+import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
 
 type Props = {
   className?: string;
   existingNoteNumbers: NoteNumber[];
+  getPianoKeys: (noteNumber: NoteNumber) => PianoKeys;
   changePianoHotKeys: (noteNumber: NoteNumber, keys: PianoKeys) => void;
 };
 
 const Component: React.FC<Props> = ({
   className,
   existingNoteNumbers,
+  getPianoKeys,
   changePianoHotKeys,
 }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>(
     existingNoteNumbers[0]
   );
-  const [hotKeys, setHotKeys] = useState(getDefaultPianoKeys());
+  const [hotKeys, setHotKeys] = useState(getPianoKeys(noteNumber));
+  const existingKeyNames = useAllPianoHotKeyName({
+    excludingNoteNumber: noteNumber,
+  });
+
+  const validationRules: ValidationRule[] = [
+    {
+      validate: (key: string) => {
+        if (key === "") {
+          return true;
+        }
+
+        return !existingKeyNames.includes(key);
+      },
+      errorMessage: "すでに設定されているキーです",
+    },
+    {
+      validate: (key: string) => {
+        if (key === "") {
+          return true;
+        }
+
+        return (
+          extractKeyNames(hotKeys).filter((edittingKey) => edittingKey === key)
+            .length === 1
+        );
+      },
+      errorMessage: "設定しようとしているキーが重複しています",
+    },
+  ];
 
   const handleChangeHotKeys = (noteName: NoteName, hotKey: string) => {
     setHotKeys((keys) => {
@@ -30,6 +62,7 @@ const Component: React.FC<Props> = ({
   const handleChangeNoteNumber = (noteNumber: NoteNumber | undefined) => {
     if (noteNumber) {
       setNoteNumber(noteNumber);
+      setHotKeys(getPianoKeys(noteNumber));
     }
   };
 
@@ -53,6 +86,7 @@ const Component: React.FC<Props> = ({
             noteNumber={noteNumber}
             hotKeys={hotKeys}
             onChange={handleChangeHotKeys}
+            validationRules={validationRules}
           />
 
           <Heading mt={5} size="md">
