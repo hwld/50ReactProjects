@@ -3,6 +3,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { NextPage } from "next";
 import React, { useMemo } from "react";
 import { AddPianoForm } from "../components/AddPianoForm";
+import { ChangePianoHotKeyForm } from "../components/ChangePianoHotKeyForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
 import { PianoHotKeys } from "../components/PianoHotKeys";
@@ -52,6 +53,10 @@ const Home: NextPage = () => {
     }
   };
 
+  const changePianoHotKeys = (noteNumber: NoteNumber, keys: PianoKeys) => {
+    dispatchToAllPianos({ type: "changePianoHotKeys", noteNumber, keys });
+  };
+
   const deletePiano = (noteNumber: NoteNumber) => {
     dispatchToAllPianos({ type: "deletePiano", noteNumber });
   };
@@ -70,11 +75,10 @@ const Home: NextPage = () => {
         <Center mt={5}>
           <Flex
             flexWrap="wrap"
-            minW="1000px"
-            maxW="1500px"
+            w="90%"
             justify="center"
             bg="gray.800"
-            p={10}
+            p={5}
             tabIndex={0}
             opacity={0.3}
             _groupFocus={{ opacity: 1, outline: "none" }}
@@ -95,26 +99,32 @@ const Home: NextPage = () => {
         </Center>
 
         <Flex p={10}>
-          {nonExistentNoteNumber.length !== 0 && (
-            <AddPianoForm
-              nonExistentNoteNumbers={nonExistentNoteNumber}
-              addPiano={addPiano}
-              flexGrow={1}
-              p={5}
-              bg="gray.400"
-              borderRight="1px solid"
-              borderColor="gray.500"
-            />
-          )}
-          {existingNoteNumber.length !== 0 && (
-            <DeletePianoForm
-              existingNoteNumbers={existingNoteNumber}
-              deletePiano={deletePiano}
-              flexGrow={1}
-              p={5}
-              bg="gray.400"
-            />
-          )}
+          <AddPianoForm
+            nonExistentNoteNumbers={nonExistentNoteNumber}
+            addPiano={addPiano}
+            flexGrow={1}
+            p={5}
+            bg="gray.400"
+            borderRight="1px solid"
+            borderColor="gray.500"
+          />
+
+          <ChangePianoHotKeyForm
+            existingNoteNumbers={existingNoteNumber}
+            changePianoHotKeys={changePianoHotKeys}
+            flexGrow={1}
+            p={5}
+            bg="gray.400"
+            borderRight="1px solid"
+            borderColor="gray.500"
+          />
+          <DeletePianoForm
+            existingNoteNumbers={existingNoteNumber}
+            deletePiano={deletePiano}
+            flexGrow={1}
+            p={5}
+            bg="gray.400"
+          />
         </Flex>
       </Box>
     </PianoHotKeys>

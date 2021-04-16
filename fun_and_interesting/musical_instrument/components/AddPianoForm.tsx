@@ -101,7 +101,7 @@ const Component: React.FC<Props> = ({
         bg="gray.100"
       />
       <Button
-        mt={5}
+        mt={10}
         w="80px"
         onClick={handleClickAddPianoButton}
         disabled={!isValid}

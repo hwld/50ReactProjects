@@ -14,6 +14,7 @@ export type PianosAction =
       noteNumber: NoteNumber;
       keys: PianoKeys;
     }
+  | { type: "changePianoHotKeys"; noteNumber: NoteNumber; keys: PianoKeys }
   | { type: "deletePiano"; noteNumber: NoteNumber }
   | { type: "keyDown"; noteNumber: NoteNumber; key: NoteName }
   | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName }
@@ -32,8 +33,17 @@ const reducer = (state: PianoObj[], action: PianosAction): PianoObj[] => {
       ];
     }
 
+    case "changePianoHotKeys": {
+      return state.map((piano) => {
+        if (piano.noteNumber !== action.noteNumber) {
+          return piano;
+        }
+        return { ...piano, keys: action.keys };
+      });
+    }
+
     case "deletePiano": {
-      return state.filter((s) => s.noteNumber !== action.noteNumber);
+      return state.filter((piano) => piano.noteNumber !== action.noteNumber);
     }
 
     case "keyDown": {
