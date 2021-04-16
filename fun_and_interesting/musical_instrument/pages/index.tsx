@@ -6,7 +6,7 @@ import { AddPianoForm } from "../components/AddPianoForm";
 import { ChangePianoHotKeyForm } from "../components/ChangePianoHotKeyForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
-import { PianoHotKeys } from "../components/PianoHotKeys";
+import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
 import { PianoKeys, usePianos } from "../hooks/usePianos";
 import { ALL_NOTE_NUMBERS, NoteNumber, playSound } from "../lib/sound";
 
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <PianoHotKeys
+    <PianosHotKeysProvider
       pianos={allPianos}
       dispatchToPianos={dispatchToAllPianos}
       playSound={playSound}
@@ -87,12 +87,12 @@ const Home: NextPage = () => {
           >
             {allPianos.map(({ noteNumber, pressedNoteNames }, index) => (
               <Piano
-                mt={5}
-                ml={index === 0 ? 0 : 3}
                 key={noteNumber}
                 noteNumber={noteNumber}
                 pressedNoteNames={pressedNoteNames}
                 playSound={playSound}
+                mt={5}
+                ml={index === 0 ? 0 : 3}
               />
             ))}
           </Flex>
@@ -127,7 +127,7 @@ const Home: NextPage = () => {
           />
         </Flex>
       </Box>
-    </PianoHotKeys>
+    </PianosHotKeysProvider>
   );
 };
 
