@@ -1,17 +1,13 @@
 import { chakra } from "@chakra-ui/react";
 import React, { createContext, Dispatch, useContext } from "react";
 import { HotKeys, HotKeysProps, KeyMapOptions } from "react-hotkeys";
-import { KeyboardPiano, PianosAction } from "../hooks/useKeyboardPianos";
+import { Piano, PianosAction } from "../hooks/usePianos";
 import { Note, NoteName } from "../lib/sound";
 
 type PianosKeyMap = { [T in string]: KeyMapOptions };
-type PianosKeyMapForRead = { [T in string]: KeyMapOptions | undefined };
 type Handlers = NonNullable<HotKeysProps["handlers"]>;
 
-const createPianoKeyMap = ({
-  noteNumber,
-  keys,
-}: KeyboardPiano): PianosKeyMap => {
+const createPianoKeyMap = ({ noteNumber, keys }: Piano): PianosKeyMap => {
   const keyMaps: PianosKeyMap = {};
   for (const noteName in keys) {
     const key = keys[noteName as NoteName] as string;
@@ -29,7 +25,7 @@ const createPianoKeyMap = ({
 };
 
 const createPianoKeyHandlers = (
-  { noteNumber, keys }: KeyboardPiano,
+  { noteNumber, keys }: Piano,
   dispatchPianos: Dispatch<PianosAction>,
   playSound: (note: Note) => void
 ): Handlers => {
@@ -50,11 +46,12 @@ const createPianoKeyHandlers = (
   return handlers;
 };
 
-const KeyMapContext = createContext<PianosKeyMap>({});
+type PianoHotKeys = { noteNumber: Piano["noteNumber"]; keys: Piano["keys"] };
+const PianosHotKeysContext = createContext<PianoHotKeys[]>([]);
 
 type PianosHotKeysProviderProps = {
   className?: string;
-  pianos: KeyboardPiano[];
+  pianos: Piano[];
   dispatchToPianos: Dispatch<PianosAction>;
   playSound?: (note: Note) => void;
   role?: string;
@@ -87,7 +84,7 @@ const Provider: React.FC<PianosHotKeysProviderProps> = ({
   };
 
   return (
-    <KeyMapContext.Provider value={keyMap}>
+    <PianosHotKeysContext.Provider value={pianos}>
       <HotKeys
         className={className}
         keyMap={keyMap}
@@ -99,34 +96,38 @@ const Provider: React.FC<PianosHotKeysProviderProps> = ({
       >
         {children}
       </HotKeys>
-    </KeyMapContext.Provider>
+    </PianosHotKeysContext.Provider>
   );
 };
 export const PianosHotKeysProvider = chakra(Provider);
 
-export const usePianosHotKeysKeyMap = (): PianosKeyMapForRead =>
-  useContext(KeyMapContext);
+export const usePianosHotKeys = (): PianoHotKeys[] =>
+  useContext(PianosHotKeysContext);
 
 export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
-  const keyMap = usePianosHotKeysKeyMap();
-  const key = keyMap[`${noteName}${noteNumber}_KEYDOWN`]?.sequence;
-  if (Array.isArray(key) || key === undefined) {
+  const pianos = usePianosHotKeys();
+  const piano = pianos.find((piano) => piano.noteNumber === noteNumber);
+  if (!piano) {
     return "";
   }
-
-  return key.toUpperCase();
+  return piano.keys[noteName].toUpperCase();
 };
 
 export const useAllPianoHotKeyName = (): string[] => {
-  const keyMap = usePianosHotKeysKeyMap();
+  const pianos = usePianosHotKeys();
 
-  const allKeyNames: string[] = [];
-  for (const entry in keyMap) {
-    const keyName = keyMap[entry]?.sequence;
-    if (typeof keyName === "string") {
-      allKeyNames.push(keyName);
-    }
-  }
+  const allKeyNames = pianos
+    .map(({ keys }) => {
+      const keyNames: string[] = [];
+      for (const noteName in keys) {
+        const keyName = keys[noteName as NoteName];
+        if (keyName !== "") {
+          keyNames.push(keyName);
+        }
+      }
+      return keyNames;
+    })
+    .flat();
 
   return Array.from(new Set(allKeyNames));
 };

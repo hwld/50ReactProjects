@@ -2,7 +2,7 @@ import { Dispatch, useReducer } from "react";
 import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
 
 export type PianoKeys = { [T in NoteName]: string };
-export type PianoObj = {
+export type Piano = {
   noteNumber: NoteNumber;
   keys: PianoKeys;
   pressedNoteNames: NoteName[];
@@ -20,7 +20,7 @@ export type PianosAction =
   | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName }
   | { type: "resetPressed" };
 
-const reducer = (state: PianoObj[], action: PianosAction): PianoObj[] => {
+const reducer = (state: Piano[], action: PianosAction): Piano[] => {
   switch (action.type) {
     case "addPiano": {
       return [
@@ -81,8 +81,8 @@ const reducer = (state: PianoObj[], action: PianosAction): PianoObj[] => {
 };
 
 export const usePianos = (
-  initialPianos: PianoObj[]
-): [PianoObj[], Dispatch<PianosAction>] => {
+  initialPianos: Piano[]
+): [Piano[], Dispatch<PianosAction>] => {
   return useReducer(reducer, initialPianos);
 };
 
