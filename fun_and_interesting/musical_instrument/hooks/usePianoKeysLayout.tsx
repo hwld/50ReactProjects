@@ -17,12 +17,12 @@ type BlackKeyLayout = {
   blackKeyWidth: ChakraProps["width"];
 };
 
-type PianoKeysLayout = {
+type NoteNameKeyMapLayout = {
   whiteKeys: WhiteKeyLayout[];
   blackKeys: BlackKeyLayout[];
 };
 
-export const usePianoKeysLayout = (): PianoKeysLayout => {
+export const useNoteNameKeyMapLayout = (): NoteNameKeyMapLayout => {
   const whiteKeyWidth = "50px";
   const whiteKeyMarginRight = "10px";
   const blackKeyWidth = "45px";

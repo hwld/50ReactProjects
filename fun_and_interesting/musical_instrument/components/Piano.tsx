@@ -1,6 +1,6 @@
 import { Box, chakra, Flex } from "@chakra-ui/react";
 import React from "react";
-import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
+import { useNoteNameKeyMapLayout } from "../hooks/usePianoKeysLayout";
 import { Note, NoteName, NoteNumber } from "../lib/sound";
 import { PlayablePianoKey } from "./PlayablePianoKey";
 
@@ -17,7 +17,7 @@ const Component: React.FC<Props> = ({
   pressedNoteNames = [],
   playSound,
 }) => {
-  const { whiteKeys, blackKeys } = usePianoKeysLayout();
+  const { whiteKeys, blackKeys } = useNoteNameKeyMapLayout();
 
   return (
     <Box position="relative" className={className}>

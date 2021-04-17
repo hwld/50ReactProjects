@@ -1,10 +1,10 @@
 import { Dispatch, useReducer } from "react";
 import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
 
-export type PianoKeys = { [T in NoteName]: string };
+export type NoteNameKeyMap = { [T in NoteName]: string };
 export type Piano = {
   noteNumber: NoteNumber;
-  keys: PianoKeys;
+  keyMap: NoteNameKeyMap;
   pressedNoteNames: NoteName[];
 };
 
@@ -12,13 +12,34 @@ export type PianosAction =
   | {
       type: "addPiano";
       noteNumber: NoteNumber;
-      keys: PianoKeys;
+      keyMap: NoteNameKeyMap;
     }
-  | { type: "changePianoHotKeys"; noteNumber: NoteNumber; keys: PianoKeys }
+  | {
+      type: "changePianoHotKeys";
+      noteNumber: NoteNumber;
+      keyMap: NoteNameKeyMap;
+    }
   | { type: "deletePiano"; noteNumber: NoteNumber }
   | { type: "keyDown"; noteNumber: NoteNumber; key: NoteName }
   | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName }
   | { type: "resetPressed" };
+
+export const extractKeyNames = (keyMap: NoteNameKeyMap): string[] => {
+  const keyNames: string[] = [];
+  for (const noteName in keyMap) {
+    const hotKey = keyMap[noteName as NoteName];
+    if (hotKey !== "") {
+      keyNames.push(hotKey);
+    }
+  }
+  return keyNames;
+};
+
+export const getDefaultNoteNameKeyMap = (): NoteNameKeyMap => {
+  return ALL_NOTE_NAMES.reduce((keyMap, noteName): NoteNameKeyMap => {
+    return { ...keyMap, [noteName]: "" };
+  }, {} as NoteNameKeyMap);
+};
 
 const reducer = (state: Piano[], action: PianosAction): Piano[] => {
   switch (action.type) {
@@ -27,7 +48,7 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
         ...state,
         {
           noteNumber: action.noteNumber,
-          keys: action.keys,
+          keyMap: action.keyMap,
           pressedNoteNames: [],
         },
       ];
@@ -38,7 +59,7 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
         if (piano.noteNumber !== action.noteNumber) {
           return piano;
         }
-        return { ...piano, keys: action.keys };
+        return { ...piano, keyMap: action.keyMap };
       });
     }
 
@@ -84,21 +105,4 @@ export const usePianos = (
   initialPianos: Piano[]
 ): [Piano[], Dispatch<PianosAction>] => {
   return useReducer(reducer, initialPianos);
-};
-
-export const extractKeyNames = (hotKeys: PianoKeys): string[] => {
-  const keys: string[] = [];
-  for (const noteName in hotKeys) {
-    const hotKey = hotKeys[noteName as NoteName];
-    if (hotKey !== "") {
-      keys.push(hotKey);
-    }
-  }
-  return keys;
-};
-
-export const getDefaultPianoKeys = (): PianoKeys => {
-  return ALL_NOTE_NAMES.reduce((keys, noteName): PianoKeys => {
-    return { ...keys, [noteName]: "" };
-  }, {} as PianoKeys);
 };

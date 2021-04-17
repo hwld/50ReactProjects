@@ -1,7 +1,7 @@
 import { Alert, AlertIcon, Box, chakra, Flex } from "@chakra-ui/react";
 import React from "react";
-import { usePianoKeysLayout } from "../hooks/usePianoKeysLayout";
-import { PianoKeys, extractKeyNames } from "../hooks/usePianos";
+import { useNoteNameKeyMapLayout } from "../hooks/usePianoKeysLayout";
+import { NoteNameKeyMap, extractKeyNames } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
 import { PianoHotkeyInput } from "./PianoHotKeyInput";
 import { PianoKey } from "./PianoKey";
@@ -14,7 +14,7 @@ export type ValidationRule = {
 type Props = {
   className?: string;
   noteNumber: NoteNumber;
-  hotKeys: PianoKeys;
+  hotKeys: NoteNameKeyMap;
   onChange?: (noteName: NoteName, key: string) => void;
   disabledHotKeys?: { isDisabled: (key: string) => boolean; message: string }[];
   validationRules?: ValidationRule[];
@@ -27,7 +27,7 @@ const Component: React.FC<Props> = ({
   onChange,
   validationRules = [],
 }) => {
-  const { whiteKeys, blackKeys } = usePianoKeysLayout();
+  const { whiteKeys, blackKeys } = useNoteNameKeyMapLayout();
 
   const handleChange = (noteName: NoteName, key: string) => {
     if (onChange) {

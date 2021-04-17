@@ -7,14 +7,18 @@ import { ChangePianoHotKeyForm } from "../components/ChangePianoHotKeyForm";
 import { DeletePianoForm } from "../components/DeletePianoForm";
 import { Piano } from "../components/Piano";
 import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
-import { getDefaultPianoKeys, PianoKeys, usePianos } from "../hooks/usePianos";
+import {
+  getDefaultNoteNameKeyMap,
+  NoteNameKeyMap,
+  usePianos,
+} from "../hooks/usePianos";
 import { ALL_NOTE_NUMBERS, NoteNumber, playSound } from "../lib/sound";
 
 const Home: NextPage = () => {
   const [allPianos, dispatchToAllPianos] = usePianos([
     {
       noteNumber: "3",
-      keys: {
+      keyMap: {
         C: "a",
         D: "s",
         E: "d",
@@ -43,27 +47,30 @@ const Home: NextPage = () => {
     );
   }, [allPianos]);
 
-  const getPianoKeys = (noteNumber: NoteNumber) => {
+  const getNoteNameKeyMap = (noteNumber: NoteNumber) => {
     const piano = allPianos.find((piano) => piano.noteNumber === noteNumber);
     if (!piano) {
-      return getDefaultPianoKeys();
+      return getDefaultNoteNameKeyMap();
     }
 
-    return piano.keys;
+    return piano.keyMap;
   };
 
-  const addPiano = (noteNumber: NoteNumber, keys: PianoKeys) => {
+  const addPiano = (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => {
     const isDuplicated = Boolean(
       allPianos.find((piano) => piano.noteNumber === noteNumber)
     );
 
     if (!isDuplicated) {
-      dispatchToAllPianos({ type: "addPiano", noteNumber, keys });
+      dispatchToAllPianos({ type: "addPiano", noteNumber, keyMap });
     }
   };
 
-  const changePianoHotKeys = (noteNumber: NoteNumber, keys: PianoKeys) => {
-    dispatchToAllPianos({ type: "changePianoHotKeys", noteNumber, keys });
+  const changePianoHotKeys = (
+    noteNumber: NoteNumber,
+    keyMap: NoteNameKeyMap
+  ) => {
+    dispatchToAllPianos({ type: "changePianoHotKeys", noteNumber, keyMap });
   };
 
   const deletePiano = (noteNumber: NoteNumber) => {
@@ -120,7 +127,7 @@ const Home: NextPage = () => {
 
           <ChangePianoHotKeyForm
             existingNoteNumbers={existingNoteNumber}
-            getPianoKeys={getPianoKeys}
+            getNoteNameKeyMap={getNoteNameKeyMap}
             changePianoHotKeys={changePianoHotKeys}
             flexGrow={1}
             p={5}

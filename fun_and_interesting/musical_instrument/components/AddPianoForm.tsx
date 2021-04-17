@@ -3,8 +3,8 @@ import React, { useMemo, useState } from "react";
 import { useAllPianoHotKeyName } from "../context/PianosHotKeysContext";
 import {
   extractKeyNames,
-  getDefaultPianoKeys,
-  PianoKeys,
+  getDefaultNoteNameKeyMap,
+  NoteNameKeyMap,
 } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
 import { NoteNumberSelect } from "./NoteNumberSelect";
@@ -13,7 +13,7 @@ import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
 type Props = {
   className?: string;
   nonExistentNoteNumbers: readonly NoteNumber[];
-  addPiano: (noteNumber: NoteNumber, keys: PianoKeys) => void;
+  addPiano: (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => void;
 };
 
 const Component: React.FC<Props> = ({
@@ -22,7 +22,7 @@ const Component: React.FC<Props> = ({
   addPiano,
 }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>("0");
-  const [hotKeys, setHotKeys] = useState(getDefaultPianoKeys());
+  const [hotKeys, setHotKeys] = useState(getDefaultNoteNameKeyMap());
   const existingKeyNames = useAllPianoHotKeyName();
 
   const validationRules: ValidationRule[] = [
@@ -58,8 +58,8 @@ const Component: React.FC<Props> = ({
   }, [hotKeys, validationRules]);
 
   const handleChangeHotKeys = (noteName: NoteName, hotKey: string) => {
-    setHotKeys((keys) => {
-      return { ...keys, [noteName]: hotKey };
+    setHotKeys((keyMap) => {
+      return { ...keyMap, [noteName]: hotKey };
     });
   };
 
@@ -71,7 +71,7 @@ const Component: React.FC<Props> = ({
 
   const handleClickAddPianoButton = () => {
     addPiano(noteNumber, hotKeys);
-    setHotKeys(getDefaultPianoKeys());
+    setHotKeys(getDefaultNoteNameKeyMap());
   };
 
   return (

@@ -1,7 +1,7 @@
 import { Button, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useAllPianoHotKeyName } from "../context/PianosHotKeysContext";
-import { extractKeyNames, PianoKeys } from "../hooks/usePianos";
+import { extractKeyNames, NoteNameKeyMap } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
 import { NoteNumberSelect } from "./NoteNumberSelect";
 import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
@@ -9,20 +9,20 @@ import { PianoHotKeyEditor, ValidationRule } from "./PianoHotKeyEditor";
 type Props = {
   className?: string;
   existingNoteNumbers: NoteNumber[];
-  getPianoKeys: (noteNumber: NoteNumber) => PianoKeys;
-  changePianoHotKeys: (noteNumber: NoteNumber, keys: PianoKeys) => void;
+  getNoteNameKeyMap: (noteNumber: NoteNumber) => NoteNameKeyMap;
+  changePianoHotKeys: (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => void;
 };
 
 const Component: React.FC<Props> = ({
   className,
   existingNoteNumbers,
-  getPianoKeys,
+  getNoteNameKeyMap,
   changePianoHotKeys,
 }) => {
   const [noteNumber, setNoteNumber] = useState<NoteNumber>(
     existingNoteNumbers[0]
   );
-  const [hotKeys, setHotKeys] = useState(getPianoKeys(noteNumber));
+  const [hotKeys, setHotKeys] = useState(getNoteNameKeyMap(noteNumber));
   const existingKeyNames = useAllPianoHotKeyName({
     excludingNoteNumber: noteNumber,
   });
@@ -54,15 +54,15 @@ const Component: React.FC<Props> = ({
   ];
 
   const handleChangeHotKeys = (noteName: NoteName, hotKey: string) => {
-    setHotKeys((keys) => {
-      return { ...keys, [noteName]: hotKey };
+    setHotKeys((keyMap) => {
+      return { ...keyMap, [noteName]: hotKey };
     });
   };
 
   const handleChangeNoteNumber = (noteNumber: NoteNumber | undefined) => {
     if (noteNumber) {
       setNoteNumber(noteNumber);
-      setHotKeys(getPianoKeys(noteNumber));
+      setHotKeys(getNoteNameKeyMap(noteNumber));
     }
   };
 
