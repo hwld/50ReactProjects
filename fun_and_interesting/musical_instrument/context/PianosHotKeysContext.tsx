@@ -1,23 +1,59 @@
 import { chakra } from "@chakra-ui/react";
 import React, { createContext, Dispatch, useContext } from "react";
-import { HotKeys, HotKeysProps, KeyMapOptions } from "react-hotkeys";
+import { HotKeys, KeyMapOptions } from "react-hotkeys";
 import { Piano, NoteNameKeyMap, PianosAction } from "../hooks/usePianos";
 import { isNoteName, Note, NoteName, NoteNumber } from "../lib/sound";
 
 type PianoKeyMap = { noteNumber: NoteNumber } & NoteNameKeyMap;
 
-type EventKeyMap = { [T in string]: KeyMapOptions };
-type EventHandlers = NonNullable<HotKeysProps["handlers"]>;
+type PianoEventType = "KEYDOWN" | "KEYUP";
+type PianoEvent = `${NoteName}${NoteNumber}_${PianoEventType}`;
+type RejectOtherThanPianoEvent = { [T in Exclude<string, PianoEvent>]: never };
+type PianoEventKeyMap = { [T in PianoEvent]?: KeyMapOptions } &
+  RejectOtherThanPianoEvent;
+type PianoEventHandlers = {
+  [T in PianoEvent]?: (keyEvent?: KeyboardEvent) => void;
+} &
+  RejectOtherThanPianoEvent;
 
-const createPianoEventKeyMap = ({ noteNumber, keyMap }: Piano): EventKeyMap => {
-  const keyMaps: EventKeyMap = {};
+const buildPianoEvent = (arg: {
+  noteName: NoteName;
+  noteNumber: NoteNumber;
+  type: PianoEventType;
+}): PianoEvent => {
+  return `${arg.noteName}${arg.noteNumber}_${arg.type}` as PianoEvent;
+};
+
+const createPianoEventKeyMap = ({
+  noteNumber,
+  keyMap,
+}: Piano): PianoEventKeyMap => {
+  const keyMaps: PianoEventKeyMap = {};
   for (const noteName in keyMap) {
-    const key = keyMap[noteName as NoteName];
-    keyMaps[`${noteName}${noteNumber}_KEYDOWN`] = {
+    if (!isNoteName(noteName)) {
+      continue;
+    }
+
+    const key = keyMap[noteName];
+
+    keyMaps[
+      buildPianoEvent({
+        noteName,
+        noteNumber,
+        type: "KEYDOWN",
+      })
+    ] = {
       sequence: key,
       action: "keydown",
     };
-    keyMaps[`${noteName}${noteNumber}_KEYUP`] = {
+
+    keyMaps[
+      buildPianoEvent({
+        noteName,
+        noteNumber,
+        type: "KEYUP",
+      })
+    ] = {
       sequence: key,
       action: "keyup",
     };
@@ -30,19 +66,32 @@ const createPianoEventHandlers = (
   { noteNumber, keyMap }: Piano,
   dispatchPianos: Dispatch<PianosAction>,
   playSound: (note: Note) => void
-): EventHandlers => {
-  let handlers: EventHandlers = {};
-  for (const property in keyMap) {
-    const noteName = property as NoteName;
-    handlers = {
-      ...handlers,
-      [`${noteName}${noteNumber}_KEYDOWN`]: () => {
-        playSound({ noteName, noteNumber });
-        dispatchPianos({ type: "keyDown", noteNumber, key: noteName });
-      },
-      [`${noteName}${noteNumber}_KEYUP`]: () => {
-        dispatchPianos({ type: "keyUp", noteNumber, key: noteName });
-      },
+): PianoEventHandlers => {
+  const handlers: PianoEventHandlers = {};
+  for (const noteName in keyMap) {
+    if (!isNoteName(noteName)) {
+      continue;
+    }
+
+    handlers[
+      buildPianoEvent({
+        noteName,
+        noteNumber,
+        type: "KEYDOWN",
+      })
+    ] = () => {
+      playSound({ noteName, noteNumber });
+      dispatchPianos({ type: "keyDown", noteNumber, key: noteName });
+    };
+
+    handlers[
+      buildPianoEvent({
+        noteName,
+        noteNumber,
+        type: "KEYUP",
+      })
+    ] = () => {
+      dispatchPianos({ type: "keyUp", noteNumber, key: noteName });
     };
   }
   return handlers;
@@ -75,8 +124,8 @@ export const PianosHotKeysProvider = chakra<
     }));
 
     const { keyMap, handlers } = pianos.reduce<{
-      keyMap: EventKeyMap;
-      handlers: EventHandlers;
+      keyMap: PianoEventKeyMap;
+      handlers: PianoEventHandlers;
     }>(
       ({ keyMap, handlers }, piano) => ({
         keyMap: { ...keyMap, ...createPianoEventKeyMap(piano) },
