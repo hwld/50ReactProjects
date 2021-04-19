@@ -14,16 +14,16 @@ export type ValidationRule = {
 type Props = {
   className?: string;
   noteNumber: NoteNumber;
-  hotKeys: NoteNameKeyMap;
+  keyMap: NoteNameKeyMap;
   onChange?: (noteName: NoteName, key: string) => void;
-  disabledHotKeys?: { isDisabled: (key: string) => boolean; message: string }[];
+  disabledKeyMap?: { isDisabled: (key: string) => boolean; message: string }[];
   validationRules?: ValidationRule[];
 };
 
 const Component: React.FC<Props> = ({
   className,
   noteNumber,
-  hotKeys,
+  keyMap,
   onChange,
   validationRules = [],
 }) => {
@@ -40,7 +40,7 @@ const Component: React.FC<Props> = ({
       <Box>
         {validationRules
           .filter(({ validate }) => {
-            const allKeys = extractKeyNames(hotKeys);
+            const allKeys = extractKeyNames(keyMap);
             return !allKeys.every((key) => validate(key));
           })
           .map(({ errorMessage }, index) => (
@@ -62,7 +62,7 @@ const Component: React.FC<Props> = ({
               >
                 <PianoHotkeyInput
                   noteName={noteName}
-                  hotKey={hotKeys[noteName]}
+                  hotKey={keyMap[noteName]}
                   onChange={handleChange}
                   bg="green.300"
                   validate={validationRules.map(({ validate }) => validate)}
@@ -86,7 +86,7 @@ const Component: React.FC<Props> = ({
               >
                 <PianoHotkeyInput
                   noteName={noteName}
-                  hotKey={hotKeys[noteName]}
+                  hotKey={keyMap[noteName]}
                   onChange={handleChange}
                   bg="green.300"
                   validate={validationRules.map(({ validate }) => validate)}
@@ -101,4 +101,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const PianoHotKeyEditor = chakra(Component);
+export const PianoKeyMapEditor = chakra(Component);

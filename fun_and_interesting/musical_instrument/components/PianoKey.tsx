@@ -24,6 +24,7 @@ const Component: React.FC<Props> = ({
     <Box
       className={className}
       as="button"
+      type="button"
       tabIndex={-1}
       onMouseDown={onMouseDown}
       data-active={pressed ? true : undefined}

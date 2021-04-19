@@ -1,11 +1,9 @@
-import { Center } from "@chakra-ui/layout";
 import { Box, Flex } from "@chakra-ui/react";
 import { NextPage } from "next";
 import React, { useMemo } from "react";
-import { AddPianoForm } from "../components/AddPianoForm";
-import { ChangePianoHotKeyForm } from "../components/ChangePianoHotKeyForm";
-import { DeletePianoForm } from "../components/DeletePianoForm";
+import { OpenAddPianoFormButton } from "../components/OpenAddPianoFormButton";
 import { Piano } from "../components/Piano";
+import { PianosHotkeys } from "../components/PianosHotkeys";
 import { PianosHotKeysProvider } from "../context/PianosHotKeysContext";
 import {
   getDefaultNoteNameKeyMap,
@@ -78,21 +76,27 @@ const Home: NextPage = () => {
   };
 
   return (
-    <PianosHotKeysProvider
-      pianos={allPianos}
-      dispatchToPianos={dispatchToAllPianos}
-      playSound={playSound}
-      role="group"
-      _focus={{ outline: "none" }}
-      // マージンの相殺が起こらないようにする
-      pt={1}
-    >
-      <Box>
-        <Center mt={5}>
+    <PianosHotKeysProvider pianos={allPianos}>
+      <Flex minH="100vh">
+        <Box p={5} minH="100%" bg="red.800">
+          <OpenAddPianoFormButton
+            addPiano={addPiano}
+            nonExistentNoteNumbers={nonExistentNoteNumber}
+          />
+        </Box>
+
+        <PianosHotkeys
+          pianos={allPianos}
+          dispatchToPianos={dispatchToAllPianos}
+          playSound={playSound}
+          role="group"
+          _focus={{ outline: "none" }}
+          flexGrow={1}
+        >
           <Flex
-            flexWrap="wrap"
-            w="90%"
             justify="center"
+            align="start"
+            flexWrap="wrap"
             bg="gray.800"
             p={5}
             tabIndex={0}
@@ -101,49 +105,35 @@ const Home: NextPage = () => {
             _focus={{ opacity: 1, outline: "none" }}
             _focusWithin={{ opacity: 1, outline: "none" }}
           >
-            {allPianos.map(({ noteNumber, pressedNoteNames }, index) => (
+            {allPianos.map(({ noteNumber, pressedNoteNames }) => (
               <Piano
                 key={noteNumber}
                 noteNumber={noteNumber}
+                deletePiano={deletePiano}
                 pressedNoteNames={pressedNoteNames}
+                existingNoteNumbers={existingNoteNumber}
+                getNoteNameKeyMap={getNoteNameKeyMap}
+                changePianoHotKeys={changePianoHotKeys}
                 playSound={playSound}
-                mt={5}
-                ml={index === 0 ? 0 : 3}
+                m={1}
+                bg="red.800"
               />
             ))}
           </Flex>
-        </Center>
-
-        <Flex p={10}>
-          <AddPianoForm
-            nonExistentNoteNumbers={nonExistentNoteNumber}
-            addPiano={addPiano}
-            flexGrow={1}
-            p={5}
-            bg="gray.400"
-            borderRight="1px solid"
-            borderColor="gray.500"
-          />
-
-          <ChangePianoHotKeyForm
-            existingNoteNumbers={existingNoteNumber}
-            getNoteNameKeyMap={getNoteNameKeyMap}
-            changePianoHotKeys={changePianoHotKeys}
-            flexGrow={1}
-            p={5}
-            bg="gray.400"
-            borderRight="1px solid"
-            borderColor="gray.500"
-          />
-          <DeletePianoForm
-            existingNoteNumbers={existingNoteNumber}
-            deletePiano={deletePiano}
-            flexGrow={1}
-            p={5}
-            bg="gray.400"
-          />
-        </Flex>
-      </Box>
+        </PianosHotkeys>
+        {/* <Flex p={10}>
+        <ChangePianoHotKeyForm
+          existingNoteNumbers={existingNoteNumber}
+          getNoteNameKeyMap={getNoteNameKeyMap}
+          changePianoHotKeys={changePianoHotKeys}
+          flexGrow={1}
+          p={5}
+          bg="gray.400"
+          borderRight="1px solid"
+          borderColor="gray.500"
+        />
+      </Flex> */}
+      </Flex>
     </PianosHotKeysProvider>
   );
 };

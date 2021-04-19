@@ -1,4 +1,4 @@
-import { chakra, Select } from "@chakra-ui/react";
+import { chakra, ChakraProps, Select } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useEffect } from "react";
 import { ALL_NOTE_NUMBERS, isNoteNumber, NoteNumber } from "../lib/sound";
 
@@ -8,6 +8,7 @@ type Props = {
   // 何も選択されていない状態をundefinedとして受け入れる
   selected: NoteNumber | undefined;
   onChange?: (noteNumber: NoteNumber | undefined) => void;
+  w?: ChakraProps["w"];
 };
 
 const Component: React.FC<Props> = ({
@@ -15,6 +16,7 @@ const Component: React.FC<Props> = ({
   noteNumbers = ALL_NOTE_NUMBERS,
   selected,
   onChange = () => {},
+  w,
 }) => {
   const handleChange: ChangeEventHandler<HTMLSelectElement> = ({
     target: { value },
@@ -38,7 +40,7 @@ const Component: React.FC<Props> = ({
   return (
     <Select
       className={className}
-      rootProps={{ w: "auto" }}
+      rootProps={{ w }}
       value={selected}
       onChange={handleChange}
       disabled={noteNumbers.length === 0}
@@ -50,4 +52,6 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const NoteNumberSelect = chakra(Component);
+export const NoteNumberSelect = chakra(Component, {
+  shouldForwardProp: (props) => true,
+});
