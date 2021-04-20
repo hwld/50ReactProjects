@@ -5,7 +5,7 @@ import { isNoteName, Note, NoteNumber } from "../lib/sound";
 
 type PianoKeyMap = { noteNumber: NoteNumber } & NoteNameKeyMap;
 
-const PianosHotKeysContext = createContext<PianoKeyMap[]>([]);
+const PianoKeyMapsContext = createContext<PianoKeyMap[]>([]);
 
 type Props = {
   pianos: Piano[];
@@ -21,14 +21,22 @@ export const PianosHotKeysProvider = chakra<React.FC<Props>>(
     }, [pianos]);
 
     return (
-      <PianosHotKeysContext.Provider value={pianosKeyMaps}>
+      <PianoKeyMapsContext.Provider value={pianosKeyMaps}>
         {children}
-      </PianosHotKeysContext.Provider>
+      </PianoKeyMapsContext.Provider>
     );
   }
 );
 
-const usePianoKeyMaps = (): PianoKeyMap[] => useContext(PianosHotKeysContext);
+const usePianoKeyMaps = (): PianoKeyMap[] => useContext(PianoKeyMapsContext);
+
+export const usePianoKeyMap = (
+  noteNumber: NoteNumber
+): PianoKeyMap | undefined => {
+  const allKeyMaps = usePianoKeyMaps();
+  const keyMap = allKeyMaps.find((map) => map["noteNumber"] === noteNumber);
+  return keyMap;
+};
 
 export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
   const keyMaps = usePianoKeyMaps();

@@ -75,6 +75,7 @@ const Component: React.FC<AddPianoFormProps> = ({
     e.preventDefault();
     if (isKeyMapValid && isNoteNumberValid) {
       onSubmit(noteNumber, keyMap);
+      setKeyMap(getDefaultNoteNameKeyMap());
     }
   };
 

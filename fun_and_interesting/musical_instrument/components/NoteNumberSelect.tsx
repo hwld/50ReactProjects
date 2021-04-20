@@ -53,5 +53,5 @@ const Component: React.FC<Props> = ({
 };
 
 export const NoteNumberSelect = chakra(Component, {
-  shouldForwardProp: (props) => true,
+  shouldForwardProp: () => true,
 });

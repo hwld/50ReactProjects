@@ -1,27 +1,34 @@
-import { Button, chakra, Flex, Heading, Text } from "@chakra-ui/react";
+import { chakra, Heading } from "@chakra-ui/react";
 import React, { SyntheticEvent, useState } from "react";
-import { useAllPianoHotKeyName } from "../context/PianosHotKeysContext";
-import { extractKeyNames, NoteNameKeyMap } from "../hooks/usePianos";
+import {
+  useAllPianoHotKeyName,
+  usePianoKeyMap,
+} from "../context/PianosHotKeysContext";
+import {
+  extractKeyNames,
+  getDefaultNoteNameKeyMap,
+  NoteNameKeyMap,
+} from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
-import { NoteNumberSelect } from "./NoteNumberSelect";
 import { PianoKeyMapEditor, ValidationRule } from "./PianoKeyMapEditor";
 
-type Props = {
+export type ChangePianoKeyMapFormProps = {
   className?: string;
   formId: string;
   noteNumber: NoteNumber;
-  getNoteNameKeyMap: (noteNumber: NoteNumber) => NoteNameKeyMap;
-  onSubmit: (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => void;
+  onSubmit: (keyMap: NoteNameKeyMap) => void;
 };
 
-const Component: React.FC<Props> = ({
+const Component: React.FC<ChangePianoKeyMapFormProps> = ({
   className,
   formId,
   noteNumber,
-  getNoteNameKeyMap,
   onSubmit,
 }) => {
-  const [keyMap, setKeyMap] = useState(getNoteNameKeyMap(noteNumber));
+  const defaultKeyMap = usePianoKeyMap(noteNumber);
+  const [keyMap, setKeyMap] = useState(
+    defaultKeyMap ?? getDefaultNoteNameKeyMap()
+  );
   const existingKeyNames = useAllPianoHotKeyName({
     excludingNoteNumber: noteNumber,
   });
@@ -65,7 +72,7 @@ const Component: React.FC<Props> = ({
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     if (isKeyMapValid) {
-      onSubmit(noteNumber, keyMap);
+      onSubmit(keyMap);
     }
   };
 

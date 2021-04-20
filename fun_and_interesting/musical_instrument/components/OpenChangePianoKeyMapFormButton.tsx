@@ -14,23 +14,29 @@ import {
 import React from "react";
 import { NoteNameKeyMap } from "../hooks/usePianos";
 import { NoteNumber } from "../lib/sound";
-import { ChangePianoKeyMapForm } from "./ChangePianoKeyMapForm";
+import {
+  ChangePianoKeyMapForm,
+  ChangePianoKeyMapFormProps,
+} from "./ChangePianoKeyMapForm";
 
 type Props = {
   className?: string;
   noteNumber: NoteNumber;
-  getNoteNameKeyMap: (noteNumber: NoteNumber) => NoteNameKeyMap;
-  changePianoHotKeys: (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => void;
+  changePianoKeyMap: (keyMap: NoteNameKeyMap) => void;
 };
 
 const Component: React.FC<Props> = ({
   className,
   noteNumber,
-  getNoteNameKeyMap,
-  changePianoHotKeys,
+  changePianoKeyMap,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formId = "changePianoKeyMapForm";
+
+  const handleSubmit: ChangePianoKeyMapFormProps["onSubmit"] = (keyMap) => {
+    changePianoKeyMap(keyMap);
+    onClose();
+  };
 
   return (
     <>
@@ -49,8 +55,7 @@ const Component: React.FC<Props> = ({
             <ChangePianoKeyMapForm
               formId={formId}
               noteNumber={noteNumber}
-              getNoteNameKeyMap={getNoteNameKeyMap}
-              onSubmit={changePianoHotKeys}
+              onSubmit={handleSubmit}
             />
           </ModalBody>
 
@@ -68,4 +73,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const OpenChangePianoKeyMapForm = chakra(Component);
+export const OpenChangePianoKeyMapFormButton = chakra(Component);

@@ -1,37 +1,29 @@
 import { Box, Button, chakra, Flex } from "@chakra-ui/react";
-import React, { Dispatch } from "react";
+import React from "react";
 import { useNoteNameKeyMapLayout } from "../hooks/usePianoKeysLayout";
-import { NoteNameKeyMap, PianosAction } from "../hooks/usePianos";
+import { NoteNameKeyMap } from "../hooks/usePianos";
 import { Note, NoteName, NoteNumber } from "../lib/sound";
-import { OpenChangePianoKeyMapForm } from "./OpenChangePianoKeyMapForm";
+import { OpenChangePianoKeyMapFormButton } from "./OpenChangePianoKeyMapFormButton";
 import { PlayablePianoKey } from "./PlayablePianoKey";
 
-type Props = {
+export type PianoProps = {
   className?: string;
   noteNumber: NoteNumber;
   pressedNoteNames?: NoteName[];
-  existingNoteNumbers: NoteNumber[];
-  getNoteNameKeyMap: (noteNumber: NoteNumber) => NoteNameKeyMap;
-  changePianoHotKeys: (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => void;
+  deletePiano: () => void;
+  changePianoKeyMap: (keyMap: NoteNameKeyMap) => void;
   playSound: (note: Note) => void;
-  deletePiano: (noteNumber: NoteNumber) => void;
 };
 
-const Component: React.FC<Props> = ({
+const Component: React.FC<PianoProps> = ({
   className,
   noteNumber,
   pressedNoteNames = [],
-  existingNoteNumbers,
-  getNoteNameKeyMap,
-  changePianoHotKeys,
-  playSound,
+  changePianoKeyMap,
   deletePiano,
+  playSound,
 }) => {
   const { whiteKeys, blackKeys } = useNoteNameKeyMapLayout();
-
-  const handleDeletePiano = () => {
-    deletePiano(noteNumber);
-  };
 
   return (
     <Box className={className} pt={5} pr={5} pl={5} height="auto">
@@ -72,13 +64,12 @@ const Component: React.FC<Props> = ({
         </Flex>
       </Box>
       <Flex pt={3} pb={3} justify="center">
-        <Button onClick={handleDeletePiano} mr={3}>
+        <Button onClick={deletePiano} mr={3}>
           削除
         </Button>
-        <OpenChangePianoKeyMapForm
+        <OpenChangePianoKeyMapFormButton
           noteNumber={noteNumber}
-          changePianoHotKeys={changePianoHotKeys}
-          getNoteNameKeyMap={getNoteNameKeyMap}
+          changePianoKeyMap={changePianoKeyMap}
         />
       </Flex>
     </Box>
