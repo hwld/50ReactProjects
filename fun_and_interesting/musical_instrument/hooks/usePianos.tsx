@@ -1,5 +1,5 @@
 import { Dispatch, useReducer } from "react";
-import { ALL_NOTE_NAMES, NoteName, NoteNumber } from "../lib/sound";
+import { ALL_NOTE_NAMES, isNoteName, NoteName, NoteNumber } from "../lib/sound";
 
 export type NoteNameKeyMap = { [T in NoteName]: string };
 export type Piano = {
@@ -27,7 +27,10 @@ export type PianosAction =
 export const extractKeyNames = (keyMap: NoteNameKeyMap): string[] => {
   const keyNames: string[] = [];
   for (const noteName in keyMap) {
-    const hotKey = keyMap[noteName as NoteName];
+    if (!isNoteName(noteName)) {
+      continue;
+    }
+    const hotKey = keyMap[noteName];
     if (hotKey !== "") {
       keyNames.push(hotKey);
     }

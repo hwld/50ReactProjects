@@ -1,6 +1,10 @@
 import { chakra } from "@chakra-ui/react";
 import React, { createContext, useContext, useMemo } from "react";
-import { Piano, NoteNameKeyMap } from "../hooks/usePianos";
+import {
+  Piano,
+  NoteNameKeyMap,
+  getDefaultNoteNameKeyMap,
+} from "../hooks/usePianos";
 import { isNoteName, Note, NoteNumber } from "../lib/sound";
 
 type PianoKeyMap = { noteNumber: NoteNumber } & NoteNameKeyMap;
@@ -30,12 +34,25 @@ export const PianosHotKeysProvider = chakra<React.FC<Props>>(
 
 const usePianoKeyMaps = (): PianoKeyMap[] => useContext(PianoKeyMapsContext);
 
-export const usePianoKeyMap = (
+export const useNoteNameKeyMap = (
   noteNumber: NoteNumber
-): PianoKeyMap | undefined => {
+): NoteNameKeyMap | undefined => {
   const allKeyMaps = usePianoKeyMaps();
-  const keyMap = allKeyMaps.find((map) => map["noteNumber"] === noteNumber);
-  return keyMap;
+  const pianoKeyMap = allKeyMaps.find(
+    (map) => map["noteNumber"] === noteNumber
+  );
+
+  if (!pianoKeyMap) {
+    return undefined;
+  }
+
+  const noteNameKeyMap = getDefaultNoteNameKeyMap();
+  for (const prop in pianoKeyMap) {
+    if (isNoteName(prop)) {
+      noteNameKeyMap[prop] = pianoKeyMap[prop];
+    }
+  }
+  return noteNameKeyMap;
 };
 
 export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {

@@ -2,7 +2,7 @@ import { chakra, Heading } from "@chakra-ui/react";
 import React, { SyntheticEvent, useState } from "react";
 import {
   useAllPianoHotKeyName,
-  usePianoKeyMap,
+  useNoteNameKeyMap,
 } from "../context/PianosHotKeysContext";
 import {
   extractKeyNames,
@@ -25,7 +25,7 @@ const Component: React.FC<ChangePianoKeyMapFormProps> = ({
   noteNumber,
   onSubmit,
 }) => {
-  const defaultKeyMap = usePianoKeyMap(noteNumber);
+  const defaultKeyMap = useNoteNameKeyMap(noteNumber);
   const [keyMap, setKeyMap] = useState(
     defaultKeyMap ?? getDefaultNoteNameKeyMap()
   );
