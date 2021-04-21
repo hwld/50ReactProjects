@@ -12,36 +12,38 @@ type Props = {
 };
 
 // 視覚要素としてのピアノのキー
-const Component: React.FC<Props> = ({
-  children,
-  note,
-  className,
-  pressed = false,
-  noteTextStyle,
-  onMouseDown,
-}) => {
-  return (
-    <Box
-      className={className}
-      as="button"
-      type="button"
-      tabIndex={-1}
-      onMouseDown={onMouseDown}
-      data-active={pressed ? true : undefined}
-      _focus={{ outline: "none" }}
-      display="flex"
-      flexDir="column"
-      justifyContent="flex-end"
-      alignItems="center"
-      userSelect="none"
-    >
-      {children}
-      <Text
-        mb={2}
-        {...noteTextStyle}
-      >{`${note.noteName}${note.noteNumber}`}</Text>
-    </Box>
-  );
-};
+const Component: React.FC<Props> = React.memo(
+  ({
+    children,
+    note,
+    className,
+    pressed = false,
+    noteTextStyle,
+    onMouseDown,
+  }) => {
+    return (
+      <Box
+        className={className}
+        as="button"
+        type="button"
+        tabIndex={-1}
+        onMouseDown={onMouseDown}
+        data-active={pressed ? true : undefined}
+        _focus={{ outline: "none" }}
+        display="flex"
+        flexDir="column"
+        justifyContent="flex-end"
+        alignItems="center"
+        userSelect="none"
+      >
+        {children}
+        <Text
+          mb={2}
+          {...noteTextStyle}
+        >{`${note.noteName}${note.noteNumber}`}</Text>
+      </Box>
+    );
+  }
+);
 
 export const PianoKey = chakra(Component);

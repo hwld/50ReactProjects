@@ -20,6 +20,7 @@ export type PianosAction =
       keyMap: NoteNameKeyMap;
     }
   | { type: "deletePiano"; noteNumber: NoteNumber }
+  | { type: "movePiano"; moveTargetIndex: number; baseIndex: number }
   | { type: "keyDown"; noteNumber: NoteNumber; key: NoteName }
   | { type: "keyUp"; noteNumber: NoteNumber; key: NoteName }
   | { type: "resetPressed" };
@@ -44,11 +45,11 @@ export const getDefaultNoteNameKeyMap = (): NoteNameKeyMap => {
   }, {} as NoteNameKeyMap);
 };
 
-const reducer = (state: Piano[], action: PianosAction): Piano[] => {
+const reducer = (pianos: Piano[], action: PianosAction): Piano[] => {
   switch (action.type) {
     case "addPiano": {
       return [
-        ...state,
+        ...pianos,
         {
           noteNumber: action.noteNumber,
           keyMap: action.keyMap,
@@ -58,7 +59,7 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
     }
 
     case "changePianoHotKeys": {
-      return state.map((piano) => {
+      return pianos.map((piano) => {
         if (piano.noteNumber !== action.noteNumber) {
           return piano;
         }
@@ -67,11 +68,23 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
     }
 
     case "deletePiano": {
-      return state.filter((piano) => piano.noteNumber !== action.noteNumber);
+      return pianos.filter((piano) => piano.noteNumber !== action.noteNumber);
+    }
+
+    case "movePiano": {
+      const copyed = [...pianos];
+      const moveTargetPiano = copyed[action.moveTargetIndex];
+
+      copyed.splice(action.moveTargetIndex, 1);
+      // moveTarget < baseIndex のときは baseIndex の後ろに、
+      // moveTarget > baseIndex のときは baseIndex の前にピアノを移動する
+      copyed.splice(action.baseIndex, 0, moveTargetPiano);
+
+      return copyed;
     }
 
     case "keyDown": {
-      return state.map((piano) => {
+      return pianos.map((piano) => {
         if (piano.noteNumber !== action.noteNumber) {
           return piano;
         }
@@ -83,7 +96,7 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
     }
 
     case "keyUp": {
-      return state.map((piano) => {
+      return pianos.map((piano) => {
         if (piano.noteNumber !== action.noteNumber) {
           return piano;
         }
@@ -97,7 +110,7 @@ const reducer = (state: Piano[], action: PianosAction): Piano[] => {
     }
 
     case "resetPressed": {
-      return state.map((piano) => {
+      return pianos.map((piano) => {
         return { ...piano, pressedNoteNames: [] };
       });
     }

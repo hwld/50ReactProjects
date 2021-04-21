@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { NextPage } from "next";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { OpenAddPianoFormButton } from "../components/OpenAddPianoFormButton";
 import { PianoContainer } from "../components/PianoContainer";
 import { PianosHotkeys } from "../components/PianosHotkeys";
@@ -37,15 +37,18 @@ const Home: NextPage = () => {
     );
   }, [allPianos]);
 
-  const addPiano = (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => {
-    const isDuplicated = Boolean(
-      allPianos.find((piano) => piano.noteNumber === noteNumber)
-    );
+  const addPiano = useCallback(
+    (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => {
+      const isDuplicated = Boolean(
+        allPianos.find((piano) => piano.noteNumber === noteNumber)
+      );
 
-    if (!isDuplicated) {
-      dispatchToAllPianos({ type: "addPiano", noteNumber, keyMap });
-    }
-  };
+      if (!isDuplicated) {
+        dispatchToAllPianos({ type: "addPiano", noteNumber, keyMap });
+      }
+    },
+    [allPianos]
+  );
 
   return (
     <PianosHotKeysProvider pianos={allPianos}>

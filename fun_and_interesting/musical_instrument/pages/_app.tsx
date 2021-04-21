@@ -4,6 +4,8 @@ import { NextPage } from "next";
 import { AppProps } from "next/dist/next-server/lib/router/router";
 import { theme } from "../theme";
 import { configure } from "react-hotkeys";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const MyApp: NextPage<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -15,7 +17,9 @@ const MyApp: NextPage<AppProps> = ({ Component, pageProps }) => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
+      <DndProvider backend={HTML5Backend}>
+        <Component {...pageProps} />
+      </DndProvider>
     </ChakraProvider>
   );
 };

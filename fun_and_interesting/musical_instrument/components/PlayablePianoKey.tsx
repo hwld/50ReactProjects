@@ -1,5 +1,5 @@
 import { chakra, ChakraProps } from "@chakra-ui/react";
-import React from "react";
+import React, { useCallback } from "react";
 import { Note } from "../lib/sound";
 import { usePianoHotKeyName } from "../context/PianosHotKeysContext";
 import { PianoKey } from "./PianoKey";
@@ -15,30 +15,26 @@ type Props = {
 };
 
 // 実際に音を鳴らす楽器としてのピアノのキー
-const Component: React.FC<Props> = ({
-  className,
-  note,
-  pressed,
-  noteTextStyle,
-  playSound,
-}) => {
-  const hotKeyName = usePianoHotKeyName(note);
+const Component: React.FC<Props> = React.memo(
+  ({ className, note, pressed, noteTextStyle, playSound }) => {
+    const hotKeyName = usePianoHotKeyName(note);
 
-  const handleMouseDown = () => {
-    playSound(note);
-  };
+    const handleMouseDown = useCallback(() => {
+      playSound(note);
+    }, [playSound, note]);
 
-  return (
-    <PianoKey
-      className={className}
-      onMouseDown={handleMouseDown}
-      pressed={pressed}
-      note={note}
-      noteTextStyle={noteTextStyle}
-    >
-      <PianoHotKeyIcon keyName={hotKeyName} />
-    </PianoKey>
-  );
-};
+    return (
+      <PianoKey
+        className={className}
+        onMouseDown={handleMouseDown}
+        pressed={pressed}
+        note={note}
+        noteTextStyle={noteTextStyle}
+      >
+        <PianoHotKeyIcon keyName={hotKeyName} />
+      </PianoKey>
+    );
+  }
+);
 
 export const PlayablePianoKey = chakra(Component);
