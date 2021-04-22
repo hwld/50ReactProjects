@@ -62,7 +62,7 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<PianoProps>>(
 
     const [, drop] = useDrop({
       accept: "PIANO",
-      hover: (item: { index: number }, monitor) => {
+      hover: (item: { index: number }) => {
         if (!actualRef.current) {
           return;
         }
@@ -74,19 +74,9 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<PianoProps>>(
           return;
         }
 
-        const hoverBoudingRect = actualRef.current.getBoundingClientRect();
-        const hoverQuarterX =
-          (hoverBoudingRect.right - hoverBoudingRect.left) / 4;
-        const clientOffset = monitor.getClientOffset();
-        if (!clientOffset) {
-          return;
-        }
-        const hoverClientX = clientOffset.x - hoverBoudingRect.left;
-
-        if (dragIndex < hoverIndex && hoverClientX < hoverQuarterX) {
-          return;
-        }
-        if (dragIndex > hoverIndex && hoverClientX > hoverQuarterX) {
+        // transformが設定されているときに、layoutアニメーションが実行されているとする
+        // hoverターゲットでlayoutアニメーションが実行されているときには何も行わない
+        if (actualRef.current.style.transform !== "") {
           return;
         }
 
@@ -94,6 +84,7 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<PianoProps>>(
         item.index = hoverIndex;
       },
     });
+
     const [{ isDragging }, drag, preview] = useDrag({
       type: "PIANO",
       item: () => {
@@ -116,6 +107,7 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<PianoProps>>(
         pl={5}
         height="auto"
         opacity={isDragging ? 0 : 1}
+        minW="450px"
       >
         <Box position="relative">
           <Flex>
@@ -169,7 +161,5 @@ const Component = forwardRef<HTMLDivElement, PropsWithChildren<PianoProps>>(
   }
 );
 
-const PianoWithOutMotion = chakra(Component, { shouldForwardProp: () => true });
-export const Piano: React.FC<MotionPianoProps> = motion(PianoWithOutMotion, {
-  forwardMotionProps: true,
-});
+const PianoWithOutMotion = chakra(Component);
+export const Piano: React.FC<MotionPianoProps> = motion(PianoWithOutMotion);

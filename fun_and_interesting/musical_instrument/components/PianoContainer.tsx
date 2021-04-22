@@ -1,3 +1,4 @@
+import { Grid } from "@chakra-ui/react";
 import React, { Dispatch } from "react";
 import { PianosAction } from "../hooks/usePianos";
 import { Piano as PianoObj } from "../hooks/usePianos";
@@ -42,7 +43,15 @@ const Component: React.FC<Props> = ({
   }));
 
   return (
-    <>
+    <Grid
+      justifyContent="center"
+      templateColumns="repeat(auto-fill, 450px)"
+      gap={3}
+      bg="gray.800"
+      p={5}
+      tabIndex={0}
+      _focus={{ outline: "none" }}
+    >
       {pianosForRender.map((piano, index) => {
         return (
           <Piano
@@ -55,14 +64,14 @@ const Component: React.FC<Props> = ({
             pressedNoteNames={piano.pressedNoteNames}
             playSound={playSound}
             m={1}
-            w="450px"
             bg="red.800"
-            layout
+            layout="position"
+            transition={{ duration: 0.3 }}
           />
         );
       })}
       <PianoDragLayer />
-    </>
+    </Grid>
   );
 };
 

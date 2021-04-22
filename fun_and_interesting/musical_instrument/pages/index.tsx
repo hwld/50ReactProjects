@@ -68,21 +68,11 @@ const Home: NextPage = () => {
           flexGrow={1}
           overflow="auto"
         >
-          <Flex
-            justify="center"
-            align="start"
-            flexWrap="wrap"
-            bg="gray.800"
-            p={5}
-            tabIndex={0}
-            _focus={{ outline: "none" }}
-          >
-            <PianoContainer
-              pianos={allPianos}
-              dispatchToPianos={dispatchToAllPianos}
-              playSound={playSound}
-            />
-          </Flex>
+          <PianoContainer
+            pianos={allPianos}
+            dispatchToPianos={dispatchToAllPianos}
+            playSound={playSound}
+          />
         </PianosHotkeys>
       </Flex>
     </PianosHotKeysProvider>
