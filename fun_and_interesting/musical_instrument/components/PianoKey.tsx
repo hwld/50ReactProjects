@@ -1,33 +1,38 @@
 import { Box, chakra, ChakraProps, Text } from "@chakra-ui/react";
 import React from "react";
-import { Note } from "../lib/sound";
+import { Note, NoteName, NoteNumber } from "../lib/sound";
 
 type Props = {
   className?: string;
-  note: Note;
+  noteName: NoteName;
+  noteNumber: NoteNumber;
   pressed?: boolean;
   noteTextStyle?: ChakraProps;
-  onMouseDown?: React.MouseEventHandler<HTMLDivElement> &
-    React.MouseEventHandler<HTMLButtonElement>;
+  onPressNote?: (note: Note) => void;
 };
 
 // 視覚要素としてのピアノのキー
 const Component: React.FC<Props> = React.memo(
   ({
     children,
-    note,
+    noteName,
+    noteNumber,
     className,
     pressed = false,
     noteTextStyle,
-    onMouseDown,
+    onPressNote = () => {},
   }) => {
+    const handleMouseDown = () => {
+      onPressNote({ noteName, noteNumber });
+    };
+
     return (
       <Box
         className={className}
         as="button"
         type="button"
         tabIndex={-1}
-        onMouseDown={onMouseDown}
+        onMouseDown={handleMouseDown}
         data-active={pressed ? true : undefined}
         _focus={{ outline: "none" }}
         display="flex"
@@ -37,10 +42,7 @@ const Component: React.FC<Props> = React.memo(
         userSelect="none"
       >
         {children}
-        <Text
-          mb={2}
-          {...noteTextStyle}
-        >{`${note.noteName}${note.noteNumber}`}</Text>
+        <Text mb={2} {...noteTextStyle}>{`${noteName}${noteNumber}`}</Text>
       </Box>
     );
   }

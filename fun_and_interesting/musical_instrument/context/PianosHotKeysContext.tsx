@@ -5,9 +5,9 @@ import {
   NoteNameKeyMap,
   getDefaultNoteNameKeyMap,
 } from "../hooks/usePianos";
-import { isNoteName, Note, NoteNumber } from "../lib/sound";
+import { isNoteName, NoteNumber } from "../lib/sound";
 
-type PianoKeyMap = { noteNumber: NoteNumber } & NoteNameKeyMap;
+export type PianoKeyMap = { noteNumber: NoteNumber } & NoteNameKeyMap;
 
 const PianoKeyMapsContext = createContext<PianoKeyMap[]>([]);
 
@@ -15,8 +15,8 @@ type Props = {
   pianos: Piano[];
 };
 
-export const PianosHotKeysProvider = chakra<React.FC<Props>>(
-  ({ children, pianos }) => {
+export const PianosHotKeysProvider = React.memo(
+  chakra<React.FC<Props>>(({ children, pianos }) => {
     const pianosKeyMaps: PianoKeyMap[] = useMemo(() => {
       return pianos.map((piano) => ({
         noteNumber: piano.noteNumber,
@@ -29,7 +29,7 @@ export const PianosHotKeysProvider = chakra<React.FC<Props>>(
         {children}
       </PianoKeyMapsContext.Provider>
     );
-  }
+  })
 );
 
 const usePianoKeyMaps = (): PianoKeyMap[] => useContext(PianoKeyMapsContext);
@@ -55,15 +55,12 @@ export const useNoteNameKeyMap = (
   return noteNameKeyMap;
 };
 
-export const usePianoHotKeyName = ({ noteName, noteNumber }: Note): string => {
+export const usePianoKeyMap = (
+  noteNumber: NoteNumber
+): PianoKeyMap | undefined => {
   const keyMaps = usePianoKeyMaps();
-  const targetKeyMap = keyMaps.find(
-    (keyMap) => keyMap.noteNumber === noteNumber
-  );
-  if (!targetKeyMap) {
-    return "";
-  }
-  return targetKeyMap[noteName].toUpperCase();
+  const targetKeyMap = keyMaps.find((map) => map.noteNumber === noteNumber);
+  return targetKeyMap;
 };
 
 export const useAllPianoHotKeyName = (option?: {

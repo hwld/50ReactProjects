@@ -5,7 +5,7 @@ type Props = {
   keyName: string;
 };
 
-const Component: React.FC<Props> = ({ keyName }) => {
+const Component: React.FC<Props> = React.memo(({ keyName }) => {
   return (
     <Kbd
       mb={1}
@@ -15,6 +15,6 @@ const Component: React.FC<Props> = ({ keyName }) => {
       {keyName || "No"}
     </Kbd>
   );
-};
+});
 
 export const PianoHotKeyIcon = Component;

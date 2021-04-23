@@ -54,7 +54,8 @@ const Component: React.FC<Props> = ({
             return (
               <PianoKey
                 key={noteName}
-                note={{ noteName, noteNumber }}
+                noteName={noteName}
+                noteNumber={noteNumber}
                 mr={whiteKeyMarginRight}
                 w={whiteKeyWidth}
                 h="250px"
@@ -76,7 +77,8 @@ const Component: React.FC<Props> = ({
             return (
               <PianoKey
                 key={noteName}
-                note={{ noteName, noteNumber }}
+                noteName={noteName}
+                noteNumber={noteNumber}
                 noteTextStyle={{ color: "gray.100" }}
                 position="absolute"
                 left={left}

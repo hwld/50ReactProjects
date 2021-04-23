@@ -1,10 +1,9 @@
 import { Grid } from "@chakra-ui/react";
-import React, { Dispatch } from "react";
-import { PianosAction } from "../hooks/usePianos";
+import React, { Dispatch, useCallback } from "react";
+import { NoteNameKeyMap, PianosAction } from "../hooks/usePianos";
 import { Piano as PianoObj } from "../hooks/usePianos";
-import { Note } from "../lib/sound";
-import { Piano, PianoProps } from "./Piano";
-import { PianoDragLayer } from "./PianoDragLayer";
+import { Note, NoteNumber } from "../lib/sound";
+import { Piano } from "./Piano";
 
 type Props = {
   pianos: PianoObj[];
@@ -12,67 +11,57 @@ type Props = {
   playSound: ({ noteName, noteNumber }: Note) => void;
 };
 
-const Component: React.FC<Props> = ({
-  pianos,
-  dispatchToPianos,
-  playSound,
-}) => {
-  // mapの中でこれらの関数を定義することもできたが、メモ化しやすくするために分離させた
-  const pianosForRender: (PianoObj &
-    Pick<
-      PianoProps,
-      "deletePiano" | "changePianoKeyMap" | "movePiano"
-    >)[] = pianos.map((piano) => ({
-    ...piano,
-    deletePiano: () => {
-      dispatchToPianos({
-        type: "deletePiano",
-        noteNumber: piano.noteNumber,
-      });
-    },
-    changePianoKeyMap: (keyMap) => {
-      dispatchToPianos({
-        type: "changePianoHotKeys",
-        noteNumber: piano.noteNumber,
-        keyMap,
-      });
-    },
-    movePiano: (moveTargetIndex, baseIndex) => {
-      dispatchToPianos({ type: "movePiano", moveTargetIndex, baseIndex });
-    },
-  }));
+const Component: React.FC<Props> = React.memo(
+  ({ pianos, dispatchToPianos, playSound }) => {
+    const deletePiano = useCallback((noteNumber: NoteNumber) => {
+      dispatchToPianos({ type: "deletePiano", noteNumber });
+    }, []);
 
-  return (
-    <Grid
-      justifyContent="center"
-      templateColumns="repeat(auto-fill, 450px)"
-      gap={3}
-      bg="gray.800"
-      p={5}
-      tabIndex={0}
-      _focus={{ outline: "none" }}
-    >
-      {pianosForRender.map((piano, index) => {
-        return (
-          <Piano
-            key={piano.noteNumber}
-            index={index}
-            noteNumber={piano.noteNumber}
-            deletePiano={piano.deletePiano}
-            changePianoKeyMap={piano.changePianoKeyMap}
-            movePiano={piano.movePiano}
-            pressedNoteNames={piano.pressedNoteNames}
-            playSound={playSound}
-            m={1}
-            bg="red.800"
-            layout="position"
-            transition={{ duration: 0.3 }}
-          />
-        );
-      })}
-      <PianoDragLayer />
-    </Grid>
-  );
-};
+    const changePianoKeyMap = useCallback(
+      (noteNumber: NoteNumber, keyMap: NoteNameKeyMap) => {
+        dispatchToPianos({ type: "changePianoHotKeys", noteNumber, keyMap });
+      },
+      []
+    );
+
+    const movePiano = useCallback(
+      (moveTargetIndex: number, baseIndex: number) => {
+        dispatchToPianos({ type: "movePiano", moveTargetIndex, baseIndex });
+      },
+      []
+    );
+
+    return (
+      <Grid
+        justifyContent="center"
+        templateColumns="repeat(auto-fill, 450px)"
+        gap={3}
+        bg="gray.800"
+        p={5}
+        tabIndex={0}
+        _focus={{ outline: "none" }}
+      >
+        {pianos.map((piano, index) => {
+          return (
+            <Piano
+              key={piano.noteNumber}
+              index={index}
+              noteNumber={piano.noteNumber}
+              deletePiano={deletePiano}
+              changePianoKeyMap={changePianoKeyMap}
+              movePiano={movePiano}
+              pressedNoteNames={piano.pressedNoteNames}
+              playSound={playSound}
+              m={1}
+              bg="red.800"
+              layout="position"
+              transition={{ duration: 0.3 }}
+            />
+          );
+        })}
+      </Grid>
+    );
+  }
+);
 
 export const PianoContainer = Component;
