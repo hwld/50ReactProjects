@@ -12,7 +12,7 @@ const Component: React.FC<Props> = React.memo(({ keyName }) => {
       bgColor={keyName !== "" ? "green.300" : "red.300"}
       borderColor={keyName !== "" ? "green.400" : "red.400"}
     >
-      {keyName || "No"}
+      {keyName.toUpperCase() || "No"}
     </Kbd>
   );
 });

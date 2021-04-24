@@ -10,6 +10,11 @@ import {
   NoteNameKeyMap,
 } from "../hooks/usePianos";
 import { NoteName, NoteNumber } from "../lib/sound";
+import {
+  isEmptyString,
+  isKeyNotIncluded,
+  isUniqueKey,
+} from "../utils/validators";
 import { PianoKeyMapEditor, ValidationRule } from "./PianoKeyMapEditor";
 
 export type ChangePianoKeyMapFormProps = {
@@ -33,34 +38,21 @@ const Component: React.FC<ChangePianoKeyMapFormProps> = ({
     excludingNoteNumber: noteNumber,
   });
 
-  const validationRules: ValidationRule[] = [
+  const keyMapValidationRules: ValidationRule[] = [
     {
-      validate: (key: string) => {
-        if (key === "") {
-          return true;
-        }
-
-        return !existingKeyNames.includes(key);
-      },
+      validate: (key: string) =>
+        isEmptyString(key) || isKeyNotIncluded(existingKeyNames, key),
       errorMessage: "すでに設定されているキーです",
     },
     {
-      validate: (key: string) => {
-        if (key === "") {
-          return true;
-        }
-
-        return (
-          extractKeyNames(keyMap).filter((edittingKey) => edittingKey === key)
-            .length === 1
-        );
-      },
+      validate: (key: string) =>
+        isEmptyString(key) || isUniqueKey(extractKeyNames(keyMap), key),
       errorMessage: "設定しようとしているキーが重複しています",
     },
   ];
 
   const isKeyMapValid = extractKeyNames(keyMap).every((key) =>
-    validationRules.every(({ validate }) => validate(key))
+    keyMapValidationRules.every(({ validate }) => validate(key))
   );
 
   const handleChangeHotKeys = (noteName: NoteName, hotKey: string) => {
@@ -84,7 +76,7 @@ const Component: React.FC<ChangePianoKeyMapFormProps> = ({
         noteNumber={noteNumber}
         keyMap={keyMap}
         onChange={handleChangeHotKeys}
-        validationRules={validationRules}
+        validationRules={keyMapValidationRules}
       />
     </form>
   );
