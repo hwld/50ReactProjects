@@ -1,35 +1,54 @@
-export type ItemType = "Radio" | "Checkbox" | "TextInput";
 type SurveyItemBase = {
   id: string;
+  type: string;
   question: string;
   description?: string;
-  type: ItemType;
 };
 
-type SurveyRadioAnswer = { type: "Radio"; value: string };
-export type SurveyRadioItem = SurveyItemBase &
-  SurveyRadioAnswer & {
+type Radio = "Radio";
+export type SurveyRadioItem = Extract<
+  {
+    id: string;
+    type: Radio;
+    question: string;
+    description?: string;
     choices: string[];
-  };
+  },
+  SurveyItemBase
+>;
+export type SurveyRadioAnswer = { type: Radio; value: string };
 
-type SurveyCheckboxAnswer = { type: "Checkbox"; value: string[] };
-export type SurveyCheckboxItem = SurveyItemBase &
-  SurveyCheckboxAnswer & {
+type Checkbox = "Checkbox";
+export type SurveyCheckboxItem = Extract<
+  {
+    id: string;
+    type: Checkbox;
+    question: string;
+    description?: string;
     choices: string[];
-  };
+  },
+  SurveyItemBase
+>;
+export type SurveyCheckboxAnswer = { type: Checkbox; value: string[] };
 
-type SurveyTextInputAnswer = { type: "TextInput"; value: string };
-export type SurveyTextInputItem = SurveyItemBase & SurveyTextInputAnswer;
+type TextInput = "TextInput";
+export type SurveyTextInputItem = Extract<
+  { id: string; type: TextInput; question: string; description?: string },
+  SurveyItemBase
+>;
+export type SurveyTextInputAnswer = { type: TextInput; value: string };
+
+export type SurveyItem =
+  | SurveyRadioItem
+  | SurveyCheckboxItem
+  | SurveyTextInputItem;
 
 export type SurveyItemAnswer =
   | SurveyRadioAnswer
   | SurveyCheckboxAnswer
   | SurveyTextInputAnswer;
 
-export type SurveyItem =
-  | SurveyRadioItem
-  | SurveyCheckboxItem
-  | SurveyTextInputItem;
+export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
 
 export type Survey = {
   id: string;
