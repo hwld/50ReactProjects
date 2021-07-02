@@ -15,7 +15,6 @@ export default function Home() {
         question: "性別",
         type: "Radio",
         choices: ["男", "女", "その他"],
-        value: "",
       },
       {
         id: "2",
@@ -23,9 +22,8 @@ export default function Home() {
         description: "複数選択可",
         type: "Checkbox",
         choices: ["C", "C++", "C#", "Java", "JavaScript", "Typescript"],
-        value: [],
       },
-      { id: "3", question: "感想", type: "TextInput", value: "" },
+      { id: "3", question: "感想", type: "TextInput" },
     ],
   };
 

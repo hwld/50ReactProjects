@@ -1,15 +1,22 @@
 import { Box, Input } from "@chakra-ui/react";
-import React from "react";
-import { SurveyTextInputItem } from "../type/survey";
+import React, { ChangeEventHandler } from "react";
+import { SurveyTextInputAnswer, SurveyTextInputItem } from "../type/survey";
 
 type Props = {
-  textInputItem: SurveyTextInputItem;
+  textInputItem: SurveyTextInputItem & SurveyTextInputAnswer;
+  setAnswer: (itemId: string, answer: SurveyTextInputAnswer) => void;
 };
 
-const Component: React.VFC<Props> = ({}) => {
+const Component: React.VFC<Props> = ({ textInputItem, setAnswer }) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = ({
+    target: { value },
+  }) => {
+    setAnswer(textInputItem.id, { type: "TextInput", value });
+  };
+
   return (
     <Box>
-      <Input />
+      <Input value={textInputItem.value} onChange={handleChange} />
     </Box>
   );
 };
