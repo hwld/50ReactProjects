@@ -12,12 +12,17 @@ const Component: React.VFC<Props> = ({ radioItem, setAnswer }) => {
     setAnswer(radioItem.id, { type: "Radio", value });
   };
 
+  // next.jsを使ってるときに自動でnameとidをつけると 'id' did not match のエラーが出ちゃう
   return (
-    <RadioGroup value={radioItem.value} onChange={handleChange}>
+    <RadioGroup
+      value={radioItem.value}
+      onChange={handleChange}
+      name={`${radioItem.question}-${radioItem.id}`}
+    >
       <Stack>
-        {radioItem.choices.map((choice) => {
+        {radioItem.choices.map((choice, index) => {
           return (
-            <Radio key={choice} value={choice}>
+            <Radio id={`${radioItem.id}-${index}`} key={choice} value={choice}>
               {choice}
             </Radio>
           );

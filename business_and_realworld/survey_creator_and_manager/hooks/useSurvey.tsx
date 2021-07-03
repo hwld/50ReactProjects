@@ -19,6 +19,35 @@ const generateSurveyItemAndAnswers = (
   });
 };
 
+const createSurveyItemAndAnswer = (
+  item: SurveyItemAndAnswer,
+  answer: SurveyItemAnswer
+): SurveyItemAndAnswer => {
+  switch (item.type) {
+    case "Radio": {
+      if (answer.type === item.type) {
+        return { ...item, value: answer.value };
+      }
+      return item;
+    }
+    case "Checkbox": {
+      if (answer.type === item.type) {
+        return { ...item, value: answer.value };
+      }
+      return item;
+    }
+    case "TextInput": {
+      if (answer.type === item.type) {
+        return { ...item, value: answer.value };
+      }
+      return item;
+    }
+    default: {
+      assertNever(item);
+    }
+  }
+};
+
 type SurveyAction = {
   type: "setAnswer";
   itemId: string;
@@ -35,30 +64,7 @@ const reducer = (
         if (item.id !== action.itemId) {
           return item;
         }
-
-        switch (item.type) {
-          case "Radio": {
-            if (action.answer.type === item.type) {
-              return { ...item, value: action.answer.value };
-            }
-            return item;
-          }
-          case "Checkbox": {
-            if (action.answer.type === item.type) {
-              return { ...item, value: action.answer.value };
-            }
-            return item;
-          }
-          case "TextInput": {
-            if (action.answer.type === item.type) {
-              return { ...item, value: action.answer.value };
-            }
-            return item;
-          }
-          default: {
-            assertNever(item);
-          }
-        }
+        return createSurveyItemAndAnswer(item, action.answer);
       });
     }
     default:
