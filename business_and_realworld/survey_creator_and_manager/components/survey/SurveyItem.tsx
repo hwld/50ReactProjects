@@ -1,6 +1,6 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { SurveyItemAndAnswer, SurveyItemAnswer } from "../type/survey";
+import { SurveyItemAndAnswer, SurveyItemAnswer } from "../../type/survey";
 import { CheckboxField } from "./CheckboxField";
 import { RadioField } from "./RadioField";
 import { TextInputField } from "./TextInputField";

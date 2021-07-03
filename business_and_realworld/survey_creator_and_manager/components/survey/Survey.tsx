@@ -1,7 +1,7 @@
 import { Box, Button, Heading, Stack } from "@chakra-ui/react";
 import React from "react";
-import { useSurvey } from "../hooks/useSurvey";
-import { Survey as SurveySpec } from "../type/survey";
+import { useSurvey } from "../../hooks/useSurvey";
+import { Survey as SurveySpec } from "../../type/survey";
 import { SurveyItem } from "./SurveyItem";
 
 const Component: React.VFC<{ survey: SurveySpec }> = ({ survey }) => {
