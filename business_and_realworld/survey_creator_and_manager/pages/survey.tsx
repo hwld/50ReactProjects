@@ -7,8 +7,6 @@ export default function Home() {
   const survey: SurveySpec = {
     id: "foo",
     title: "調査タイトル",
-    startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
     items: [
       {
         id: "1",

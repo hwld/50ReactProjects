@@ -53,7 +53,5 @@ export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
 export type Survey = {
   id: string;
   title: string;
-  startTime: string;
-  endTime: string;
   items: SurveyItem[];
 };
