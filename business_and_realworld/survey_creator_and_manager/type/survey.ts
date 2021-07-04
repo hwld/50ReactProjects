@@ -1,42 +1,55 @@
+const allSurveyItemType = ["Radio", "Checkbox", "TextInput"] as const;
+export type SurveyItemType = typeof allSurveyItemType[number];
+
+export function isSurveyItemType(value: string): value is SurveyItemType {
+  return allSurveyItemType.includes(value as any);
+}
+
 type SurveyItemBase = {
   id: string;
-  type: string;
+  type: SurveyItemType;
   question: string;
   description?: string;
 };
 
-type Radio = "Radio";
 export type SurveyRadioItem = Extract<
   {
     id: string;
-    type: Radio;
+    type: "Radio";
     question: string;
     description?: string;
     choices: string[];
   },
   SurveyItemBase
 >;
-export type SurveyRadioAnswer = { type: Radio; value: string };
+export type SurveyRadioAnswer = {
+  type: SurveyRadioItem["type"];
+  value: string;
+};
 
-type Checkbox = "Checkbox";
 export type SurveyCheckboxItem = Extract<
   {
     id: string;
-    type: Checkbox;
+    type: "Checkbox";
     question: string;
     description?: string;
     choices: string[];
   },
   SurveyItemBase
 >;
-export type SurveyCheckboxAnswer = { type: Checkbox; value: string[] };
+export type SurveyCheckboxAnswer = {
+  type: SurveyCheckboxItem["type"];
+  value: string[];
+};
 
-type TextInput = "TextInput";
 export type SurveyTextInputItem = Extract<
-  { id: string; type: TextInput; question: string; description?: string },
+  { id: string; type: "TextInput"; question: string; description?: string },
   SurveyItemBase
 >;
-export type SurveyTextInputAnswer = { type: TextInput; value: string };
+export type SurveyTextInputAnswer = {
+  type: SurveyTextInputItem["type"];
+  value: string;
+};
 
 export type SurveyItem =
   | SurveyRadioItem

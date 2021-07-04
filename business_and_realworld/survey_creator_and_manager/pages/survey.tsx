@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { Survey } from "../components/Survey";
+import { Survey } from "../components/survey/Survey";
 import { Survey as SurveySpec } from "../type/survey";
 
 export default function Home() {
