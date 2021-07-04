@@ -6,4 +6,7 @@ export const theme = extendTheme({
       body: {},
     },
   },
+  config: {
+    initialColorMode: "dark",
+  },
 });
