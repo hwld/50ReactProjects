@@ -9,3 +9,37 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+enum SurveyItemType {
+  Radio
+  Checkbox
+  TextInput
+}
+
+model Choice {
+  surveyId String
+  itemId String
+  survey SurveyItem @relation(fields: [surveyId, itemId], references: [surveyId, id])
+  choice String
+  @@id([surveyId, itemId, choice])
+}
+
+model SurveyItem {
+  id String @default(uuid())
+  surveyId String 
+  survey Survey @relation(fields: [surveyId], references: [id])
+  type SurveyItemType
+  question String
+  description String?
+
+  // typeがRadio,Checkboxのときにのみセットする
+  choices Choice[]
+
+  @@id([id, surveyId])
+}
+
+model Survey {
+  id String @id @default(uuid())
+  title String
+  items SurveyItem[]
+}

@@ -1,7 +1,7 @@
 import { Box, Button, Input, Text } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { SurveyItem, SurveyRadioItem } from "../../type/survey";
+import { Survey, SurveyItem, SurveyRadioItem } from "../../type/survey";
 import { SurveyItemCreator } from "./SurveyItemCreator";
 
 type Props = {};
@@ -44,8 +44,16 @@ const Component: React.FC<Props> = ({}) => {
     setItems((items) => items.filter((item) => item.id !== itemId));
   };
 
-  const createSurvey = () => {
-    console.log(title, items);
+  const createSurvey = async () => {
+    const survey: Survey = {
+      id: "temp",
+      title,
+      items,
+    };
+    await fetch("/api/surveys", {
+      method: "POST",
+      body: JSON.stringify(survey),
+    });
   };
 
   return (
