@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { NextApiHandler } from "next";
+import prisma from "../../lib/prisma";
 import { Survey } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
-
-const prisma = new PrismaClient();
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {

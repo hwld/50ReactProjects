@@ -17,11 +17,12 @@ enum SurveyItemType {
 }
 
 model Choice {
-  surveyId String
   itemId String
-  survey SurveyItem @relation(fields: [surveyId, itemId], references: [surveyId, id])
+  survey SurveyItem @relation(fields: [itemId], references: [id])
   choice String
-  @@id([surveyId, itemId, choice])
+
+  // 同一SurveyItemで同じchoiceは存在しない
+  @@id([itemId, choice])
 }
 
 model SurveyItem {
@@ -32,14 +33,26 @@ model SurveyItem {
   question String
   description String?
 
-  // typeがRadio,Checkboxのときにのみセットする
   choices Choice[]
 
-  @@id([id, surveyId])
+  answer SurveyItemAnswer[]
+
+  @@id([id])
+}
+
+model SurveyItemAnswer {
+  itemId String
+  surveyItem SurveyItem @relation(fields: [itemId], references: [id])
+  surveyId String
+  survey Survey @relation(fields: [surveyId], references: [id])
+  value String
+
+  @@id([itemId, value])
 }
 
 model Survey {
   id String @id @default(uuid())
   title String
   items SurveyItem[]
+  answers SurveyItemAnswer[]
 }

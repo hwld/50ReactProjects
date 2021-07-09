@@ -9,6 +9,10 @@ const Component: React.VFC<{ survey: SurveySpec }> = ({ survey }) => {
 
   const handleSubmit = () => {
     console.log(items);
+    fetch(`/api/surveys/${survey.id}/answers`, {
+      method: "POST",
+      body: JSON.stringify(items),
+    });
   };
 
   return (
