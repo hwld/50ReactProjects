@@ -1,4 +1,5 @@
 import { Box, Button, Input, Text } from "@chakra-ui/react";
+import { useRouter } from "next/dist/client/router";
 import React, { ChangeEventHandler, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Survey, SurveyItem, SurveyRadioItem } from "../../type/survey";
@@ -7,6 +8,7 @@ import { SurveyItemCreator } from "./SurveyItemCreator";
 type Props = {};
 
 const Component: React.FC<Props> = ({}) => {
+  const router = useRouter();
   const [error, setError] = useState(false);
   const [title, setTitle] = useState("");
   const [items, setItems] = useState<SurveyItem[]>([]);
@@ -54,6 +56,8 @@ const Component: React.FC<Props> = ({}) => {
       method: "POST",
       body: JSON.stringify(survey),
     });
+
+    router.push("/");
   };
 
   return (

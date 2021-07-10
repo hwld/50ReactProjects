@@ -41,13 +41,12 @@ model SurveyItem {
 }
 
 model SurveyItemAnswer {
+  id String @id @default(uuid()) 
   itemId String
   surveyItem SurveyItem @relation(fields: [itemId], references: [id])
   surveyId String
   survey Survey @relation(fields: [surveyId], references: [id])
   value String
-
-  @@id([itemId, value])
 }
 
 model Survey {
