@@ -66,5 +66,6 @@ export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
 export type Survey = {
   id: string;
   title: string;
+  description?: string;
   items: SurveyItem[];
 };

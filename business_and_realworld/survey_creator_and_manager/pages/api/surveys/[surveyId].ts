@@ -1,6 +1,7 @@
 import { NextApiHandler } from "next";
+import prisma from "../../../lib/prisma";
 
-const handler: NextApiHandler = (req, res) => {
+const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {
     case "GET": {
       getSurvey(req, res);
@@ -11,7 +12,7 @@ const handler: NextApiHandler = (req, res) => {
       break;
     }
     case "DELETE": {
-      deleteSurvey(req, res);
+      await deleteSurvey(req, res);
       break;
     }
     default: {
@@ -24,6 +25,14 @@ const getSurvey: NextApiHandler = (req, res) => {};
 
 const updateSurvey: NextApiHandler = (req, res) => {};
 
-const deleteSurvey: NextApiHandler = (req, res) => {};
+const deleteSurvey: NextApiHandler = async (req, res) => {
+  const { surveyId } = req.query;
+  if (typeof surveyId !== "string") {
+    throw new Error();
+  }
+
+  await prisma.survey.delete({ where: { id: surveyId } });
+  res.status(200).json({});
+};
 
 export default handler;

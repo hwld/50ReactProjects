@@ -1,4 +1,4 @@
-import { Box, Button, Input, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, chakra, Input } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useMemo } from "react";
 import { SurveyItem, SurveyItemType } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
@@ -6,6 +6,7 @@ import { EditChoices } from "./EditChoices";
 import { SurveyItemTypeSelect } from "./SurveyItemTypeSelect";
 
 type Props = {
+  className?: string;
   item: SurveyItem;
   onChangeItem: (item: SurveyItem) => void;
   onDeleteItem: (itemId: string) => void;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const Component: React.FC<Props> = ({
+  className,
   item,
   onChangeItem,
   onDeleteItem,
@@ -73,47 +75,48 @@ const Component: React.FC<Props> = ({
 
     switch (item.type) {
       case "Radio":
+      case "Checkbox": {
         return (
           <EditChoices
+            mt={5}
+            ml={5}
             choices={item.choices}
             onChangeChoices={handleChangeChoices}
             setError={setError}
           />
         );
-      case "Checkbox":
-        return (
-          <EditChoices
-            choices={item.choices}
-            onChangeChoices={handleChangeChoices}
-            setError={setError}
-          />
-        );
-      case "TextInput":
+      }
+      case "TextInput": {
         // 何も表示しない
         break;
-      default:
+      }
+      default: {
         assertNever(item);
+      }
     }
-  }, [item, onChangeItem]);
+  }, [item, onChangeItem, setError]);
 
   return (
-    <Box mx={10} my={3} p={5} boxShadow="md" bgColor="gray.700">
-      <Stack>
+    <Box className={className} p={10}>
+      <Box>
         <Box>
-          <Text>質問</Text>
-          <Input onChange={handleChangeQuestion} />
+          <Input
+            placeholder="質問"
+            variant="flushed"
+            size="lg"
+            onChange={handleChangeQuestion}
+          />
         </Box>
         <Box>
-          <Text>種類</Text>
-          <SurveyItemTypeSelect onChange={changeItemType} />
+          <SurveyItemTypeSelect mt={5} onChange={changeItemType} />
         </Box>
         {option}
-        <Button colorScheme="red" w="100px" onClick={handleClick}>
+        <Button mt={5} colorScheme="red" w="100px" onClick={handleClick}>
           削除
         </Button>
-      </Stack>
+      </Box>
     </Box>
   );
 };
 
-export const SurveyItemCreator = Component;
+export const SurveyItemCreator = chakra(Component);

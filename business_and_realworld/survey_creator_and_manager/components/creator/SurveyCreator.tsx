@@ -1,4 +1,5 @@
-import { Box, Button, Input, Text } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
+import { Box, Button, Center, Flex, IconButton, Input } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React, { ChangeEventHandler, useState } from "react";
 import { v4 as uuid } from "uuid";
@@ -11,12 +12,19 @@ const Component: React.FC<Props> = ({}) => {
   const router = useRouter();
   const [error, setError] = useState(false);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState<string | undefined>(undefined);
   const [items, setItems] = useState<SurveyItem[]>([]);
 
   const handleChangeTitle: ChangeEventHandler<HTMLInputElement> = ({
     target: { value },
   }) => {
     setTitle(value);
+  };
+
+  const handleChangeDescription: ChangeEventHandler<HTMLInputElement> = ({
+    target: { value },
+  }) => {
+    setDescription(value);
   };
 
   const handleAddItem = () => {
@@ -50,6 +58,7 @@ const Component: React.FC<Props> = ({}) => {
     const survey: Survey = {
       id: "temp",
       title,
+      description,
       items,
     };
     await fetch("/api/surveys", {
@@ -61,27 +70,69 @@ const Component: React.FC<Props> = ({}) => {
   };
 
   return (
-    <Box>
-      <Box m={3}>
-        <Text>調査タイトル:</Text>
-        <Input value={title} onChange={handleChangeTitle} />
-      </Box>
-      {items.map((item, index) => {
-        return (
-          <SurveyItemCreator
-            key={index}
-            item={item}
-            onChangeItem={handleChangeItem}
-            onDeleteItem={handleDeleteItem}
-            setError={setError}
-          />
-        );
-      })}
-      <Box w="100%" h="64px" />
-      <Box p={3} position="fixed" bottom="0" right="0" left="0">
-        <Button colorScheme="blue" onClick={handleAddItem}>
-          質問を作成
-        </Button>
+    <Box minH="100vh" bgColor="gray.600">
+      <Flex w="800px" m="0 auto">
+        <Box flexGrow={1}>
+          <Box bgColor="gray.700" p={10} borderRadius="10px" boxShadow="md">
+            <Input
+              placeholder="調査タイトル"
+              value={title}
+              variant="flushed"
+              fontSize="3xl"
+              h="50px"
+              py={8}
+              onChange={handleChangeTitle}
+            />
+            <Input
+              mt={5}
+              ml={3}
+              placeholder="調査の説明"
+              variant="flushed"
+              w="80%"
+              onChange={handleChangeDescription}
+            />
+          </Box>
+          {items.map((item, index) => {
+            return (
+              <SurveyItemCreator
+                my={3}
+                boxShadow="md"
+                bgColor="gray.700"
+                borderRadius="10px"
+                key={index}
+                item={item}
+                onChangeItem={handleChangeItem}
+                onDeleteItem={handleDeleteItem}
+                setError={setError}
+              />
+            );
+          })}
+        </Box>
+        <Box
+          bgColor="gray.100"
+          h="300px"
+          position="sticky"
+          top="0"
+          borderRadius="10px"
+          ml={5}
+          p={3}
+        >
+          <Center>
+            <IconButton
+              aria-label="項目を作成"
+              icon={<AddIcon color="gray.100" boxSize="20px" />}
+              alignItems="center"
+              bgColor="gray.600"
+              _hover={{ bgColor: "gray.700" }}
+              _active={{ bgColor: "gray.800" }}
+              borderRadius="50%"
+              onClick={handleAddItem}
+            />
+          </Center>
+        </Box>
+      </Flex>
+
+      <Box p={3}>
         <Button
           ml={3}
           colorScheme="blue"

@@ -1,8 +1,9 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, IconButton, Input } from "@chakra-ui/react";
+import { Box, Button, chakra, Flex, IconButton, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 
 type Props = {
+  className?: string;
   choices: string[];
   onChangeChoices: (choices: string[]) => void;
   setError: (isError: boolean) => void;
@@ -10,7 +11,12 @@ type Props = {
 
 // 選択肢が文字列の配列でしかないため、選択肢を特定するのにインデックスを使用している。
 // 問題があれば選択肢にidをつける。
-const Component: React.FC<Props> = ({ choices, onChangeChoices, setError }) => {
+const Component: React.FC<Props> = ({
+  className,
+  choices,
+  onChangeChoices,
+  setError,
+}) => {
   const [defaultChoice, setDefaultChoice] = useState(1);
 
   const handleChangeChoice = (index: number, choice: string) => {
@@ -53,11 +59,12 @@ const Component: React.FC<Props> = ({ choices, onChangeChoices, setError }) => {
   };
 
   return (
-    <Box>
+    <Box className={className}>
       {choices.map((choice, index) => {
         return (
-          <Flex mt={2} ml={5} key={index}>
+          <Flex mt={3} key={index}>
             <Input
+              variant="flushed"
               value={choice}
               onChange={({ target: { value } }) =>
                 handleChangeChoice(index, value)
@@ -65,9 +72,10 @@ const Component: React.FC<Props> = ({ choices, onChangeChoices, setError }) => {
               isInvalid={choices.indexOf(choice) !== index}
             />
             <IconButton
-              ml={2}
+              ml={3}
               aria-label="選択肢を削除"
               icon={<CloseIcon />}
+              borderRadius="10px"
               onClick={() => handleDeleteChoice(index)}
             />
           </Flex>
@@ -75,10 +83,9 @@ const Component: React.FC<Props> = ({ choices, onChangeChoices, setError }) => {
       })}
 
       <Button
-        mt={2}
-        ml={5}
+        mt={3}
         color="blue.400"
-        variant="ghost"
+        variant="outline"
         onClick={handleAddChoice}
       >
         新しい項目を追加する
@@ -87,4 +94,4 @@ const Component: React.FC<Props> = ({ choices, onChangeChoices, setError }) => {
   );
 };
 
-export const EditChoices = Component;
+export const EditChoices = chakra(Component);

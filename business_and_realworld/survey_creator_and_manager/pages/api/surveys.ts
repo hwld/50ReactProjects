@@ -32,6 +32,7 @@ const createSurvey: NextApiHandler = async (req, res) => {
   const result = await prisma.survey.create({
     data: {
       title: survey.title,
+      description: survey.description,
       items: {
         create: survey.items.map((item) => {
           switch (item.type) {

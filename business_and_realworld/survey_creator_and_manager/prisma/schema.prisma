@@ -8,6 +8,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 enum SurveyItemType {
@@ -18,7 +19,7 @@ enum SurveyItemType {
 
 model Choice {
   itemId String
-  survey SurveyItem @relation(fields: [itemId], references: [id])
+  surveyItem SurveyItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   choice String
 
   // 同一SurveyItemで同じchoiceは存在しない
@@ -28,7 +29,7 @@ model Choice {
 model SurveyItem {
   id String @default(uuid())
   surveyId String 
-  survey Survey @relation(fields: [surveyId], references: [id])
+  survey Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   type SurveyItemType
   question String
   description String?
@@ -43,15 +44,16 @@ model SurveyItem {
 model SurveyItemAnswer {
   id String @id @default(uuid()) 
   itemId String
-  surveyItem SurveyItem @relation(fields: [itemId], references: [id])
+  surveyItem SurveyItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   surveyId String
-  survey Survey @relation(fields: [surveyId], references: [id])
+  survey Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   value String
 }
 
 model Survey {
   id String @id @default(uuid())
   title String
+  description String?
   items SurveyItem[]
   answers SurveyItemAnswer[]
 }
