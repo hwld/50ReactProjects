@@ -97,7 +97,7 @@ const Component: React.FC<Props> = ({
   }, [item, onChangeItem, setError]);
 
   return (
-    <Box className={className} p={10}>
+    <Box className={className} p={5}>
       <Box>
         <Box>
           <Input

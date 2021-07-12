@@ -71,7 +71,31 @@ const Component: React.FC<Props> = ({}) => {
 
   return (
     <Box minH="100vh" bgColor="gray.600">
-      <Flex w="800px" m="0 auto">
+      <Box h="70px">
+        <Flex
+          position="fixed"
+          bgColor="gray.300"
+          top={0}
+          left={0}
+          right={0}
+          h="70px"
+          zIndex="1"
+          justifyContent="flex-end"
+        >
+          <Button
+            colorScheme="blue"
+            onClick={createSurvey}
+            isDisabled={error}
+            position="relative"
+            right={0}
+            mt={3}
+            mr={3}
+          >
+            調査を作成
+          </Button>
+        </Flex>
+      </Box>
+      <Flex w="800px" mt={10} mx="auto">
         <Box flexGrow={1}>
           <Box bgColor="gray.700" p={10} borderRadius="10px" boxShadow="md">
             <Input
@@ -109,10 +133,11 @@ const Component: React.FC<Props> = ({}) => {
           })}
         </Box>
         <Box
-          bgColor="gray.100"
+          bgColor="gray.300"
+          w="50px"
           h="300px"
           position="sticky"
-          top="0"
+          top="80px"
           borderRadius="10px"
           ml={5}
           p={3}
@@ -131,17 +156,6 @@ const Component: React.FC<Props> = ({}) => {
           </Center>
         </Box>
       </Flex>
-
-      <Box p={3}>
-        <Button
-          ml={3}
-          colorScheme="blue"
-          onClick={createSurvey}
-          isDisabled={error}
-        >
-          調査を作成
-        </Button>
-      </Box>
     </Box>
   );
 };
