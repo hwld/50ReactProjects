@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useSurvey } from "../../hooks/useSurvey";
@@ -19,16 +19,41 @@ const Component: React.VFC<{ survey: SurveySpec }> = ({ survey }) => {
   };
 
   return (
-    <Box>
-      <Heading size="xl">{survey.title}</Heading>
-      <Stack>
+    <Box minH="100vh" bgColor="gray.600">
+      <Box h="70px">
+        <Flex
+          position="fixed"
+          bgColor="gray.300"
+          top={0}
+          left={0}
+          right={0}
+          h="70px"
+          zIndex="1"
+          justifyContent="flex-end"
+        />
+      </Box>
+      <Box w="800px" mt={5} mx="auto">
+        <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
+          <Heading size="xl">{survey.title}</Heading>
+          <Text>{survey.description}</Text>
+        </Box>
         {items.map((item) => {
-          return <SurveyItem key={item.id} item={item} setAnswer={setAnswer} />;
+          return (
+            <SurveyItem
+              my={3}
+              bgColor="gray.700"
+              rounded="xl"
+              boxShadow="md"
+              key={item.id}
+              item={item}
+              setAnswer={setAnswer}
+            />
+          );
         })}
-      </Stack>
-      <Button colorScheme="green" onClick={handleSubmit}>
-        送信
-      </Button>
+        <Button colorScheme="green" onClick={handleSubmit}>
+          送信
+        </Button>
+      </Box>
     </Box>
   );
 };

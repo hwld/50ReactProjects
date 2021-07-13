@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, BoxProps, Heading, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { SurveyItemAndAnswer, SurveyItemAnswer } from "../../type/survey";
 import { CheckboxField } from "./CheckboxField";
@@ -8,9 +8,9 @@ import { TextInputField } from "./TextInputField";
 type Props = {
   item: SurveyItemAndAnswer;
   setAnswer: (itemId: string, answer: SurveyItemAnswer) => void;
-};
+} & BoxProps;
 
-const Component: React.VFC<Props> = ({ item, setAnswer }) => {
+const Component: React.VFC<Props> = ({ item, setAnswer, ...boxProps }) => {
   const inputField = useMemo(() => {
     switch (item.type) {
       case "Radio":
@@ -23,10 +23,12 @@ const Component: React.VFC<Props> = ({ item, setAnswer }) => {
   }, [item, setAnswer]);
 
   return (
-    <Box key={item.id}>
-      <Heading size="md">{item.question}</Heading>
-      <Text>{item.description}</Text>
-      {inputField}
+    <Box {...boxProps} key={item.id} p={5}>
+      <Box mb={3}>
+        <Heading size="md">{item.question}</Heading>
+        <Text>{item.description}</Text>
+      </Box>
+      <Box ml={3}>{inputField}</Box>
     </Box>
   );
 };

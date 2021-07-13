@@ -25,6 +25,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   }
 
   const survey = await getSurveyFromPrisma(surveyId);
+  if (!survey) {
+    throw new Error();
+  }
 
   // undefinedを含むとエラーが起こるので、stringifyをしてプロパティを消す
   return { props: { survey: JSON.parse(JSON.stringify(survey)) } };
