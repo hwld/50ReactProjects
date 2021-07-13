@@ -12,6 +12,7 @@ type DBSurvey = PrismaSurvey & {
 const DBSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   const survey: Survey = {
     id: dbSurvey.id,
+    description: dbSurvey.description ?? undefined,
     items: dbSurvey.items.map((item) => {
       switch (item.type) {
         case "Radio": {
