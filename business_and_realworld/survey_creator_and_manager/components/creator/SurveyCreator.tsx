@@ -116,14 +116,14 @@ const Component: React.FC<Props> = ({}) => {
               onChange={handleChangeDescription}
             />
           </Box>
-          {items.map((item, index) => {
+          {items.map((item) => {
             return (
               <SurveyItemCreator
                 my={3}
                 boxShadow="md"
                 bgColor="gray.700"
                 borderRadius="10px"
-                key={index}
+                key={item.id}
                 item={item}
                 onChangeItem={handleChangeItem}
                 onDeleteItem={handleDeleteItem}
