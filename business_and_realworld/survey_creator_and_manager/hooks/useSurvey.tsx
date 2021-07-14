@@ -1,86 +1,91 @@
 import { useCallback, useReducer } from "react";
-import { Survey, SurveyItemAndAnswer, SurveyItemAnswer } from "../type/survey";
+import { v4 as uuid } from "uuid";
+import { Survey, SurveyItem } from "../type/survey";
 import { assertNever } from "../utils/asertNever";
 
-const generateSurveyItemAndAnswers = (
-  survey: Survey
-): SurveyItemAndAnswer[] => {
-  return survey.items.map((item) => {
-    switch (item.type) {
-      case "Radio":
-        return { ...item, value: "" };
-      case "Checkbox":
-        return { ...item, value: [] };
-      case "TextInput":
-        return { ...item, value: "" };
-      default:
-        assertNever(item);
-    }
-  });
-};
+type Action =
+  | { type: "changeTitle"; title: string }
+  | { type: "changeDescription"; description: string }
+  | { type: "addSurveyItem" }
+  | { type: "deleteSurveyItem"; id: string }
+  | { type: "changeSurveyItem"; item: SurveyItem };
 
-const createSurveyItemAndAnswer = (
-  item: SurveyItemAndAnswer,
-  answer: SurveyItemAnswer
-): SurveyItemAndAnswer => {
-  switch (item.type) {
-    case "Radio": {
-      if (answer.type === item.type) {
-        return { ...item, value: answer.value };
-      }
-      return item;
+const reducer = (state: Survey, action: Action): Survey => {
+  switch (action.type) {
+    case "changeTitle": {
+      return { ...state, title: action.title };
     }
-    case "Checkbox": {
-      if (answer.type === item.type) {
-        return { ...item, value: answer.value };
-      }
-      return item;
+    case "changeDescription": {
+      return { ...state, description: action.description };
     }
-    case "TextInput": {
-      if (answer.type === item.type) {
-        return { ...item, value: answer.value };
-      }
-      return item;
+    case "addSurveyItem": {
+      return {
+        ...state,
+        items: [
+          ...state.items,
+          {
+            // フロント側で仮のidをつける
+            id: uuid(),
+            type: "Radio",
+            question: "",
+            choices: ["選択肢1"],
+          },
+        ],
+      };
+    }
+    case "deleteSurveyItem": {
+      return {
+        ...state,
+        items: state.items.filter((item) => item.id !== action.id),
+      };
+    }
+    case "changeSurveyItem": {
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (action.item.id !== item.id) {
+            return item;
+          }
+
+          return action.item;
+        }),
+      };
     }
     default: {
-      assertNever(item);
+      assertNever(action);
     }
   }
 };
 
-type SurveyAction = {
-  type: "setAnswer";
-  itemId: string;
-  answer: SurveyItemAnswer;
-};
+export const useSurvey = (initialSurvey: Survey) => {
+  const [survey, dispatch] = useReducer(reducer, initialSurvey);
 
-const reducer = (
-  items: SurveyItemAndAnswer[],
-  action: SurveyAction
-): SurveyItemAndAnswer[] => {
-  switch (action.type) {
-    case "setAnswer": {
-      return items.map((item) => {
-        if (item.id !== action.itemId) {
-          return item;
-        }
-        return createSurveyItemAndAnswer(item, action.answer);
-      });
-    }
-    default:
-      assertNever(action.type);
-  }
-};
-
-export const useSurvey = (surveySpec: Survey) => {
-  const [itemAndAnswers, dispatch] = useReducer(
-    reducer,
-    generateSurveyItemAndAnswers(surveySpec)
-  );
-
-  const setAnswer = useCallback((itemId: string, answer: SurveyItemAnswer) => {
-    dispatch({ type: "setAnswer", itemId, answer });
+  const changeTitle = useCallback((title: string) => {
+    dispatch({ type: "changeTitle", title });
   }, []);
 
-  return { items: itemAndAnswers, setAnswer };
+  const changeDescription = useCallback((description: string) => {
+    dispatch({ type: "changeDescription", description });
+  }, []);
+
+  const addItem = useCallback(() => {
+    dispatch({ type: "addSurveyItem" });
+  }, []);
+
+  const changeItem = useCallback((newItem: SurveyItem) => {
+    dispatch({ type: "changeSurveyItem", item: newItem });
+  }, []);
+
+  const deleteItem = useCallback((itemId: string) => {
+    dispatch({ type: "deleteSurveyItem", id: itemId });
+  }, []);
+
+  return {
+    survey,
+    changeTitle,
+    changeDescription,
+    addItem,
+    changeItem,
+    deleteItem,
+  };
 };

@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import prisma from "../../../../lib/prisma";
+import prisma from "../../../../lib/server/prisma";
 import { SurveyItemAndAnswer } from "../../../../type/survey";
 
 const handler: NextApiHandler = async (req, res) => {

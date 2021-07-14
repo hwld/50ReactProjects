@@ -1,14 +1,15 @@
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import { useSurvey } from "../../hooks/useSurvey";
-import { Survey as SurveySpec } from "../../type/survey";
+import { useSurveyAnswers } from "../../../hooks/useSurveyAnswers";
+import { Survey as SurveySpec } from "../../../type/survey";
+import { Header } from "../../common/Header";
 import { SurveyItem } from "./SurveyItem";
 
 const Component: React.VFC<{
   survey: SurveySpec;
   setAnswered: (value: boolean) => void;
 }> = ({ survey, setAnswered }) => {
-  const { items, setAnswer } = useSurvey(survey);
+  const { items, setAnswer } = useSurveyAnswers(survey);
 
   const handleSubmit = async () => {
     await fetch(`/api/surveys/${survey.id}/answers`, {
@@ -20,18 +21,7 @@ const Component: React.VFC<{
 
   return (
     <Box minH="100vh" bgColor="gray.600">
-      <Box h="70px">
-        <Flex
-          position="fixed"
-          bgColor="gray.300"
-          top={0}
-          left={0}
-          right={0}
-          h="70px"
-          zIndex="1"
-          justifyContent="flex-end"
-        />
-      </Box>
+      <Header />
       <Box w="800px" mt={5} mx="auto">
         <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
           <Heading size="xl">{survey.title}</Heading>

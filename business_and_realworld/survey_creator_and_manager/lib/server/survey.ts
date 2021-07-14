@@ -1,13 +1,11 @@
-import { Choice, Survey as PrismaSurvey, SurveyItem } from "@prisma/client";
-import { Survey } from "../type/survey";
-import { assertNever } from "../utils/asertNever";
+import { Prisma } from "@prisma/client";
+import { Survey } from "../../type/survey";
+import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
 
-type DBSurvey = PrismaSurvey & {
-  items: (SurveyItem & {
-    choices: Choice[];
-  })[];
-};
+type DBSurvey = Prisma.SurveyGetPayload<{
+  include: { items: { include: { choices: true } } };
+}>;
 
 const DBSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   const survey: Survey = {
@@ -52,7 +50,7 @@ const DBSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   return survey;
 };
 
-export const getSurveyFromPrisma = async (
+export const getSurvey = async (
   surveyId: string
 ): Promise<Survey | undefined> => {
   const dbSurvey = await prisma.survey.findFirst({
@@ -67,7 +65,7 @@ export const getSurveyFromPrisma = async (
   return DBSurveyToSurvey(dbSurvey);
 };
 
-export const getAllSurveyFromPrisma = async (): Promise<Survey[]> => {
+export const getAllSurvey = async (): Promise<Survey[]> => {
   const allDbSurveys = await prisma.survey.findMany({
     include: { items: { include: { choices: true } } },
   });

@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import prisma from "../../lib/prisma";
+import prisma from "../../lib/server/prisma";
 import { Survey } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 

@@ -1,6 +1,6 @@
 import { Box, chakra, Select } from "@chakra-ui/react";
 import React, { ChangeEventHandler } from "react";
-import { isSurveyItemType, SurveyItemType } from "../../type/survey";
+import { isSurveyItemType, SurveyItemType } from "../../../type/survey";
 import { SurveyItemTypeSelectOption } from "./SurveyItemTypeSelectOption";
 
 type Props = {

@@ -1,6 +1,6 @@
 import { Checkbox, CheckboxGroup, Stack } from "@chakra-ui/react";
 import React from "react";
-import { SurveyCheckboxAnswer, SurveyCheckboxItem } from "../../type/survey";
+import { SurveyCheckboxAnswer, SurveyCheckboxItem } from "../../../type/survey";
 
 type Props = {
   checkBoxItem: SurveyCheckboxItem & SurveyCheckboxAnswer;

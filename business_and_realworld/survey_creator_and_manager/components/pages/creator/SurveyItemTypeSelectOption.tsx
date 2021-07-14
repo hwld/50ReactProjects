@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { SurveyItemType } from "../../type/survey";
+import { SurveyItemType } from "../../../type/survey";
 
 type Props = {
   children: ReactNode;

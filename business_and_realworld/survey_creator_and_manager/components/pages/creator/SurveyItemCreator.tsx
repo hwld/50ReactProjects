@@ -1,7 +1,7 @@
-import { Box, Button, chakra, Input } from "@chakra-ui/react";
+import { Box, BoxProps, Button, Input } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useMemo } from "react";
-import { SurveyItem, SurveyItemType } from "../../type/survey";
-import { assertNever } from "../../utils/asertNever";
+import { SurveyItem, SurveyItemType } from "../../../type/survey";
+import { assertNever } from "../../../utils/asertNever";
 import { EditChoices } from "./EditChoices";
 import { SurveyItemTypeSelect } from "./SurveyItemTypeSelect";
 
@@ -11,7 +11,7 @@ type Props = {
   onChangeItem: (item: SurveyItem) => void;
   onDeleteItem: (itemId: string) => void;
   setError: (isError: boolean) => void;
-};
+} & BoxProps;
 
 const Component: React.FC<Props> = ({
   className,
@@ -19,6 +19,7 @@ const Component: React.FC<Props> = ({
   onChangeItem,
   onDeleteItem,
   setError,
+  ...boxProps
 }) => {
   const handleClick = () => {
     onDeleteItem(item.id);
@@ -97,7 +98,13 @@ const Component: React.FC<Props> = ({
   }, [item, onChangeItem, setError]);
 
   return (
-    <Box className={className} p={5}>
+    <Box
+      p={5}
+      boxShadow="md"
+      bgColor="gray.700"
+      borderRadius="10px"
+      {...boxProps}
+    >
       <Box>
         <Box>
           <Input
@@ -119,4 +126,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const SurveyItemCreator = chakra(Component);
+export const SurveyItemCreator = Component;

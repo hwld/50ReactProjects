@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import { Survey } from "../../type/survey";
+import { Survey } from "../../../type/survey";
 
 type Props = {
   survey: Survey;

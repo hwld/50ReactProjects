@@ -64,18 +64,18 @@ const Component: React.FC<Props> = ({
         return (
           <Flex mt={3} key={index}>
             <Input
+              isInvalid={choices.indexOf(choice) !== index}
               variant="flushed"
               value={choice}
               onChange={({ target: { value } }) =>
                 handleChangeChoice(index, value)
               }
-              isInvalid={choices.indexOf(choice) !== index}
             />
             <IconButton
               ml={3}
+              borderRadius="10px"
               aria-label="選択肢を削除"
               icon={<CloseIcon />}
-              borderRadius="10px"
               onClick={() => handleDeleteChoice(index)}
             />
           </Flex>

@@ -9,15 +9,14 @@ import {
   IconButton,
   useToast,
 } from "@chakra-ui/react";
-import { useRouter } from "next/dist/client/router";
+import NextLink from "next/link";
 import React, { useState } from "react";
-import { Survey } from "../../type/survey";
+import { Survey } from "../../../type/survey";
 
 type Props = { surveys: Survey[] };
 
 const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
   const [surveys, setSurveys] = useState(surveysProp);
-  const router = useRouter();
   const toast = useToast();
 
   const writeClipboard = async (value: string) => {
@@ -32,10 +31,6 @@ const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
     setSurveys(surveys);
   };
 
-  const toCreator = async () => {
-    await router.push("/creator");
-  };
-
   return (
     <Box minH="100vh" bgColor="gray.600">
       <Box bg="cyan.200" h="250px"></Box>
@@ -46,18 +41,19 @@ const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
         gap={5}
         justifyContent="center"
       >
-        <IconButton
-          aria-label="新しい調査の作成"
-          icon={<AddIcon boxSize="70px" color="gray.800" />}
-          borderRadius="20px"
-          height="100%"
-          bgColor="gray.400"
-          _hover={{ bgColor: "gray.500" }}
-          _active={{ bgColor: "gray.600" }}
-          opacity="0.7"
-          boxShadow="lg"
-          onClick={toCreator}
-        />
+        <NextLink href="/creator">
+          <IconButton
+            aria-label="新しい調査の作成"
+            icon={<AddIcon boxSize="70px" color="gray.800" />}
+            borderRadius="20px"
+            height="100%"
+            bgColor="gray.400"
+            _hover={{ bgColor: "gray.500" }}
+            _active={{ bgColor: "gray.600" }}
+            opacity="0.7"
+            boxShadow="lg"
+          />
+        </NextLink>
         {surveys.map((survey) => {
           return (
             <Flex
