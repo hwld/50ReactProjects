@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useState } from "react";
+import { Response } from "../../components/survey/Response";
 import { Survey } from "../../components/survey/Survey";
 import { getSurveyFromPrisma } from "../../lib/prismaSurvey";
 import { Survey as SurveySpec } from "../../type/survey";
@@ -8,9 +9,14 @@ import { Survey as SurveySpec } from "../../type/survey";
 type Props = { survey: SurveySpec };
 
 export default function Home({ survey }: Props) {
+  const [answered, setAnswered] = useState(false);
   return (
     <Box>
-      <Survey survey={survey} />
+      {answered === false ? (
+        <Survey survey={survey} setAnswered={setAnswered} />
+      ) : (
+        <Response survey={survey} setAnswered={setAnswered} />
+      )}
     </Box>
   );
 }

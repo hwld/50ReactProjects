@@ -1,12 +1,13 @@
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
-import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useSurvey } from "../../hooks/useSurvey";
 import { Survey as SurveySpec } from "../../type/survey";
 import { SurveyItem } from "./SurveyItem";
 
-const Component: React.VFC<{ survey: SurveySpec }> = ({ survey }) => {
-  const router = useRouter();
+const Component: React.VFC<{
+  survey: SurveySpec;
+  setAnswered: (value: boolean) => void;
+}> = ({ survey, setAnswered }) => {
   const { items, setAnswer } = useSurvey(survey);
 
   const handleSubmit = async () => {
@@ -14,8 +15,7 @@ const Component: React.VFC<{ survey: SurveySpec }> = ({ survey }) => {
       method: "POST",
       body: JSON.stringify(items),
     });
-
-    router.push(`/surveys/${survey.id}/response`);
+    setAnswered(true);
   };
 
   return (
