@@ -1,25 +1,36 @@
-import { CloseIcon } from "@chakra-ui/icons";
-import { Box, Button, chakra, Flex, IconButton, Input } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { CloseIcon, WarningTwoIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Center,
+  Flex,
+  IconButton,
+  Input,
+} from "@chakra-ui/react";
+import React from "react";
 
 type Props = {
-  className?: string;
+  type: "Radio" | "Checkbox";
   choices: string[];
   onChangeChoices: (choices: string[]) => void;
   setError: (isError: boolean) => void;
-};
+} & BoxProps;
 
 // 選択肢が文字列の配列でしかないため、選択肢を特定するのにインデックスを使用している。
 // 問題があれば選択肢にidをつける。
 const Component: React.FC<Props> = ({
-  className,
+  type,
   choices,
   onChangeChoices,
   setError,
+  ...boxProps
 }) => {
-  const [defaultChoice, setDefaultChoice] = useState(1);
+  const isError = (choices: string[]) => {
+    return choices.some((choice, i) => choices.indexOf(choice) !== i);
+  };
 
-  const handleChangeChoice = (index: number, choice: string) => {
+  const changeChoice = (index: number, choice: string) => {
     const newChoices = choices.map((c, i) => {
       if (i === index) {
         return choice;
@@ -27,56 +38,75 @@ const Component: React.FC<Props> = ({
       return c;
     });
 
-    if (newChoices.every((choice, i) => newChoices.indexOf(choice) === i)) {
-      setError(false);
-    } else {
+    if (isError(newChoices)) {
       setError(true);
+    } else {
+      setError(false);
     }
 
     onChangeChoices(newChoices);
   };
 
   const handleAddChoice = () => {
-    let increment = 0;
-    while (choices.includes(`選択肢${defaultChoice + increment}`)) {
+    let increment = 1;
+    while (choices.includes(`選択肢${increment}`)) {
       increment++;
     }
 
-    onChangeChoices([...choices, `選択肢${defaultChoice + increment}`]);
-    setDefaultChoice((c) => c + increment);
+    onChangeChoices([...choices, `選択肢${increment}`]);
   };
 
-  const handleDeleteChoice = (index: number) => {
+  const deleteChoice = (index: number) => {
     const newChoices = choices.filter((_, i) => i != index);
 
-    if (newChoices.every((choice, i) => newChoices.indexOf(choice) === i)) {
-      setError(false);
-    } else {
+    if (isError(choices)) {
       setError(true);
+    } else {
+      setError(false);
     }
 
     onChangeChoices(newChoices);
   };
 
   return (
-    <Box className={className}>
+    <Box {...boxProps}>
       {choices.map((choice, index) => {
+        const isInvalid = choices.indexOf(choice) !== index;
+
         return (
           <Flex mt={3} key={index}>
+            <Center>
+              <Box
+                rounded={type === "Radio" ? "full" : "sm"}
+                boxSize="16px"
+                bgColor="gray.50"
+                borderWidth="2px"
+                borderColor="gray.400"
+              />
+            </Center>
             <Input
-              isInvalid={choices.indexOf(choice) !== index}
+              ml={2}
+              borderColor="transparent"
+              isInvalid={isInvalid}
+              _hover={{
+                borderColor: "gray.300",
+                _focus: { borderColor: "blue.400" },
+              }}
               variant="flushed"
               value={choice}
               onChange={({ target: { value } }) =>
-                handleChangeChoice(index, value)
+                changeChoice(index, value)
               }
             />
+            <Center ml={1} w="30px">
+              {isInvalid && <WarningTwoIcon mt={2} color="red.400" />}
+            </Center>
             <IconButton
-              ml={3}
-              borderRadius="10px"
+              ml={1}
+              bgColor="transparent"
               aria-label="選択肢を削除"
               icon={<CloseIcon />}
-              onClick={() => handleDeleteChoice(index)}
+              onClick={() => deleteChoice(index)}
             />
           </Flex>
         );
@@ -94,4 +124,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const EditChoices = chakra(Component);
+export const EditChoices = Component;

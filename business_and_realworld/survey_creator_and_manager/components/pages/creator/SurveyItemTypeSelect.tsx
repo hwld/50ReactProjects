@@ -1,4 +1,4 @@
-import { Box, chakra, Select } from "@chakra-ui/react";
+import { Select, SelectProps } from "@chakra-ui/react";
 import React, { ChangeEventHandler } from "react";
 import { isSurveyItemType, SurveyItemType } from "../../../type/survey";
 import { SurveyItemTypeSelectOption } from "./SurveyItemTypeSelectOption";
@@ -6,9 +6,13 @@ import { SurveyItemTypeSelectOption } from "./SurveyItemTypeSelectOption";
 type Props = {
   className?: string;
   onChange: (type: SurveyItemType) => void;
-};
+} & Omit<SelectProps, "onChange">;
 
-const Component: React.FC<Props> = ({ className, onChange }) => {
+const Component: React.FC<Props> = ({
+  className,
+  onChange,
+  ...selectProps
+}) => {
   const handleChange: ChangeEventHandler<HTMLSelectElement> = ({
     target: { value },
   }) => {
@@ -18,22 +22,18 @@ const Component: React.FC<Props> = ({ className, onChange }) => {
   };
 
   return (
-    // SelectにclassNameを渡すと、select_wrapperではなくその内側のselectにスタイルがあたって、
-    // marginが思ったとおりに設定できないのでBoxでラップする
-    <Box className={className}>
-      <Select variant="outline" onChange={handleChange}>
-        <SurveyItemTypeSelectOption value={"Radio"}>
-          ラジオボタン
-        </SurveyItemTypeSelectOption>
-        <SurveyItemTypeSelectOption value={"Checkbox"}>
-          チェックボックス
-        </SurveyItemTypeSelectOption>
-        <SurveyItemTypeSelectOption value={"TextInput"}>
-          テキストフィールド
-        </SurveyItemTypeSelectOption>
-      </Select>
-    </Box>
+    <Select variant="outline" {...selectProps} onChange={handleChange}>
+      <SurveyItemTypeSelectOption value={"Radio"}>
+        ラジオボタン
+      </SurveyItemTypeSelectOption>
+      <SurveyItemTypeSelectOption value={"Checkbox"}>
+        チェックボックス
+      </SurveyItemTypeSelectOption>
+      <SurveyItemTypeSelectOption value={"TextInput"}>
+        テキストフィールド
+      </SurveyItemTypeSelectOption>
+    </Select>
   );
 };
 
-export const SurveyItemTypeSelect = chakra(Component);
+export const SurveyItemTypeSelect = Component;

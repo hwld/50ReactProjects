@@ -27,20 +27,23 @@ const Component: React.FC<Props> = ({
   };
 
   return (
-    <Box bgColor="gray.700" p={10} borderRadius="10px" boxShadow="md">
+    <Box>
       <Input
         placeholder="調査タイトル"
+        _placeholder={{ color: "gray.500" }}
         variant="flushed"
         fontSize="3xl"
         h="50px"
-        py={5}
+        borderColor="gray.300"
         value={title}
         onChange={handleChangeTitle}
       />
       <Input
         mt={5}
         ml={3}
+        borderColor="gray.300"
         placeholder="調査の説明"
+        _placeholder={{ color: "gray.500" }}
         variant="flushed"
         fontSize="xl"
         w="80%"

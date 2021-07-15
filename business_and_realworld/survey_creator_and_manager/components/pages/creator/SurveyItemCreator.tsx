@@ -21,7 +21,7 @@ const Component: React.FC<Props> = ({
   setError,
   ...boxProps
 }) => {
-  const handleClick = () => {
+  const handleDeleteItem = () => {
     onDeleteItem(item.id);
   };
 
@@ -31,9 +31,9 @@ const Component: React.FC<Props> = ({
     onChangeItem({ ...item, question: value });
   };
 
-  const changeItemType = (type: SurveyItemType) => {
+  const handleChangeItemType = (type: SurveyItemType) => {
     switch (type) {
-      case "Radio":
+      case "Radio": {
         onChangeItem({
           id: item.id,
           type,
@@ -42,7 +42,8 @@ const Component: React.FC<Props> = ({
           choices: ["選択肢1"],
         });
         break;
-      case "Checkbox":
+      }
+      case "Checkbox": {
         onChangeItem({
           id: item.id,
           type,
@@ -51,7 +52,8 @@ const Component: React.FC<Props> = ({
           choices: ["選択肢1"],
         });
         break;
-      case "TextInput":
+      }
+      case "TextInput": {
         onChangeItem({
           id: item.id,
           type,
@@ -59,8 +61,10 @@ const Component: React.FC<Props> = ({
           description: item.description,
         });
         break;
-      default:
+      }
+      default: {
         assertNever(type);
+      }
     }
   };
 
@@ -68,9 +72,13 @@ const Component: React.FC<Props> = ({
     const handleChangeChoices = (choices: string[]) => {
       switch (item.type) {
         case "Radio":
-        case "Checkbox":
+        case "Checkbox": {
           onChangeItem({ ...item, choices });
           break;
+        }
+        default: {
+          return;
+        }
       }
     };
 
@@ -79,6 +87,7 @@ const Component: React.FC<Props> = ({
       case "Checkbox": {
         return (
           <EditChoices
+            type={item.type}
             mt={5}
             ml={5}
             choices={item.choices}
@@ -99,7 +108,7 @@ const Component: React.FC<Props> = ({
 
   return (
     <Box
-      p={5}
+      p={10}
       boxShadow="md"
       bgColor="gray.700"
       borderRadius="10px"
@@ -109,16 +118,18 @@ const Component: React.FC<Props> = ({
         <Box>
           <Input
             placeholder="質問"
+            _placeholder={{ color: "gray.500" }}
+            borderColor="gray.300"
             variant="flushed"
             size="lg"
             onChange={handleChangeQuestion}
           />
         </Box>
         <Box>
-          <SurveyItemTypeSelect mt={5} onChange={changeItemType} />
+          <SurveyItemTypeSelect mt={5} onChange={handleChangeItemType} />
         </Box>
         {option}
-        <Button mt={5} colorScheme="red" w="100px" onClick={handleClick}>
+        <Button mt={5} colorScheme="red" w="100px" onClick={handleDeleteItem}>
           削除
         </Button>
       </Box>

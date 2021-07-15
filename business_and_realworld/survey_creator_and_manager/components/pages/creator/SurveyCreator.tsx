@@ -25,7 +25,7 @@ const Component: React.FC = ({}) => {
     items: [],
   });
 
-  const createSurvey = async () => {
+  const handleCreateSurvey = async () => {
     await fetch("/api/surveys", {
       method: "POST",
       body: JSON.stringify(survey),
@@ -44,7 +44,7 @@ const Component: React.FC = ({}) => {
           right={0}
           colorScheme="blue"
           isDisabled={error}
-          onClick={createSurvey}
+          onClick={handleCreateSurvey}
         >
           調査を作成
         </Button>
