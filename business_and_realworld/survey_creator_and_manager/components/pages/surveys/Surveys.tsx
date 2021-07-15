@@ -92,7 +92,9 @@ const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
                   borderRadius="50%"
                   alignSelf="flex-end"
                   onClick={() =>
-                    writeClipboard(`http://localhost:3000/surveys/${survey.id}`)
+                    writeClipboard(
+                      `${process.env.NEXT_PUBLIC_HOST}/surveys/${survey.id}`
+                    )
                   }
                 />
               </HStack>

@@ -30,7 +30,7 @@ const Component: React.VFC<{
         {items.map((item) => {
           return (
             <SurveyItem
-              my={3}
+              mt={3}
               bgColor="gray.700"
               rounded="xl"
               boxShadow="md"
@@ -40,7 +40,7 @@ const Component: React.VFC<{
             />
           );
         })}
-        <Button colorScheme="green" onClick={handleSubmit}>
+        <Button mt={5} colorScheme="green" onClick={handleSubmit}>
           送信
         </Button>
       </Box>
