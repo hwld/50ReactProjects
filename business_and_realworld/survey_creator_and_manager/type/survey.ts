@@ -69,3 +69,7 @@ export type Survey = {
   description?: string;
   items: SurveyItem[];
 };
+
+export type SurveyAnswer = Omit<Survey, "items"> & {
+  items: SurveyItemAndAnswer[];
+};

@@ -1,18 +1,18 @@
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import { useSurveyAnswers } from "../../../hooks/useSurveyAnswers";
-import { Survey as SurveySpec } from "../../../type/survey";
+import { SurveyAnswer } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyItem } from "./SurveyItem";
 
 const Component: React.VFC<{
-  survey: SurveySpec;
+  surveyAnswer: SurveyAnswer;
   setAnswered: (value: boolean) => void;
-}> = ({ survey, setAnswered }) => {
-  const { items, setAnswer } = useSurveyAnswers(survey);
+}> = ({ surveyAnswer, setAnswered }) => {
+  const { items, setAnswer } = useSurveyAnswers(surveyAnswer.items);
 
   const handleSubmit = async () => {
-    await fetch(`/api/surveys/${survey.id}/answers`, {
+    await fetch(`/api/surveys/${surveyAnswer.id}/answers`, {
       method: "POST",
       body: JSON.stringify(items),
     });
@@ -24,8 +24,8 @@ const Component: React.VFC<{
       <Header />
       <Box w="800px" mt={5} mx="auto">
         <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
-          <Heading size="xl">{survey.title}</Heading>
-          <Text>{survey.description}</Text>
+          <Heading size="xl">{surveyAnswer.title}</Heading>
+          <Text>{surveyAnswer.description}</Text>
         </Box>
         {items.map((item) => {
           return (

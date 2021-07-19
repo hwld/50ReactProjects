@@ -72,11 +72,10 @@ const reducer = (
   }
 };
 
-export const useSurveyAnswers = (surveySpec: Survey) => {
-  const [itemAndAnswers, dispatch] = useReducer(
-    reducer,
-    generateSurveyItemAndAnswers(surveySpec)
-  );
+export const useSurveyAnswers = (
+  surveyItemAndAnswer: SurveyItemAndAnswer[]
+) => {
+  const [itemAndAnswers, dispatch] = useReducer(reducer, surveyItemAndAnswer);
 
   const setAnswer = useCallback((itemId: string, answer: SurveyItemAnswer) => {
     dispatch({ type: "setAnswer", itemId, answer });

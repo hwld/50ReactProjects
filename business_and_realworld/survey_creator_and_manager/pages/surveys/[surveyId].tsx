@@ -3,18 +3,18 @@ import React, { useState } from "react";
 import { Response } from "../../components/pages/survey/Response";
 import { Survey } from "../../components/pages/survey/Survey";
 import { getSurvey } from "../../lib/server/survey";
-import { Survey as SurveySpec } from "../../type/survey";
+import { SurveyAnswer } from "../../type/survey";
 
-type Props = { survey: SurveySpec };
+type Props = { surveyAnswer: SurveyAnswer };
 
-export default function Home({ survey }: Props) {
+export default function Home({ surveyAnswer }: Props) {
   const [answered, setAnswered] = useState(false);
   return (
     <>
       {answered === false ? (
-        <Survey survey={survey} setAnswered={setAnswered} />
+        <Survey surveyAnswer={surveyAnswer} setAnswered={setAnswered} />
       ) : (
-        <Response survey={survey} setAnswered={setAnswered} />
+        <Response survey={surveyAnswer} setAnswered={setAnswered} />
       )}
     </>
   );
@@ -34,5 +34,5 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   }
 
   // undefinedを含むとエラーが起こるので、stringifyをしてプロパティを消す
-  return { props: { survey: JSON.parse(JSON.stringify(survey)) } };
+  return { props: { surveyAnswer: JSON.parse(JSON.stringify(survey)) } };
 };
