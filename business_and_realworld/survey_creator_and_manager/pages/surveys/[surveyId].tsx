@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import { Response } from "../../components/pages/survey/Response";
 import { Survey } from "../../components/pages/survey/Survey";
-import { getSurvey } from "../../lib/server/survey";
+import { getSurveyAnswer } from "../../lib/server/survey";
 import { SurveyAnswer } from "../../type/survey";
 
 type Props = { surveyAnswer: SurveyAnswer };
@@ -28,11 +28,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     return { notFound: true };
   }
 
-  const survey = await getSurvey(surveyId);
-  if (!survey) {
+  const surveyAnswer = await getSurveyAnswer(surveyId);
+  if (!surveyAnswer) {
     return { notFound: true };
   }
 
   // undefinedを含むとエラーが起こるので、stringifyをしてプロパティを消す
-  return { props: { surveyAnswer: JSON.parse(JSON.stringify(survey)) } };
+  return { props: { surveyAnswer: JSON.parse(JSON.stringify(surveyAnswer)) } };
 };
