@@ -26,6 +26,10 @@ export type SurveyRadioAnswer = {
   type: SurveyRadioItem["type"];
   value: string;
 };
+export type SurveyRadioResults = {
+  type: SurveyRadioItem["type"];
+  results: { choice: string; count: number }[];
+};
 
 export type SurveyCheckboxItem = Extract<
   {
@@ -41,6 +45,10 @@ export type SurveyCheckboxAnswer = {
   type: SurveyCheckboxItem["type"];
   value: string[];
 };
+export type SurveyCheckboxResults = {
+  type: SurveyCheckboxItem["type"];
+  results: { choice: string; count: number }[];
+};
 
 export type SurveyTextInputItem = Extract<
   { id: string; type: "TextInput"; question: string; description?: string },
@@ -49,6 +57,10 @@ export type SurveyTextInputItem = Extract<
 export type SurveyTextInputAnswer = {
   type: SurveyTextInputItem["type"];
   value: string;
+};
+export type SurveyTextInputResults = {
+  type: SurveyTextInputItem["type"];
+  texts: string[];
 };
 
 export type SurveyItem =
@@ -61,7 +73,13 @@ export type SurveyItemAnswer =
   | SurveyCheckboxAnswer
   | SurveyTextInputAnswer;
 
+export type SurveyItemResult =
+  | SurveyRadioResults
+  | SurveyCheckboxResults
+  | SurveyTextInputResults;
+
 export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
+export type SurveyItemAndResults = SurveyItem & SurveyItemResult;
 
 export type Survey = {
   id: string;
@@ -72,4 +90,8 @@ export type Survey = {
 
 export type SurveyAnswer = Omit<Survey, "items"> & {
   items: SurveyItemAndAnswer[];
+};
+
+export type SurveyResult = Omit<Survey, "items"> & {
+  items: SurveyItemAndResults[];
 };
