@@ -1,21 +1,29 @@
-import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { Header } from "../../../components/common/Header";
+import { Result } from "../../../components/pages/result/Result";
+import { aggregateBySurvey } from "../../../lib/server/survey";
+import { SurveyResult } from "../../../type/survey";
 
-export default function SurveyResult() {
-  return (
-    <Box minH="100vh" bgColor="gray.600">
-      <Header />
-      Answers
-    </Box>
-  );
+type Props = {
+  surveyResult: SurveyResult;
+};
+
+export default function ResultPage({ surveyResult }: Props) {
+  return <Result surveyResult={surveyResult} />;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  query,
+}) => {
   const { surveyId } = query;
   if (typeof surveyId !== "string") {
     return { notFound: true };
   }
-  return { props: {} };
+
+  const surveyResult = await aggregateBySurvey(surveyId);
+  if (!surveyResult) {
+    return { notFound: true };
+  }
+
+  return { props: { surveyResult: JSON.parse(JSON.stringify(surveyResult)) } };
 };
