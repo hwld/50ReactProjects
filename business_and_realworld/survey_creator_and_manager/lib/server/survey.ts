@@ -3,7 +3,7 @@ import {
   Survey,
   SurveyAnswer,
   SurveyCheckboxResults,
-  SurveyItemAndResults,
+  SurveyItemAndResult,
   SurveyRadioResults,
   SurveyResult,
   SurveyTextInputResults,
@@ -164,7 +164,7 @@ export const aggregateBySurvey = async (
     return;
   }
 
-  const items = survey.items.map((item): SurveyItemAndResults => {
+  const items = survey.items.map((item): SurveyItemAndResult => {
     switch (item.type) {
       case "Radio": {
         const choices = item.choices.map((c) => c.choice);

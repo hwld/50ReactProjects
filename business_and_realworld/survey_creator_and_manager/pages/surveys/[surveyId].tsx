@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import { Response } from "../../components/pages/survey/Response";
 import { Survey } from "../../components/pages/survey/Survey";
-import { getSurveyAnswer } from "../../lib/server/survey";
+import { createSurveyAnswer } from "../../lib/server/survey";
 import { SurveyAnswer } from "../../type/survey";
 
 type Props = { surveyAnswer: SurveyAnswer };
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     return { notFound: true };
   }
 
-  const surveyAnswer = await getSurveyAnswer(surveyId);
+  const surveyAnswer = await createSurveyAnswer(surveyId);
   if (!surveyAnswer) {
     return { notFound: true };
   }

@@ -79,7 +79,7 @@ export type SurveyItemResult =
   | SurveyTextInputResults;
 
 export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
-export type SurveyItemAndResults = SurveyItem & SurveyItemResult;
+export type SurveyItemAndResult = SurveyItem & SurveyItemResult;
 
 export type Survey = {
   id: string;
@@ -93,5 +93,5 @@ export type SurveyAnswer = Omit<Survey, "items"> & {
 };
 
 export type SurveyResult = Omit<Survey, "items"> & {
-  items: SurveyItemAndResults[];
+  items: SurveyItemAndResult[];
 };
