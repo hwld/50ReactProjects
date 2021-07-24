@@ -2,9 +2,8 @@ import { Box, Heading } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { SurveyItemAndResult } from "../../../type/survey";
 import { assertNever } from "../../../utils/asertNever";
-import { CheckboxItemResult } from "./CheckboxItemResult";
-import { RadioItemResult } from "./RadioItemResult";
-import { TextInputItemResult } from "./TextInputItemResult";
+import { SurveyPercentageChart } from "./PercentageChart";
+import { TextListChart } from "./TextListChart";
 
 type Props = { item: SurveyItemAndResult };
 
@@ -12,13 +11,13 @@ const Component: React.FC<Props> = ({ item }) => {
   const result = useMemo(() => {
     switch (item.type) {
       case "Radio": {
-        return <RadioItemResult results={item.results} />;
+        return <SurveyPercentageChart data={item.results} />;
       }
       case "Checkbox": {
-        return <CheckboxItemResult results={item.results} />;
+        return <SurveyPercentageChart data={item.results} />;
       }
       case "TextInput": {
-        return <TextInputItemResult texts={item.texts} />;
+        return <TextListChart texts={item.texts} />;
       }
       default: {
         assertNever(item);
