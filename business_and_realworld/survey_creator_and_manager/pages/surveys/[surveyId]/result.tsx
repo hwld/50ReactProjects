@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import React from "react";
 import { Result } from "../../../components/pages/result/Result";
-import { aggregateBySurvey } from "../../../lib/server/survey";
+import { aggregateBySurvey } from "../../../lib/server/surveyResult";
 import { SurveyResult } from "../../../type/survey";
 
 type Props = {

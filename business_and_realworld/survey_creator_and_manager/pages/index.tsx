@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import React from "react";
 import { Surveys } from "../components/pages/surveys/Surveys";
-import { getAllSurvey } from "../lib/server/survey";
+import { fetchAllSurvey } from "../lib/server/survey";
 import { Survey } from "../type/survey";
 
 type Props = {
@@ -13,7 +13,7 @@ export default function SurveysPage({ surveys }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const surveys = await getAllSurvey();
+  const surveys = await fetchAllSurvey();
 
   return { props: { surveys: JSON.parse(JSON.stringify(surveys)) } };
 };

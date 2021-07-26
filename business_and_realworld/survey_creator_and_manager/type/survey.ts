@@ -2,7 +2,7 @@ const allSurveyItemType = ["Radio", "Checkbox", "TextInput"] as const;
 export type SurveyItemType = typeof allSurveyItemType[number];
 
 export function isSurveyItemType(value: string): value is SurveyItemType {
-  return allSurveyItemType.includes(value as any);
+  return allSurveyItemType.includes(value as SurveyItemType);
 }
 
 type SurveyItemBase = {

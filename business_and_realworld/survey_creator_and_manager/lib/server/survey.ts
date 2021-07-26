@@ -1,21 +1,13 @@
-import { Prisma, SurveyItemAnswer } from "@prisma/client";
-import {
-  Survey,
-  SurveyAnswer,
-  SurveyCheckboxResults,
-  SurveyItemAndResult,
-  SurveyRadioResults,
-  SurveyResult,
-  SurveyTextInputResults,
-} from "../../type/survey";
+import { Prisma } from "@prisma/client";
+import { Survey } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
 
+// DBSurveyはSurveyと違ってtypeとitemの関連がない。
+// 例えば、Surveyではtypeが"TextInput"であればitemオブジェクトにchoicesプロパティは存在しないが、
+// DBSurveyではtypeに関係なくitemオブジェクトにchoicesプロパティを含んでいる。
 type DBSurvey = Prisma.SurveyGetPayload<{
   include: { items: { include: { choices: true } } };
-}>;
-type DBSurveyItemAnswer = Prisma.SurveyItemAnswerGetPayload<{
-  include: { surveyItem: true };
 }>;
 
 const convertDbSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
@@ -61,7 +53,9 @@ const convertDbSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   return survey;
 };
 
-const getDbSurvey = async (surveyId: string): Promise<DBSurvey | undefined> => {
+const fetchDbSurvey = async (
+  surveyId: string
+): Promise<DBSurvey | undefined> => {
   const dbSurve = await prisma.survey.findFirst({
     where: { id: surveyId },
     include: { items: { include: { choices: true } } },
@@ -70,16 +64,16 @@ const getDbSurvey = async (surveyId: string): Promise<DBSurvey | undefined> => {
   return dbSurve ? dbSurve : undefined;
 };
 
-const getAllDbSurveys = async (): Promise<DBSurvey[]> => {
+const fetchAllDbSurveys = async (): Promise<DBSurvey[]> => {
   return prisma.survey.findMany({
     include: { items: { include: { choices: true } } },
   });
 };
 
-export const getSurvey = async (
+export const fetchSurvey = async (
   surveyId: string
 ): Promise<Survey | undefined> => {
-  const dbSurvey = await getDbSurvey(surveyId);
+  const dbSurvey = await fetchDbSurvey(surveyId);
   if (!dbSurvey) {
     return;
   }
@@ -87,126 +81,47 @@ export const getSurvey = async (
   return convertDbSurveyToSurvey(dbSurvey);
 };
 
-export const getAllSurvey = async (): Promise<Survey[]> => {
-  const allDbSurveys = await getAllDbSurveys();
+export const fetchAllSurvey = async (): Promise<Survey[]> => {
+  const allDbSurveys = await fetchAllDbSurveys();
   return allDbSurveys.map((dbSurvey) => convertDbSurveyToSurvey(dbSurvey));
 };
 
-export const createSurveyAnswer = async (
-  surveyId: string
-): Promise<SurveyAnswer | undefined> => {
-  const dbSurvey = await getDbSurvey(surveyId);
-  if (!dbSurvey) {
-    return;
-  }
-
-  const survey = convertDbSurveyToSurvey(dbSurvey);
-
-  return {
-    ...survey,
-    items: survey.items.map((item) => {
-      switch (item.type) {
-        case "Radio":
-        case "TextInput": {
-          return { ...item, value: "" };
-        }
-        case "Checkbox": {
-          return { ...item, value: [] };
-        }
-        default: {
-          assertNever(item);
-        }
-      }
-    }),
-  };
-};
-
-const aggregateRadioAnswers = (
-  choices: string[],
-  answers: SurveyItemAnswer[]
-): SurveyRadioResults => {
-  return {
-    type: "Radio",
-    results: choices.map((choice) => {
-      const count = answers.filter((ans) => ans.value === choice).length;
-      return { choice, count };
-    }),
-  };
-};
-
-const aggregateCheckBoxAnswers = (
-  choices: string[],
-  answers: SurveyItemAnswer[]
-): SurveyCheckboxResults => {
-  return {
-    type: "Checkbox",
-    results: choices.map((choice) => {
-      const count = answers.filter((ans) => ans.value === choice).length;
-      return { choice, count };
-    }),
-  };
-};
-
-const aggregateTextInputAnswers = (
-  answers: SurveyItemAnswer[]
-): SurveyTextInputResults => {
-  return { type: "TextInput", texts: answers.map((ans) => ans.value) };
-};
-
-export const aggregateBySurvey = async (
-  surveyId: string
-): Promise<SurveyResult | undefined> => {
-  const survey = await prisma.survey.findFirst({
-    where: { id: surveyId },
-    include: { items: { include: { choices: true, answer: true } } },
-  });
-  if (!survey) {
-    return;
-  }
-
-  const items = survey.items.map((item): SurveyItemAndResult => {
-    switch (item.type) {
-      case "Radio": {
-        const choices = item.choices.map((c) => c.choice);
-        const radioResults = aggregateRadioAnswers(choices, item.answer);
-        return {
-          id: item.id,
-          question: item.question,
-          description: item.description ?? undefined,
-          choices,
-          ...radioResults,
-        };
-      }
-      case "Checkbox": {
-        const choices = item.choices.map((c) => c.choice);
-        const checkboxResults = aggregateCheckBoxAnswers(choices, item.answer);
-        return {
-          id: item.id,
-          question: item.question,
-          description: item.description ?? undefined,
-          choices,
-          ...checkboxResults,
-        };
-      }
-      case "TextInput": {
-        const textInputResults = aggregateTextInputAnswers(item.answer);
-        return {
-          id: item.id,
-          question: item.question,
-          description: item.description ?? undefined,
-          ...textInputResults,
-        };
-      }
-      default: {
-        assertNever(item.type);
-      }
-    }
+export const postSurvey = async (survey: Survey): Promise<Survey> => {
+  await prisma.survey.create({
+    data: {
+      title: survey.title,
+      description: survey.description,
+      items: {
+        create: survey.items.map((item) => {
+          switch (item.type) {
+            case "Radio":
+            case "Checkbox":
+              return {
+                type: item.type,
+                question: item.question,
+                description: item.description,
+                choices: {
+                  create: item.choices.map((choice) => ({ choice })),
+                },
+              };
+            case "TextInput":
+              return {
+                type: item.type,
+                question: item.question,
+                description: item.description,
+              };
+            default:
+              assertNever(item);
+          }
+        }),
+      },
+    },
+    include: { items: { include: { choices: true } } },
   });
 
-  return {
-    id: survey.id,
-    title: survey.title,
-    description: survey.description ?? undefined,
-    items,
-  };
+  return survey;
+};
+
+export const deleteSurvey = async (surveyId: string) => {
+  await prisma.survey.delete({ where: { id: surveyId } });
 };
