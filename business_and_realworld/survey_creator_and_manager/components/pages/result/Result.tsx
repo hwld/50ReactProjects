@@ -14,12 +14,12 @@ const Component: React.FC<Props> = ({ surveyResult }) => {
       <Box w="800px" mt={5} mx="auto">
         <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
           <Heading size="xl" mb={3}>
-            {surveyResult.title}
+            {surveyResult.surveyTitle}
           </Heading>
-          <Text ml={3}>{surveyResult.description}</Text>
+          <Text ml={3}>{surveyResult.surveyDescription}</Text>
         </Box>
         <Box>
-          {surveyResult.items.map((item) => {
+          {surveyResult.itemAndResults.map((item) => {
             return <SurveyItemResult key={item.id} item={item} />;
           })}
         </Box>

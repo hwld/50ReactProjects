@@ -1,10 +1,10 @@
 import { SurveyItemAnswer } from "@prisma/client";
 import {
-  SurveyCheckboxResults,
+  SurveyCheckboxResult,
   SurveyItemAndResult,
-  SurveyRadioResults,
+  SurveyRadioResult,
   SurveyResult,
-  SurveyTextInputResults,
+  SurveyTextInputResult,
 } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
@@ -60,20 +60,20 @@ export const aggregateBySurvey = async (
   });
 
   return {
-    id: dbSurvey.id,
-    title: dbSurvey.title,
-    description: dbSurvey.description ?? undefined,
-    items,
+    surveyId: dbSurvey.id,
+    surveyTitle: dbSurvey.title,
+    surveyDescription: dbSurvey.description ?? undefined,
+    itemAndResults: items,
   };
 };
 
 const aggregateRadioAnswers = (
   choices: string[],
   answers: SurveyItemAnswer[]
-): SurveyRadioResults => {
+): SurveyRadioResult => {
   return {
     type: "Radio",
-    results: choices.map((choice) => {
+    result: choices.map((choice) => {
       const count = answers.filter((ans) => ans.value === choice).length;
       return { choice, count };
     }),
@@ -83,10 +83,10 @@ const aggregateRadioAnswers = (
 const aggregateCheckBoxAnswers = (
   choices: string[],
   answers: SurveyItemAnswer[]
-): SurveyCheckboxResults => {
+): SurveyCheckboxResult => {
   return {
     type: "Checkbox",
-    results: choices.map((choice) => {
+    result: choices.map((choice) => {
       const count = answers.filter((ans) => ans.value === choice).length;
       return { choice, count };
     }),
@@ -95,6 +95,6 @@ const aggregateCheckBoxAnswers = (
 
 const aggregateTextInputAnswers = (
   answers: SurveyItemAnswer[]
-): SurveyTextInputResults => {
-  return { type: "TextInput", texts: answers.map((ans) => ans.value) };
+): SurveyTextInputResult => {
+  return { type: "TextInput", result: answers.map((ans) => ans.value) };
 };

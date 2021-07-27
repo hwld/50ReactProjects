@@ -1,13 +1,13 @@
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
-import { Survey } from "../../../type/survey";
+import { SurveyAnswer } from "../../../type/survey";
 
 type Props = {
-  survey: Survey;
+  surveyAnswer: SurveyAnswer;
   setAnswered: (value: boolean) => void;
 };
 
-const Component: React.FC<Props> = ({ survey, setAnswered }) => {
+const Component: React.FC<Props> = ({ surveyAnswer, setAnswered }) => {
   const handleClick = () => {
     setAnswered(false);
   };
@@ -28,7 +28,7 @@ const Component: React.FC<Props> = ({ survey, setAnswered }) => {
       </Box>
       <Box mt={5} w="800px" mx="auto">
         <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
-          <Heading>{survey.title}</Heading>
+          <Heading>{surveyAnswer.surveyTitle}</Heading>
           <Box ml={3}>
             <Text mt={5}>回答が送信されました</Text>
 

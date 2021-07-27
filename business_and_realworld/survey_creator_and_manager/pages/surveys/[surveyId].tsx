@@ -9,12 +9,13 @@ type Props = { surveyAnswer: SurveyAnswer };
 
 export default function Home({ surveyAnswer }: Props) {
   const [answered, setAnswered] = useState(false);
+
   return (
     <>
       {answered === false ? (
         <Survey surveyAnswer={surveyAnswer} setAnswered={setAnswered} />
       ) : (
-        <Response survey={surveyAnswer} setAnswered={setAnswered} />
+        <Response surveyAnswer={surveyAnswer} setAnswered={setAnswered} />
       )}
     </>
   );

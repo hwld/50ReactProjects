@@ -9,10 +9,10 @@ const Component: React.VFC<{
   surveyAnswer: SurveyAnswer;
   setAnswered: (value: boolean) => void;
 }> = ({ surveyAnswer, setAnswered }) => {
-  const { items, setAnswer } = useSurveyAnswers(surveyAnswer.items);
+  const { items, setAnswer } = useSurveyAnswers(surveyAnswer.itemAndAnswers);
 
   const handleSubmit = async () => {
-    await fetch(`/api/surveys/${surveyAnswer.id}/answers`, {
+    await fetch(`/api/surveys/${surveyAnswer.surveyId}/answers`, {
       method: "POST",
       body: JSON.stringify(items),
     });
@@ -24,8 +24,8 @@ const Component: React.VFC<{
       <Header />
       <Box w="800px" mt={5} mx="auto">
         <Box p={5} bgColor="gray.700" rounded="10px" boxShadow="md">
-          <Heading size="xl">{surveyAnswer.title}</Heading>
-          <Text>{surveyAnswer.description}</Text>
+          <Heading size="xl">{surveyAnswer.surveyTitle}</Heading>
+          <Text>{surveyAnswer.surveyDescription}</Text>
         </Box>
         {items.map((item) => {
           return (

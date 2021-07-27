@@ -1,9 +1,9 @@
 import { Box, Input } from "@chakra-ui/react";
 import React, { ChangeEventHandler } from "react";
-import { SurveyTextInputAnswer, SurveyTextInputItem } from "../../../type/survey";
+import { SurveyTextInputAnswer, SurveyTextInput } from "../../../type/survey";
 
 type Props = {
-  textInputItem: SurveyTextInputItem & SurveyTextInputAnswer;
+  textInputItem: SurveyTextInput & SurveyTextInputAnswer;
   setAnswer: (itemId: string, answer: SurveyTextInputAnswer) => void;
 };
 

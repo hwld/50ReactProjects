@@ -13,8 +13,10 @@ export const createSurveyAnswerObj = async (
   }
 
   return {
-    ...survey,
-    items: survey.items.map((item) => {
+    surveyId: survey.id,
+    surveyTitle: survey.title,
+    surveyDescription: survey.description,
+    itemAndAnswers: survey.items.map((item) => {
       switch (item.type) {
         case "Radio":
         case "TextInput": {

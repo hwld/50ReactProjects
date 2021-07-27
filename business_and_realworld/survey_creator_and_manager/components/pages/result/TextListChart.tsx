@@ -1,8 +1,8 @@
 import { Box, Stack, Text } from "@chakra-ui/react";
 import React from "react";
-import { SurveyTextInputResults } from "../../../type/survey";
+import { SurveyTextInputResult } from "../../../type/survey";
 
-type Props = { texts: SurveyTextInputResults["texts"] };
+type Props = { texts: SurveyTextInputResult["result"] };
 
 const Component: React.FC<Props> = ({ texts }) => {
   return (

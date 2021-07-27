@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { SurveyCheckboxResults } from "../../../type/survey";
+import { SurveyCheckboxResult } from "../../../type/survey";
 
-type Props = { results: SurveyCheckboxResults["results"] };
+type Props = { results: SurveyCheckboxResult["result"] };
 
 const Component: React.FC<Props> = ({ results }) => {
   return (

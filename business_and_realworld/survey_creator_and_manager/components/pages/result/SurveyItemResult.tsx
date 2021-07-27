@@ -11,13 +11,13 @@ const Component: React.FC<Props> = ({ item }) => {
   const result = useMemo(() => {
     switch (item.type) {
       case "Radio": {
-        return <SurveyPercentageChart data={item.results} />;
+        return <SurveyPercentageChart data={item.result} />;
       }
       case "Checkbox": {
-        return <SurveyPercentageChart data={item.results} />;
+        return <SurveyPercentageChart data={item.result} />;
       }
       case "TextInput": {
-        return <TextListChart texts={item.texts} />;
+        return <TextListChart texts={item.result} />;
       }
       default: {
         assertNever(item);
