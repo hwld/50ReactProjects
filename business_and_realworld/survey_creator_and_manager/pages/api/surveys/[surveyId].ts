@@ -10,7 +10,7 @@ const handler: NextApiHandler = async (req, res) => {
       }
 
       await deleteSurvey(surveyId);
-      res.status(200);
+      res.status(200).json({});
       return;
     }
     default: {
