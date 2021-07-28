@@ -26,8 +26,7 @@ export const aggregateBySurvey = async (
         const choices = item.choices.map((c) => c.choice);
         const radioResults = aggregateRadioAnswers(choices, item.answer);
         return {
-          id: item.id,
-          question: item.question,
+          ...item,
           description: item.description ?? undefined,
           choices,
           ...radioResults,
@@ -37,8 +36,7 @@ export const aggregateBySurvey = async (
         const choices = item.choices.map((c) => c.choice);
         const checkboxResults = aggregateCheckBoxAnswers(choices, item.answer);
         return {
-          id: item.id,
-          question: item.question,
+          ...item,
           description: item.description ?? undefined,
           choices,
           ...checkboxResults,
@@ -47,8 +45,7 @@ export const aggregateBySurvey = async (
       case "TextInput": {
         const textInputResults = aggregateTextInputAnswers(item.answer);
         return {
-          id: item.id,
-          question: item.question,
+          ...item,
           description: item.description ?? undefined,
           ...textInputResults,
         };

@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Survey } from "../../type/survey";
+import { Survey, SurveyItem } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
 
@@ -14,32 +14,29 @@ const convertDbSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   const survey: Survey = {
     id: dbSurvey.id,
     description: dbSurvey.description ?? undefined,
-    items: dbSurvey.items.map((item) => {
+    items: dbSurvey.items.map((item): SurveyItem => {
       switch (item.type) {
         case "Radio": {
           return {
-            id: item.id,
+            ...item,
             type: item.type,
             description: item.description ?? undefined,
-            question: item.question,
             choices: item.choices.map((c) => c.choice),
           };
         }
         case "Checkbox": {
           return {
-            id: item.id,
+            ...item,
             type: item.type,
             description: item.description ?? undefined,
-            question: item.question,
             choices: item.choices.map((c) => c.choice),
           };
         }
         case "TextInput": {
           return {
-            id: item.id,
+            ...item,
             type: item.type,
             description: item.description ?? undefined,
-            question: item.question,
           };
         }
         default: {
@@ -92,28 +89,32 @@ export const postSurvey = async (survey: Survey): Promise<Survey> => {
       title: survey.title,
       description: survey.description,
       items: {
-        create: survey.items.map((item) => {
-          switch (item.type) {
-            case "Radio":
-            case "Checkbox":
-              return {
-                type: item.type,
-                question: item.question,
-                description: item.description,
-                choices: {
-                  create: item.choices.map((choice) => ({ choice })),
-                },
-              };
-            case "TextInput":
-              return {
-                type: item.type,
-                question: item.question,
-                description: item.description,
-              };
-            default:
-              assertNever(item);
+        create: survey.items.map(
+          (item): Prisma.SurveyItemCreateWithoutSurveyInput => {
+            switch (item.type) {
+              case "Radio":
+              case "Checkbox":
+                return {
+                  type: item.type,
+                  question: item.question,
+                  description: item.description,
+                  required: item.required,
+                  choices: {
+                    create: item.choices.map((choice) => ({ choice })),
+                  },
+                };
+              case "TextInput":
+                return {
+                  type: item.type,
+                  question: item.question,
+                  description: item.description,
+                  required: item.required,
+                };
+              default:
+                assertNever(item);
+            }
           }
-        }),
+        ),
       },
     },
     include: { items: { include: { choices: true } } },

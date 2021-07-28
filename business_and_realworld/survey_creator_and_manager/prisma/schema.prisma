@@ -33,6 +33,7 @@ model SurveyItem {
   type SurveyItemType
   question String
   description String?
+  required Boolean @default(false)
 
   choices Choice[]
 

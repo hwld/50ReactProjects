@@ -28,6 +28,7 @@ const reducer = (state: Survey, action: Action): Survey => {
             id: uuid(),
             type: "Radio",
             question: "",
+            required: false,
             choices: ["選択肢1"],
           },
         ],

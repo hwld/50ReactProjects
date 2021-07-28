@@ -10,6 +10,7 @@ type SurveyItemBase = {
   type: SurveyItemType;
   question: string;
   description?: string;
+  required: boolean;
 };
 
 // Radio
