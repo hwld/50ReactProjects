@@ -1,4 +1,4 @@
-import { Box, BoxProps, Heading, Text } from "@chakra-ui/react";
+import { Box, BoxProps, Flex, Heading, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { SurveyItemAndAnswer, SurveyItemAnswer } from "../../../type/survey";
 import { CheckboxField } from "./CheckboxField";
@@ -7,10 +7,16 @@ import { TextInputField } from "./TextInputField";
 
 type Props = {
   item: SurveyItemAndAnswer;
+  error?: { itemId: string; type: "required" };
   setAnswer: (itemId: string, answer: SurveyItemAnswer) => void;
 } & BoxProps;
 
-const Component: React.VFC<Props> = ({ item, setAnswer, ...boxProps }) => {
+const Component: React.VFC<Props> = ({
+  item,
+  error,
+  setAnswer,
+  ...boxProps
+}) => {
   const inputField = useMemo(() => {
     switch (item.type) {
       case "Radio":
@@ -22,13 +28,39 @@ const Component: React.VFC<Props> = ({ item, setAnswer, ...boxProps }) => {
     }
   }, [item, setAnswer]);
 
+  const errorText = (type: "required") => {
+    switch (type) {
+      case "required": {
+        return "この質問は必須です";
+      }
+    }
+  };
+
   return (
-    <Box {...boxProps} key={item.id} p={5}>
+    <Box
+      {...boxProps}
+      key={item.id}
+      p={5}
+      borderWidth="1px"
+      borderColor={error && "red.400"}
+    >
       <Box mb={3}>
-        <Heading size="md">{item.question}</Heading>
+        <Flex align="center">
+          <Heading size="md">{item.question}</Heading>
+          {item.required && (
+            <Text ml={1} color="red.400">
+              *
+            </Text>
+          )}
+        </Flex>
         <Text>{item.description}</Text>
       </Box>
       <Box ml={3}>{inputField}</Box>
+      {error && (
+        <Text mt={3} color="red.400">
+          {errorText(error.type)}
+        </Text>
+      )}
     </Box>
   );
 };

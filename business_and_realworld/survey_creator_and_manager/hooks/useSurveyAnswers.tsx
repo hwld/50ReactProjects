@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Survey, SurveyItemAndAnswer, SurveyItemAnswer } from "../type/survey";
 import { assertNever } from "../utils/asertNever";
 
@@ -76,10 +76,65 @@ export const useSurveyAnswers = (
   surveyItemAndAnswer: SurveyItemAndAnswer[]
 ) => {
   const [itemAndAnswers, dispatch] = useReducer(reducer, surveyItemAndAnswer);
+  const [errors, setErrors] = useState<{ itemId: string; type: "required" }[]>(
+    []
+  );
+  const isErrorCheckingEnabled = useRef(false);
 
   const setAnswer = useCallback((itemId: string, answer: SurveyItemAnswer) => {
     dispatch({ type: "setAnswer", itemId, answer });
   }, []);
 
-  return { items: itemAndAnswers, setAnswer };
+  const enableErrorChecking = () => {
+    isErrorCheckingEnabled.current = true;
+  };
+
+  const validateRequired = (itemAndAnswer: SurveyItemAndAnswer): boolean => {
+    switch (itemAndAnswer.type) {
+      case "Radio": {
+        return itemAndAnswer.value !== "";
+      }
+      case "Checkbox": {
+        return itemAndAnswer.value.length !== 0;
+      }
+      case "TextInput": {
+        return itemAndAnswer.value !== "";
+      }
+    }
+  };
+
+  const validateAnswers = useCallback((): boolean => {
+    let isError = false;
+    itemAndAnswers.forEach((itemAndAnswer) => {
+      if (itemAndAnswer.required && !validateRequired(itemAndAnswer)) {
+        setErrors((errors) => [
+          ...errors.filter((error) => error.itemId !== itemAndAnswer.id),
+          { itemId: itemAndAnswer.id, type: "required" },
+        ]);
+        isError = true;
+      } else {
+        setErrors((errors) =>
+          errors.filter((error) => error.itemId !== itemAndAnswer.id)
+        );
+      }
+    });
+
+    return !isError;
+  }, [itemAndAnswers]);
+
+  // 回答が変更された際にエラーをチェックする
+  useEffect(() => {
+    if (!isErrorCheckingEnabled.current) {
+      return;
+    }
+    validateAnswers();
+  }, [validateAnswers]);
+
+  return {
+    items: itemAndAnswers,
+    setAnswer,
+    enableErrorChecking,
+    errors,
+    validateAnswers,
+  };
 };

@@ -1,4 +1,12 @@
-import { Box, BoxProps, Button, Input } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Flex,
+  Input,
+  Switch,
+  Text,
+} from "@chakra-ui/react";
 import React, { ChangeEventHandler, useMemo } from "react";
 import { SurveyItem, SurveyItemType } from "../../../type/survey";
 import { assertNever } from "../../../utils/asertNever";
@@ -35,30 +43,24 @@ const Component: React.FC<Props> = ({
     switch (type) {
       case "Radio": {
         onChangeItem({
-          id: item.id,
+          ...item,
           type,
-          question: item.question,
-          description: item.description,
           choices: ["選択肢1"],
         });
         break;
       }
       case "Checkbox": {
         onChangeItem({
-          id: item.id,
+          ...item,
           type,
-          question: item.question,
-          description: item.description,
           choices: ["選択肢1"],
         });
         break;
       }
       case "TextInput": {
         onChangeItem({
-          id: item.id,
+          ...item,
           type,
-          question: item.question,
-          description: item.description,
         });
         break;
       }
@@ -66,6 +68,10 @@ const Component: React.FC<Props> = ({
         assertNever(type);
       }
     }
+  };
+
+  const handleChangeRequired = () => {
+    onChangeItem({ ...item, required: !item.required });
   };
 
   const option = useMemo(() => {
@@ -129,9 +135,19 @@ const Component: React.FC<Props> = ({
           <SurveyItemTypeSelect mt={5} onChange={handleChangeItemType} />
         </Box>
         {option}
-        <Button mt={5} colorScheme="red" w="100px" onClick={handleDeleteItem}>
-          削除
-        </Button>
+        <Flex mt={5} justify="space-between" align="center">
+          <Button colorScheme="red" w="100px" onClick={handleDeleteItem}>
+            削除
+          </Button>
+          <Flex align="center">
+            <Text>必須</Text>
+            <Switch
+              ml={2}
+              isChecked={item.required}
+              onChange={handleChangeRequired}
+            />
+          </Flex>
+        </Flex>
       </Box>
     </Box>
   );

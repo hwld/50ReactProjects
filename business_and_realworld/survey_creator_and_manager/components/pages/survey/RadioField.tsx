@@ -1,6 +1,6 @@
 import { Radio, RadioGroup, Stack } from "@chakra-ui/react";
 import React from "react";
-import { SurveyRadioAnswer, SurveyRadio } from "../../../type/survey";
+import { SurveyRadio, SurveyRadioAnswer } from "../../../type/survey";
 
 type Props = {
   radioItem: SurveyRadio & SurveyRadioAnswer;
