@@ -1,11 +1,4 @@
-import { SurveyItemAnswer } from "@prisma/client";
-import {
-  SurveyCheckboxResult,
-  SurveyItemAndResult,
-  SurveyRadioResult,
-  SurveyResult,
-  SurveyTextInputResult,
-} from "../../type/survey";
+import { SurveyItemResult, SurveyResult } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
 
@@ -20,34 +13,44 @@ export const aggregateBySurvey = async (
     return;
   }
 
-  const items = dbSurvey.items.map((item): SurveyItemAndResult => {
+  const itemResults = dbSurvey.items.map((item): SurveyItemResult => {
     switch (item.type) {
       case "Radio": {
         const choices = item.choices.map((c) => c.choice);
-        const radioResults = aggregateRadioAnswers(choices, item.answer);
         return {
           ...item,
+          type: "Radio",
           description: item.description ?? undefined,
           choices,
-          ...radioResults,
+          result: choices.map((choice) => {
+            const count = item.answer.filter(
+              (ans) => ans.value === choice
+            ).length;
+            return { choice, count };
+          }),
         };
       }
       case "Checkbox": {
         const choices = item.choices.map((c) => c.choice);
-        const checkboxResults = aggregateCheckBoxAnswers(choices, item.answer);
         return {
           ...item,
+          type: "Checkbox",
           description: item.description ?? undefined,
           choices,
-          ...checkboxResults,
+          result: choices.map((choice) => {
+            const count = item.answer.filter(
+              (ans) => ans.value === choice
+            ).length;
+            return { choice, count };
+          }),
         };
       }
       case "TextInput": {
-        const textInputResults = aggregateTextInputAnswers(item.answer);
         return {
           ...item,
+          type: "TextInput",
           description: item.description ?? undefined,
-          ...textInputResults,
+          result: item.answer.map((ans) => ans.value),
         };
       }
       default: {
@@ -60,38 +63,6 @@ export const aggregateBySurvey = async (
     surveyId: dbSurvey.id,
     surveyTitle: dbSurvey.title,
     surveyDescription: dbSurvey.description ?? undefined,
-    itemAndResults: items,
+    itemResults,
   };
-};
-
-const aggregateRadioAnswers = (
-  choices: string[],
-  answers: SurveyItemAnswer[]
-): SurveyRadioResult => {
-  return {
-    type: "Radio",
-    result: choices.map((choice) => {
-      const count = answers.filter((ans) => ans.value === choice).length;
-      return { choice, count };
-    }),
-  };
-};
-
-const aggregateCheckBoxAnswers = (
-  choices: string[],
-  answers: SurveyItemAnswer[]
-): SurveyCheckboxResult => {
-  return {
-    type: "Checkbox",
-    result: choices.map((choice) => {
-      const count = answers.filter((ans) => ans.value === choice).length;
-      return { choice, count };
-    }),
-  };
-};
-
-const aggregateTextInputAnswers = (
-  answers: SurveyItemAnswer[]
-): SurveyTextInputResult => {
-  return { type: "TextInput", result: answers.map((ans) => ans.value) };
 };

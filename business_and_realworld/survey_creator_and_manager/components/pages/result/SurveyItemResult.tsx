@@ -1,33 +1,33 @@
 import { Box, Heading } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { SurveyItemAndResult } from "../../../type/survey";
+import { SurveyItemResult as SurveyItemResultSpec } from "../../../type/survey";
 import { assertNever } from "../../../utils/asertNever";
 import { SurveyPercentageChart } from "./PercentageChart";
 import { TextListChart } from "./TextListChart";
 
-type Props = { item: SurveyItemAndResult };
+type Props = { itemResult: SurveyItemResultSpec };
 
-const Component: React.FC<Props> = ({ item }) => {
+const Component: React.FC<Props> = ({ itemResult }) => {
   const result = useMemo(() => {
-    switch (item.type) {
+    switch (itemResult.type) {
       case "Radio": {
-        return <SurveyPercentageChart data={item.result} />;
+        return <SurveyPercentageChart data={itemResult.result} />;
       }
       case "Checkbox": {
-        return <SurveyPercentageChart data={item.result} />;
+        return <SurveyPercentageChart data={itemResult.result} />;
       }
       case "TextInput": {
-        return <TextListChart texts={item.result} />;
+        return <TextListChart texts={itemResult.result} />;
       }
       default: {
-        assertNever(item);
+        assertNever(itemResult);
       }
     }
-  }, [item]);
+  }, [itemResult]);
 
   return (
     <Box
-      key={item.id}
+      key={itemResult.id}
       p={5}
       mt={3}
       bgColor="gray.700"
@@ -35,7 +35,7 @@ const Component: React.FC<Props> = ({ item }) => {
       boxShadow="md"
     >
       <Heading size="md" mb={3}>
-        {item.question}
+        {itemResult.question}
       </Heading>
       {result}
     </Box>

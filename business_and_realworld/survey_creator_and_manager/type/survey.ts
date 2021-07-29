@@ -18,12 +18,10 @@ export type SurveyRadio = SurveyItemBase & {
   type: "Radio";
   choices: string[];
 };
-export type SurveyRadioAnswer = {
-  type: SurveyRadio["type"];
+export type SurveyRadioAnswer = SurveyRadio & {
   value: string;
 };
-export type SurveyRadioResult = {
-  type: SurveyRadio["type"];
+export type SurveyRadioResult = SurveyRadio & {
   result: { choice: string; count: number }[];
 };
 
@@ -32,12 +30,10 @@ export type SurveyCheckbox = SurveyItemBase & {
   type: "Checkbox";
   choices: string[];
 };
-export type SurveyCheckboxAnswer = {
-  type: SurveyCheckbox["type"];
+export type SurveyCheckboxAnswer = SurveyCheckbox & {
   value: string[];
 };
-export type SurveyCheckboxResult = {
-  type: SurveyCheckbox["type"];
+export type SurveyCheckboxResult = SurveyCheckbox & {
   result: { choice: string; count: number }[];
 };
 
@@ -45,12 +41,10 @@ export type SurveyCheckboxResult = {
 export type SurveyTextInput = SurveyItemBase & {
   type: "TextInput";
 };
-export type SurveyTextInputAnswer = {
-  type: SurveyTextInput["type"];
+export type SurveyTextInputAnswer = SurveyTextInput & {
   value: string;
 };
-export type SurveyTextInputResult = {
-  type: SurveyTextInput["type"];
+export type SurveyTextInputResult = SurveyTextInput & {
   result: string[];
 };
 
@@ -66,9 +60,6 @@ export type SurveyItemResult =
   | SurveyCheckboxResult
   | SurveyTextInputResult;
 
-export type SurveyItemAndAnswer = SurveyItem & SurveyItemAnswer;
-export type SurveyItemAndResult = SurveyItem & SurveyItemResult;
-
 export type Survey = {
   id: string;
   title: string;
@@ -80,12 +71,12 @@ export type SurveyAnswer = {
   surveyId: Survey["id"];
   surveyTitle: Survey["title"];
   surveyDescription: Survey["description"];
-  itemAndAnswers: SurveyItemAndAnswer[];
+  itemAnswers: SurveyItemAnswer[];
 };
 
 export type SurveyResult = {
   surveyId: Survey["id"];
   surveyTitle: Survey["title"];
   surveyDescription: Survey["description"];
-  itemAndResults: SurveyItemAndResult[];
+  itemResults: SurveyItemResult[];
 };

@@ -1,4 +1,4 @@
-import { SurveyAnswer, SurveyItemAndAnswer } from "../../type/survey";
+import { SurveyAnswer, SurveyItemAnswer } from "../../type/survey";
 import { assertNever } from "../../utils/asertNever";
 import prisma from "./prisma";
 import { fetchSurvey } from "./survey";
@@ -16,7 +16,7 @@ export const createSurveyAnswerObj = async (
     surveyId: survey.id,
     surveyTitle: survey.title,
     surveyDescription: survey.description,
-    itemAndAnswers: survey.items.map((item) => {
+    itemAnswers: survey.items.map((item) => {
       switch (item.type) {
         case "Radio":
         case "TextInput": {
@@ -33,21 +33,12 @@ export const createSurveyAnswerObj = async (
   };
 };
 
-export const fetchAnswers = async (surveyId: string) => {
-  const allAnswers = await prisma.survey.findMany({
-    where: { id: surveyId },
-    include: { answers: true },
-  });
-
-  return allAnswers;
-};
-
 export const postAnswer = async (
   surveyId: string,
-  answers: SurveyItemAndAnswer[]
+  itemAnswers: SurveyItemAnswer[]
 ) => {
   // answer.valueがstring[]のものをstringに分割する
-  const stringAnswers = answers
+  const stringAnswers = itemAnswers
     .map((ans) => {
       if (ans.type !== "Checkbox") {
         return ans;

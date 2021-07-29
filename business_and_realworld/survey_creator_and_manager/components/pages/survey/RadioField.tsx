@@ -1,28 +1,32 @@
 import { Radio, RadioGroup, Stack } from "@chakra-ui/react";
 import React from "react";
-import { SurveyRadio, SurveyRadioAnswer } from "../../../type/survey";
+import { SurveyRadioAnswer } from "../../../type/survey";
 
 type Props = {
-  radioItem: SurveyRadio & SurveyRadioAnswer;
-  setAnswer: (itemId: string, answer: SurveyRadioAnswer) => void;
+  radioItemAnswer: SurveyRadioAnswer;
+  changeAnswer: (answer: SurveyRadioAnswer) => void;
 };
 
-const Component: React.VFC<Props> = ({ radioItem, setAnswer }) => {
+const Component: React.VFC<Props> = ({ radioItemAnswer, changeAnswer }) => {
   const handleChange = (value: string) => {
-    setAnswer(radioItem.id, { type: "Radio", value });
+    changeAnswer({ ...radioItemAnswer, value });
   };
 
   // next.jsを使ってるときに自動でnameとidをつけると 'id' did not match のエラーが出ちゃう
   return (
     <RadioGroup
-      value={radioItem.value}
+      value={radioItemAnswer.value}
       onChange={handleChange}
-      name={`${radioItem.question}-${radioItem.id}`}
+      name={`${radioItemAnswer.question}-${radioItemAnswer.id}`}
     >
       <Stack>
-        {radioItem.choices.map((choice, index) => {
+        {radioItemAnswer.choices.map((choice, index) => {
           return (
-            <Radio id={`${radioItem.id}-${index}`} key={choice} value={choice}>
+            <Radio
+              id={`${radioItemAnswer.id}-${index}`}
+              key={choice}
+              value={choice}
+            >
               {choice}
             </Radio>
           );

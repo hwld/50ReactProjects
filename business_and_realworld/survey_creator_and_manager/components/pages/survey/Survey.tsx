@@ -1,6 +1,6 @@
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useSurveyAnswers } from "../../../hooks/useSurveyAnswers";
+import { useSurveyItemAnswers } from "../../../hooks/useSurveyItemAnswers";
 import { SurveyAnswer } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyItem } from "./SurveyItem";
@@ -9,12 +9,17 @@ const Component: React.VFC<{
   surveyAnswer: SurveyAnswer;
   setAnswered: (value: boolean) => void;
 }> = ({ surveyAnswer, setAnswered }) => {
-  const { items, setAnswer, enableErrorChecking, validateAnswers, errors } =
-    useSurveyAnswers(surveyAnswer.itemAndAnswers);
+  const {
+    itemAnswers,
+    changeAnswer,
+    enableErrorChecking,
+    validateAnswers,
+    errors,
+  } = useSurveyItemAnswers(surveyAnswer.itemAnswers);
 
   const requiredExists: boolean = useMemo(() => {
-    return items.some((item) => item.required);
-  }, [items]);
+    return itemAnswers.some((itemAnswer) => itemAnswer.required);
+  }, [itemAnswers]);
 
   const handleSubmit = async () => {
     enableErrorChecking();
@@ -24,7 +29,7 @@ const Component: React.VFC<{
 
     await fetch(`/api/surveys/${surveyAnswer.surveyId}/answers`, {
       method: "POST",
-      body: JSON.stringify(items),
+      body: JSON.stringify(itemAnswers),
     });
     setAnswered(true);
   };
@@ -42,17 +47,17 @@ const Component: React.VFC<{
             </Text>
           )}
         </Box>
-        {items.map((item) => {
+        {itemAnswers.map((itemAnswer) => {
           return (
             <SurveyItem
               mt={3}
               bgColor="gray.700"
               rounded="xl"
               boxShadow="md"
-              key={item.id}
-              item={item}
-              error={errors.find((e) => e.itemId === item.id)}
-              setAnswer={setAnswer}
+              key={itemAnswer.id}
+              itemAnswer={itemAnswer}
+              error={errors.find((e) => e.itemId === itemAnswer.id)}
+              changeAnswer={changeAnswer}
             />
           );
         })}

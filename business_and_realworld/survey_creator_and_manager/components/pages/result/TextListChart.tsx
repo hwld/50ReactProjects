@@ -9,9 +9,9 @@ const Component: React.FC<Props> = ({ texts }) => {
     <Box>
       <Text ml={3}>{texts.length}件の回答</Text>
       <Stack mt={5} ml={5}>
-        {texts.map((text) => {
+        {texts.map((text, index) => {
           return (
-            <Box p={3} key={text} bgColor="gray.800" rounded="md">
+            <Box p={3} key={index} bgColor="gray.800" rounded="md">
               {text}
             </Box>
           );

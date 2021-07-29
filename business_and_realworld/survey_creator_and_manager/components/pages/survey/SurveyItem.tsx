@@ -1,32 +1,47 @@
 import { Box, BoxProps, Flex, Heading, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { SurveyItemAndAnswer, SurveyItemAnswer } from "../../../type/survey";
+import { SurveyItemAnswer } from "../../../type/survey";
 import { CheckboxField } from "./CheckboxField";
 import { RadioField } from "./RadioField";
 import { TextInputField } from "./TextInputField";
 
 type Props = {
-  item: SurveyItemAndAnswer;
+  itemAnswer: SurveyItemAnswer;
   error?: { itemId: string; type: "required" };
-  setAnswer: (itemId: string, answer: SurveyItemAnswer) => void;
+  changeAnswer: (itemAnswer: SurveyItemAnswer) => void;
 } & BoxProps;
 
 const Component: React.VFC<Props> = ({
-  item,
+  itemAnswer,
   error,
-  setAnswer,
+  changeAnswer,
   ...boxProps
 }) => {
   const inputField = useMemo(() => {
-    switch (item.type) {
+    switch (itemAnswer.type) {
       case "Radio":
-        return <RadioField radioItem={item} setAnswer={setAnswer} />;
+        return (
+          <RadioField
+            radioItemAnswer={itemAnswer}
+            changeAnswer={changeAnswer}
+          />
+        );
       case "Checkbox":
-        return <CheckboxField checkBoxItem={item} setAnswer={setAnswer} />;
+        return (
+          <CheckboxField
+            checkBoxItemAnswer={itemAnswer}
+            changeAnswer={changeAnswer}
+          />
+        );
       case "TextInput":
-        return <TextInputField textInputItem={item} setAnswer={setAnswer} />;
+        return (
+          <TextInputField
+            textInputItemAnswer={itemAnswer}
+            changeAnswer={changeAnswer}
+          />
+        );
     }
-  }, [item, setAnswer]);
+  }, [itemAnswer, changeAnswer]);
 
   const errorText = (type: "required") => {
     switch (type) {
@@ -39,21 +54,21 @@ const Component: React.VFC<Props> = ({
   return (
     <Box
       {...boxProps}
-      key={item.id}
+      key={itemAnswer.id}
       p={5}
       borderWidth="1px"
       borderColor={error && "red.400"}
     >
       <Box mb={3}>
         <Flex align="center">
-          <Heading size="md">{item.question}</Heading>
-          {item.required && (
+          <Heading size="md">{itemAnswer.question}</Heading>
+          {itemAnswer.required && (
             <Text ml={1} color="red.400">
               *
             </Text>
           )}
         </Flex>
-        <Text>{item.description}</Text>
+        <Text>{itemAnswer.description}</Text>
       </Box>
       <Box ml={3}>{inputField}</Box>
       {error && (

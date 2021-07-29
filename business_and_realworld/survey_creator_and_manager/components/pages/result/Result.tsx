@@ -7,7 +7,6 @@ import { SurveyItemResult } from "./SurveyItemResult";
 type Props = { surveyResult: SurveyResult };
 
 const Component: React.FC<Props> = ({ surveyResult }) => {
-  console.log(surveyResult);
   return (
     <Box minH="100vh" bgColor="gray.600">
       <Header />
@@ -19,8 +18,8 @@ const Component: React.FC<Props> = ({ surveyResult }) => {
           <Text ml={3}>{surveyResult.surveyDescription}</Text>
         </Box>
         <Box>
-          {surveyResult.itemAndResults.map((item) => {
-            return <SurveyItemResult key={item.id} item={item} />;
+          {surveyResult.itemResults.map((item) => {
+            return <SurveyItemResult key={item.id} itemResult={item} />;
           })}
         </Box>
       </Box>

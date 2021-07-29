@@ -10,43 +10,46 @@ type DBSurvey = Prisma.SurveyGetPayload<{
   include: { items: { include: { choices: true } } };
 }>;
 
+const convertDBSurveyItemToSurveyItem = (
+  dbSurveyItem: DBSurvey["items"][number]
+): SurveyItem => {
+  switch (dbSurveyItem.type) {
+    case "Radio": {
+      return {
+        ...dbSurveyItem,
+        type: dbSurveyItem.type,
+        description: dbSurveyItem.description ?? undefined,
+        choices: dbSurveyItem.choices.map((c) => c.choice),
+      };
+    }
+    case "Checkbox": {
+      return {
+        ...dbSurveyItem,
+        type: dbSurveyItem.type,
+        description: dbSurveyItem.description ?? undefined,
+        choices: dbSurveyItem.choices.map((c) => c.choice),
+      };
+    }
+    case "TextInput": {
+      return {
+        ...dbSurveyItem,
+        type: dbSurveyItem.type,
+        description: dbSurveyItem.description ?? undefined,
+      };
+    }
+    default: {
+      assertNever(dbSurveyItem.type);
+    }
+  }
+};
+
 const convertDbSurveyToSurvey = (dbSurvey: DBSurvey): Survey => {
   const survey: Survey = {
     id: dbSurvey.id,
     description: dbSurvey.description ?? undefined,
-    items: dbSurvey.items.map((item): SurveyItem => {
-      switch (item.type) {
-        case "Radio": {
-          return {
-            ...item,
-            type: item.type,
-            description: item.description ?? undefined,
-            choices: item.choices.map((c) => c.choice),
-          };
-        }
-        case "Checkbox": {
-          return {
-            ...item,
-            type: item.type,
-            description: item.description ?? undefined,
-            choices: item.choices.map((c) => c.choice),
-          };
-        }
-        case "TextInput": {
-          return {
-            ...item,
-            type: item.type,
-            description: item.description ?? undefined,
-          };
-        }
-        default: {
-          assertNever(item.type);
-        }
-      }
-    }),
+    items: dbSurvey.items.map((item) => convertDBSurveyItemToSurveyItem(item)),
     title: dbSurvey.title,
   };
-
   return survey;
 };
 
@@ -84,37 +87,38 @@ export const fetchAllSurvey = async (): Promise<Survey[]> => {
 };
 
 export const postSurvey = async (survey: Survey): Promise<Survey> => {
+  const surveyItemsCreateObj: Prisma.SurveyItemCreateWithoutSurveyInput[] =
+    survey.items.map((item) => {
+      switch (item.type) {
+        case "Radio":
+        case "Checkbox":
+          return {
+            type: item.type,
+            question: item.question,
+            description: item.description,
+            required: item.required,
+            choices: {
+              create: item.choices.map((choice) => ({ choice })),
+            },
+          };
+        case "TextInput":
+          return {
+            type: item.type,
+            question: item.question,
+            description: item.description,
+            required: item.required,
+          };
+        default:
+          assertNever(item);
+      }
+    });
+
   await prisma.survey.create({
     data: {
       title: survey.title,
       description: survey.description,
       items: {
-        create: survey.items.map(
-          (item): Prisma.SurveyItemCreateWithoutSurveyInput => {
-            switch (item.type) {
-              case "Radio":
-              case "Checkbox":
-                return {
-                  type: item.type,
-                  question: item.question,
-                  description: item.description,
-                  required: item.required,
-                  choices: {
-                    create: item.choices.map((choice) => ({ choice })),
-                  },
-                };
-              case "TextInput":
-                return {
-                  type: item.type,
-                  question: item.question,
-                  description: item.description,
-                  required: item.required,
-                };
-              default:
-                assertNever(item);
-            }
-          }
-        ),
+        create: surveyItemsCreateObj,
       },
     },
     include: { items: { include: { choices: true } } },
