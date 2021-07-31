@@ -86,6 +86,77 @@ export const fetchAllSurvey = async (): Promise<Survey[]> => {
   return allDbSurveys.map((dbSurvey) => convertDbSurveyToSurvey(dbSurvey));
 };
 
+export const createSurvey = async (): Promise<string> => {
+  const survey = await prisma.survey.create({ data: { title: "無題の調査" } });
+  return survey.id;
+};
+
+type SurveyItemCreateAndUpdateInput =
+  Prisma.SurveyItemUpdateWithoutSurveyInput &
+    Prisma.SurveyItemCreateWithoutSurveyInput;
+
+export const updateSurvey = async (survey: Survey): Promise<Survey> => {
+  const surveyItemUpsertObjs = survey.items.map(
+    (item): Prisma.SurveyItemUpsertWithWhereUniqueWithoutSurveyInput => {
+      switch (item.type) {
+        case "Radio":
+        case "Checkbox": {
+          return {
+            where: { id: item.id },
+            update: {
+              type: item.type,
+              question: item.question,
+              description: item.description,
+              choices: {
+                deleteMany: {},
+                create: item.choices.map((choice) => ({ choice })),
+              },
+              required: item.required,
+            },
+            create: {
+              type: item.type,
+              question: item.question,
+              description: item.description,
+              choices: {
+                create: item.choices.map((choice) => ({ choice })),
+              },
+              required: item.required,
+            },
+          };
+        }
+        case "TextInput": {
+          const upsertObj: SurveyItemCreateAndUpdateInput = {
+            type: item.type,
+            question: item.question,
+            description: item.description,
+            required: item.required,
+          };
+          return {
+            where: { id: item.id },
+            update: upsertObj,
+            create: upsertObj,
+          };
+        }
+        default: {
+          assertNever(item);
+        }
+      }
+    }
+  );
+
+  await prisma.survey.update({
+    where: { id: survey.id },
+    data: {
+      title: survey.title,
+      description: survey.description,
+      items: { upsert: surveyItemUpsertObjs },
+    },
+    include: { items: { include: { choices: true } } },
+  });
+
+  return survey;
+};
+
 export const postSurvey = async (survey: Survey): Promise<Survey> => {
   const surveyItemsCreateObj: Prisma.SurveyItemCreateWithoutSurveyInput[] =
     survey.items.map((item) => {

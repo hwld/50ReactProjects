@@ -3,11 +3,14 @@ import { Box, Button, Center, Flex, IconButton } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { useSurvey } from "../../../hooks/useSurvey";
+import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyHeaderInput } from "./SurveyHeaderInput";
-import { SurveyItemCreator } from "./SurveyItemCreator";
+import { SurveyItemEditor } from "./SurveyItemEditor";
 
-const Component: React.FC = ({}) => {
+type Props = { initialSurvey: Survey };
+
+const Component: React.FC<Props> = ({ initialSurvey }) => {
   const router = useRouter();
   const [error, setError] = useState(false);
 
@@ -18,16 +21,11 @@ const Component: React.FC = ({}) => {
     addItem,
     deleteItem,
     changeItem,
-  } = useSurvey({
-    id: "",
-    title: "",
-    description: "",
-    items: [],
-  });
+  } = useSurvey(initialSurvey);
 
   const handleCreateSurvey = async () => {
-    await fetch("/api/surveys", {
-      method: "POST",
+    await fetch(`/api/surveys/${survey.id}`, {
+      method: "PUT",
       body: JSON.stringify(survey),
     });
 
@@ -61,7 +59,7 @@ const Component: React.FC = ({}) => {
           </Box>
           {survey.items.map((item) => {
             return (
-              <SurveyItemCreator
+              <SurveyItemEditor
                 my={3}
                 key={item.id}
                 item={item}
@@ -100,4 +98,4 @@ const Component: React.FC = ({}) => {
   );
 };
 
-export const SurveyCreator = Component;
+export const SurveyEditor = Component;

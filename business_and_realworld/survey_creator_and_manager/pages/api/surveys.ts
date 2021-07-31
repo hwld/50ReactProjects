@@ -15,6 +15,7 @@ const handler: NextApiHandler = async (req, res) => {
       return;
     }
     default: {
+      res.status(404).end();
       return;
     }
   }

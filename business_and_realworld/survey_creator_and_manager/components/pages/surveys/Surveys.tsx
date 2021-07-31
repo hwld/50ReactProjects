@@ -9,7 +9,7 @@ import {
   IconButton,
   useToast,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { Survey } from "../../../type/survey";
 
@@ -17,7 +17,14 @@ type Props = { surveys: Survey[] };
 
 const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
   const [surveys, setSurveys] = useState(surveysProp);
+  const router = useRouter();
   const toast = useToast();
+
+  const handleClickCreateSurvey = async () => {
+    const data = await fetch("/api/surveys/create", { method: "POST" });
+    const { surveyId } = await data.json();
+    router.push(`/surveys/${surveyId}/edit`);
+  };
 
   const writeClipboard = async (value: string) => {
     await navigator.clipboard.writeText(value);
@@ -41,19 +48,19 @@ const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
         gap={5}
         justifyContent="center"
       >
-        <NextLink href="/creator">
-          <IconButton
-            aria-label="新しい調査の作成"
-            icon={<AddIcon boxSize="70px" color="gray.800" />}
-            borderRadius="20px"
-            height="100%"
-            bgColor="gray.400"
-            _hover={{ bgColor: "gray.500" }}
-            _active={{ bgColor: "gray.600" }}
-            opacity="0.7"
-            boxShadow="lg"
-          />
-        </NextLink>
+        <IconButton
+          aria-label="新しい調査の作成"
+          icon={<AddIcon boxSize="70px" color="gray.800" />}
+          borderRadius="20px"
+          height="100%"
+          bgColor="gray.400"
+          _hover={{ bgColor: "gray.500" }}
+          _active={{ bgColor: "gray.600" }}
+          opacity="0.7"
+          boxShadow="lg"
+          onClick={handleClickCreateSurvey}
+        />
+
         {surveys.map((survey) => {
           return (
             <Flex
@@ -73,7 +80,13 @@ const Component: React.FC<Props> = ({ surveys: surveysProp }) => {
 
               <HStack justifyContent="space-between">
                 <HStack>
-                  <Button>変更</Button>
+                  <Button
+                    onClick={async () => {
+                      router.push(`/surveys/${survey.id}/edit`);
+                    }}
+                  >
+                    変更
+                  </Button>
                   <Button
                     colorScheme="red"
                     onClick={() => {

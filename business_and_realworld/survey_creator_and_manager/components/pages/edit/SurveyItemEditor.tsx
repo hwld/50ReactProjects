@@ -153,4 +153,4 @@ const Component: React.FC<Props> = ({
   );
 };
 
-export const SurveyItemCreator = Component;
+export const SurveyItemEditor = Component;

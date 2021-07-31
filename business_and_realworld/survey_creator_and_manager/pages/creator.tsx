@@ -1,6 +1,6 @@
 import React from "react";
-import { SurveyCreator } from "../components/pages/creator/SurveyCreator";
+import { SurveyEditor } from "../components/pages/edit/SurveyEditor";
 
 export default function Creator() {
-  return <SurveyCreator />;
+  return <SurveyEditor />;
 }
