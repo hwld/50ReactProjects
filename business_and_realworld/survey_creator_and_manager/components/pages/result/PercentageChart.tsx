@@ -38,9 +38,10 @@ const Component: React.FC<Props> = ({ data }) => {
               position="right"
               offset={5}
               fill={barLabelColor}
-              formatter={(count: number) =>
-                `${Math.trunc((count / allCounts) * 100)}％`
-              }
+              formatter={(count: number) => {
+                const percentage = Math.trunc((count / allCounts) * 100);
+                return isNaN(percentage) ? "0%" : `${percentage}%`;
+              }}
             />
           </Bar>
           <XAxis type="number" hide={true} />
