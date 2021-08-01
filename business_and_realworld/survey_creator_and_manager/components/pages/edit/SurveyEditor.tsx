@@ -1,7 +1,7 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Center, Flex, IconButton } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSurvey } from "../../../hooks/useSurvey";
 import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
@@ -11,15 +11,6 @@ import { SurveyItemEditor } from "./SurveyItemEditor";
 type Props = { initialSurvey: Survey };
 
 const Component: React.FC<Props> = ({ initialSurvey }) => {
-  const router = useRouter();
-  const [error, setError] = useState(false);
-  const appHeaderHeight = 70;
-  const editorTopMargin = 20;
-  const headerInputTop = appHeaderHeight + editorTopMargin;
-
-  const [menuTop, setMenuTop] = useState(0);
-  const menuHeight = 300;
-
   const {
     survey,
     changeTitle,
@@ -28,6 +19,22 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     deleteItem,
     changeItem,
   } = useSurvey(initialSurvey);
+
+  const router = useRouter();
+  const [error, setError] = useState(false);
+
+  const appHeaderHeight = 70;
+  const editorTopMargin = 20;
+  const headerInputTop = appHeaderHeight + editorTopMargin;
+  const [menuTop, setMenuTop] = useState(0);
+  const menuHeight = 300;
+
+  // 最後の要素を削除したときに、その一つ前の要素にフォーカスを当てるために使用する
+  const secondToLastRef = useRef<HTMLDivElement | null>(null);
+  const handleDeleteLast = (itemId: string) => {
+    secondToLastRef.current?.focus();
+    deleteItem(itemId);
+  };
 
   const convertMenuViewTopToMenuTop = useCallback(
     (viewTop: number) => {
@@ -106,10 +113,15 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
       <Flex mt={`${editorTopMargin}px`} mx="auto" w="800px">
         <Box flexGrow={1}>
           <Box
+            tabIndex={-1}
+            ref={survey.items.length === 1 ? secondToLastRef : undefined}
             p={10}
             bgColor="gray.700"
             borderRadius="10px"
             boxShadow="md"
+            borderWidth="2px"
+            borderColor="transparent"
+            _focusWithin={{ borderColor: "blue.500" }}
             onFocus={handleFocus}
           >
             <SurveyHeaderInput
@@ -119,14 +131,24 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
               onChangeDescription={changeDescription}
             />
           </Box>
-          {survey.items.map((item) => {
+          {survey.items.map((item, index) => {
             return (
               <SurveyItemEditor
+                ref={
+                  index === survey.items.length - 2
+                    ? secondToLastRef
+                    : undefined
+                }
+                tabIndex={-1}
                 my={3}
                 key={item.id}
                 item={item}
                 onChangeItem={changeItem}
-                onDeleteItem={deleteItem}
+                onDeleteItem={
+                  index === survey.items.length - 1
+                    ? handleDeleteLast
+                    : deleteItem
+                }
                 setError={setError}
                 borderWidth="2px"
                 borderColor="transparent"

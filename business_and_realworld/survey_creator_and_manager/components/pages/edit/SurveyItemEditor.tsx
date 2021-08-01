@@ -7,7 +7,7 @@ import {
   Switch,
   Text,
 } from "@chakra-ui/react";
-import React, { ChangeEventHandler, useMemo } from "react";
+import React, { ChangeEventHandler, forwardRef, useMemo } from "react";
 import { SurveyItem, SurveyItemType } from "../../../type/survey";
 import { assertNever } from "../../../utils/asertNever";
 import { EditChoices } from "./EditChoices";
@@ -21,14 +21,10 @@ type Props = {
   setError: (isError: boolean) => void;
 } & BoxProps;
 
-const Component: React.FC<Props> = ({
-  className,
-  item,
-  onChangeItem,
-  onDeleteItem,
-  setError,
-  ...boxProps
-}) => {
+const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
+  { className, item, onChangeItem, onDeleteItem, setError, ...boxProps },
+  ref
+) {
   const handleDeleteItem = () => {
     onDeleteItem(item.id);
   };
@@ -119,6 +115,7 @@ const Component: React.FC<Props> = ({
       bgColor="gray.700"
       borderRadius="10px"
       {...boxProps}
+      ref={ref}
     >
       <Box>
         <Box>
@@ -151,6 +148,6 @@ const Component: React.FC<Props> = ({
       </Box>
     </Box>
   );
-};
+});
 
 export const SurveyItemEditor = Component;
