@@ -59,9 +59,26 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     [headerInputTop]
   );
 
+  const oldInterSectionObserver = useRef<IntersectionObserver>();
   const handleFocus: React.FocusEventHandler<HTMLDivElement> = ({
     currentTarget,
   }) => {
+    oldInterSectionObserver.current?.disconnect();
+    // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          console.log("observe");
+          const menuViewTop = entry.target.getBoundingClientRect().top;
+          const newMenuTop = convertMenuViewTopToMenuTop(menuViewTop);
+          setMenuTop(newMenuTop);
+        });
+      },
+      { rootMargin: `-${headerInputTop}px 0px 0px 0px`, threshold: 1 }
+    );
+    observer.observe(currentTarget);
+    oldInterSectionObserver.current = observer;
+
     const menuViewTop = currentTarget.getBoundingClientRect().top;
     const newMenuTop = convertMenuViewTopToMenuTop(menuViewTop);
     setMenuTop(newMenuTop);
@@ -76,6 +93,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     router.push("/");
   };
 
+  // スクロールとMenuTopを連動させる
   useEffect(() => {
     let timerId: NodeJS.Timeout;
 
