@@ -10,7 +10,7 @@ type Props = {
 
 const Component: React.FC<Props> = ({
   title,
-  description,
+  description = "",
   onChangeTitle,
   onChangeDescription,
 }) => {
