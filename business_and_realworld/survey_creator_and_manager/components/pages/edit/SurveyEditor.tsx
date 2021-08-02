@@ -1,10 +1,12 @@
-import { AddIcon } from "@chakra-ui/icons";
-import { Box, Button, Center, Flex, IconButton } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/dist/client/router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useMenuTop } from "../../../hooks/useMenuTop";
 import { useSurvey } from "../../../hooks/useSurvey";
 import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
+import { SurveyEditorMenu } from "./SurveyEditorMenu";
 import { SurveyHeaderInput } from "./SurveyHeaderInput";
 import { SurveyItemEditor } from "./SurveyItemEditor";
 
@@ -24,65 +26,14 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const [error, setError] = useState(false);
 
   const appHeaderHeight = 70;
-  const editorTopMargin = 20;
-  const headerInputTop = appHeaderHeight + editorTopMargin;
-  const [menuTop, setMenuTop] = useState(0);
+  const menuMargin = 20;
+  const menuTopMargin = appHeaderHeight + menuMargin;
   const menuHeight = 300;
-
-  // 最後の要素を削除したときに、その一つ前の要素にフォーカスを当てるために使用する
-  const secondToLastRef = useRef<HTMLDivElement | null>(null);
-  const handleDeleteLast = (itemId: string) => {
-    secondToLastRef.current?.focus();
-    deleteItem(itemId);
-  };
-
-  const convertMenuViewTopToMenuTop = useCallback(
-    (viewTop: number) => {
-      const menuViewBottom = viewTop + menuHeight;
-      // headerInputのtopがmenuTopの0のため、それを引く
-      let newMenuTop = viewTop + window.scrollY - headerInputTop;
-
-      // 上にはみ出す場合
-      if (viewTop < headerInputTop) {
-        newMenuTop = window.scrollY;
-      }
-
-      //下にはみ出す場合
-      if (menuViewBottom > window.innerHeight - editorTopMargin) {
-        newMenuTop =
-          newMenuTop -
-          (menuViewBottom - (window.innerHeight - editorTopMargin));
-      }
-
-      return newMenuTop;
-    },
-    [headerInputTop]
-  );
-
-  const oldInterSectionObserver = useRef<IntersectionObserver>();
-  const handleFocus: React.FocusEventHandler<HTMLDivElement> = ({
-    currentTarget,
-  }) => {
-    oldInterSectionObserver.current?.disconnect();
-    // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          console.log("observe");
-          const menuViewTop = entry.target.getBoundingClientRect().top;
-          const newMenuTop = convertMenuViewTopToMenuTop(menuViewTop);
-          setMenuTop(newMenuTop);
-        });
-      },
-      { rootMargin: `-${headerInputTop}px 0px 0px 0px`, threshold: 1 }
-    );
-    observer.observe(currentTarget);
-    oldInterSectionObserver.current = observer;
-
-    const menuViewTop = currentTarget.getBoundingClientRect().top;
-    const newMenuTop = convertMenuViewTopToMenuTop(menuViewTop);
-    setMenuTop(newMenuTop);
-  };
+  const { menuTop, updateMenuTop, changeMenuTopUsingViewTop } = useMenuTop({
+    menuHeight,
+    menuTopMargin,
+    menuBottomMargin: menuMargin,
+  });
 
   const handleCreateSurvey = async () => {
     await fetch(`/api/surveys/${survey.id}`, {
@@ -93,25 +44,49 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     router.push("/");
   };
 
+  // 最後の要素を削除したときに、その一つ前の要素にフォーカスを当てるために使用する
+  const secondToLastRef = useRef<HTMLDivElement | null>(null);
+  const handleDeleteLast = (itemId: string) => {
+    //secondToLastRef.current?.focus();
+    deleteItem(itemId);
+  };
+
+  const oldInterSectionObserver = useRef<IntersectionObserver>();
+  const handleBlur = () => {
+    oldInterSectionObserver.current?.disconnect();
+  };
+  const handleFocus: React.FocusEventHandler<HTMLDivElement> = ({
+    currentTarget,
+  }) => {
+    // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const menuViewTop = entries[0].target.getBoundingClientRect().top;
+        changeMenuTopUsingViewTop(menuViewTop);
+      },
+      { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
+    );
+    observer.observe(currentTarget);
+    oldInterSectionObserver.current = observer;
+
+    const menuViewTop = currentTarget.getBoundingClientRect().top;
+    changeMenuTopUsingViewTop(menuViewTop);
+  };
+
   // スクロールとMenuTopを連動させる
   useEffect(() => {
     let timerId: NodeJS.Timeout;
 
     const handleScroll = () => {
       clearTimeout(timerId);
-      timerId = setTimeout(() => {
-        setMenuTop((top) => {
-          const menuViewTop = headerInputTop + top - window.scrollY;
-          return convertMenuViewTopToMenuTop(menuViewTop);
-        });
-      }, 50);
+      timerId = setTimeout(() => updateMenuTop(), 50);
     };
 
     document.addEventListener("scroll", handleScroll);
     return () => {
       document.removeEventListener("scroll", handleScroll);
     };
-  }, [convertMenuViewTopToMenuTop, headerInputTop]);
+  }, [updateMenuTop]);
 
   return (
     <Box minH="100vh" bgColor="gray.600">
@@ -128,7 +103,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
           調査を作成
         </Button>
       </Header>
-      <Flex mt={`${editorTopMargin}px`} mx="auto" w="800px">
+      <Flex mt={`${menuMargin}px`} mx="auto" w="800px">
         <Box flexGrow={1}>
           <Box
             tabIndex={-1}
@@ -141,6 +116,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
             borderColor="transparent"
             _focusWithin={{ borderColor: "blue.500" }}
             onFocus={handleFocus}
+            onBlur={handleBlur}
           >
             <SurveyHeaderInput
               title={survey.title}
@@ -149,57 +125,44 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
               onChangeDescription={changeDescription}
             />
           </Box>
-          {survey.items.map((item, index) => {
-            return (
-              <SurveyItemEditor
-                ref={
-                  index === survey.items.length - 2
-                    ? secondToLastRef
-                    : undefined
-                }
-                tabIndex={-1}
-                my={3}
-                key={item.id}
-                item={item}
-                onChangeItem={changeItem}
-                onDeleteItem={
-                  index === survey.items.length - 1
-                    ? handleDeleteLast
-                    : deleteItem
-                }
-                setError={setError}
-                borderWidth="2px"
-                borderColor="transparent"
-                _focusWithin={{ borderColor: "blue.500" }}
-                onFocus={handleFocus}
-              />
-            );
-          })}
+          <AnimatePresence>
+            {survey.items.map((item, index) => {
+              return (
+                <SurveyItemEditor
+                  key={item.id}
+                  ref={
+                    index === survey.items.length - 2
+                      ? secondToLastRef
+                      : undefined
+                  }
+                  tabIndex={-1}
+                  my={3}
+                  item={item}
+                  onChangeItem={changeItem}
+                  onDeleteItem={
+                    index === survey.items.length - 1
+                      ? handleDeleteLast
+                      : deleteItem
+                  }
+                  setError={setError}
+                  borderWidth="2px"
+                  borderColor="transparent"
+                  _focusWithin={{ borderColor: "blue.500" }}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  layout
+                  exit={{ opacity: 0 }}
+                />
+              );
+            })}
+          </AnimatePresence>
         </Box>
 
-        <Box
-          ml={5}
-          p={3}
-          bgColor="gray.300"
-          w="50px"
-          h={`${menuHeight}px`}
-          position="relative"
-          top={`${menuTop}px`}
-          borderRadius="10px"
-        >
-          <Center>
-            <IconButton
-              alignItems="center"
-              bgColor="gray.600"
-              borderRadius="50%"
-              _hover={{ bgColor: "gray.700" }}
-              _active={{ bgColor: "gray.800" }}
-              aria-label="項目を作成"
-              icon={<AddIcon color="gray.100" boxSize="20px" />}
-              onClick={addItem}
-            />
-          </Center>
-        </Box>
+        <SurveyEditorMenu
+          height={menuHeight}
+          top={menuTop}
+          addSurveyItem={addItem}
+        />
       </Flex>
     </Box>
   );

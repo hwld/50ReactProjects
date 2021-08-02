@@ -1,15 +1,8 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  Flex,
-  Input,
-  Switch,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Switch, Text } from "@chakra-ui/react";
 import React, { ChangeEventHandler, forwardRef, useMemo } from "react";
 import { SurveyItem, SurveyItemType } from "../../../type/survey";
 import { assertNever } from "../../../utils/asertNever";
+import { MotionBox, MotionBoxProps } from "../../common/MotionBox";
 import { EditChoices } from "./EditChoices";
 import { SurveyItemTypeSelect } from "./SurveyItemTypeSelect";
 
@@ -19,7 +12,7 @@ type Props = {
   onChangeItem: (item: SurveyItem) => void;
   onDeleteItem: (itemId: string) => void;
   setError: (isError: boolean) => void;
-} & BoxProps;
+} & MotionBoxProps;
 
 const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
   { className, item, onChangeItem, onDeleteItem, setError, ...boxProps },
@@ -109,7 +102,7 @@ const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
   }, [item, onChangeItem, setError]);
 
   return (
-    <Box
+    <MotionBox
       p={10}
       boxShadow="md"
       bgColor="gray.700"
@@ -146,7 +139,7 @@ const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
           </Flex>
         </Flex>
       </Box>
-    </Box>
+    </MotionBox>
   );
 });
 
