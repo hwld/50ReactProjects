@@ -61,6 +61,9 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
     const observer = new IntersectionObserver(
       (entries) => {
+        if (!entries[0].isIntersecting) {
+          return;
+        }
         const menuViewTop = entries[0].target.getBoundingClientRect().top;
         changeMenuTopUsingViewTop(menuViewTop);
       },
