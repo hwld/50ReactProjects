@@ -44,10 +44,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     router.push("/");
   };
 
-  // 最後の要素を削除したときに、その一つ前の要素にフォーカスを当てるために使用する
-  const secondToLastRef = useRef<HTMLDivElement | null>(null);
-  const handleDeleteLast = (itemId: string) => {
-    //secondToLastRef.current?.focus();
+  const handleDelete = (itemId: string) => {
     deleteItem(itemId);
   };
 
@@ -110,7 +107,6 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
         <Box flexGrow={1}>
           <Box
             tabIndex={-1}
-            ref={survey.items.length === 1 ? secondToLastRef : undefined}
             p={10}
             bgColor="gray.700"
             borderRadius="10px"
@@ -133,20 +129,11 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
               return (
                 <SurveyItemEditor
                   key={item.id}
-                  ref={
-                    index === survey.items.length - 2
-                      ? secondToLastRef
-                      : undefined
-                  }
                   tabIndex={-1}
                   my={3}
                   item={item}
                   onChangeItem={changeItem}
-                  onDeleteItem={
-                    index === survey.items.length - 1
-                      ? handleDeleteLast
-                      : deleteItem
-                  }
+                  onDeleteItem={handleDelete}
                   setError={setError}
                   borderWidth="2px"
                   borderColor="transparent"
