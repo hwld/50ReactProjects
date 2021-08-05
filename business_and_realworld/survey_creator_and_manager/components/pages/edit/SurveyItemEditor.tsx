@@ -103,14 +103,12 @@ const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
 
   return (
     <MotionBox
-      p={10}
       boxShadow="md"
       bgColor="gray.700"
       borderRadius="10px"
       {...boxProps}
-      ref={ref}
     >
-      <Box>
+      <Box p={10} ref={ref}>
         <Box>
           <Input
             placeholder="質問"

@@ -1,9 +1,12 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/dist/client/router";
-import React, { useEffect, useRef, useState } from "react";
-import { useMenuTop } from "../../../hooks/useMenuTop";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSurvey } from "../../../hooks/useSurvey";
+import {
+  useSurveyEditorMenuTop,
+  ViewTop,
+} from "../../../hooks/useSurveyEditorMenuTop";
 import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyEditorMenu } from "./SurveyEditorMenu";
@@ -29,11 +32,12 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const menuMargin = 20;
   const menuTopMargin = appHeaderHeight + menuMargin;
   const menuHeight = 300;
-  const { menuTop, updateMenuTop, changeMenuTopUsingViewTop } = useMenuTop({
-    menuHeight,
-    menuTopMargin,
-    menuBottomMargin: menuMargin,
-  });
+  const { menuTop, updateMenuTop, changeMenuTopUsingViewTop, setMenuTop } =
+    useSurveyEditorMenuTop({
+      menuHeight,
+      menuTopMargin,
+      menuBottomMargin: menuMargin,
+    });
 
   const handleCreateSurvey = async () => {
     await fetch(`/api/surveys/${survey.id}`, {
@@ -44,8 +48,39 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     router.push("/");
   };
 
+  const secondToLastRef = useRef<HTMLDivElement | null>(null);
+
+  // 連続してelementが渡されたときには、連続した数と同じnullを渡されて初めてrefをnullに設定する
+  // elementが複数渡されるときには、対応する数-1のnullが渡されることを前提としているけど、間違ってるかも・・・
+  const mountCount = useRef(0);
+  const unmountCount = useRef(0);
+  const secondToLastCallbackRef = useCallback((e: HTMLDivElement | null) => {
+    if (e) {
+      secondToLastRef.current = e;
+      mountCount.current += 1;
+    } else {
+      unmountCount.current += 1;
+      if (mountCount.current === unmountCount.current) {
+        secondToLastRef.current = null;
+        mountCount.current = 0;
+        unmountCount.current = 0;
+      }
+    }
+  }, []);
+
+  const didDeleteLast = useRef(false);
+  const oldSecondToLastTop = useRef<number | null>(null);
+  const oldScrollY = useRef(0);
+  const handleDeleteLast = (itemId: string) => {
+    didDeleteLast.current = true;
+    oldScrollY.current = window.scrollY;
+    oldSecondToLastTop.current =
+      secondToLastRef.current?.getBoundingClientRect().top ?? null;
+    deleteItem(itemId);
+  };
   const handleDelete = (itemId: string) => {
     deleteItem(itemId);
+    oldScrollY.current = window.scrollY;
   };
 
   const oldInterSectionObserver = useRef<IntersectionObserver>();
@@ -61,16 +96,28 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
         if (!entries[0].isIntersecting) {
           return;
         }
-        const menuViewTop = entries[0].target.getBoundingClientRect().top;
-        changeMenuTopUsingViewTop(menuViewTop);
+        const menuViewTop: ViewTop = {
+          type: "Viewport",
+          value: entries[0].target.getBoundingClientRect().top,
+        };
+        changeMenuTopUsingViewTop(menuViewTop, {
+          type: "Document",
+          value: window.scrollY,
+        });
       },
       { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
     );
     observer.observe(currentTarget);
     oldInterSectionObserver.current = observer;
 
-    const menuViewTop = currentTarget.getBoundingClientRect().top;
-    changeMenuTopUsingViewTop(menuViewTop);
+    const menuViewTop: ViewTop = {
+      type: "Viewport",
+      value: currentTarget.getBoundingClientRect().top,
+    };
+    changeMenuTopUsingViewTop(menuViewTop, {
+      type: "Document",
+      value: window.scrollY,
+    });
   };
 
   // スクロールとMenuTopを連動させる
@@ -79,14 +126,41 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
 
     const handleScroll = () => {
       clearTimeout(timerId);
-      timerId = setTimeout(() => updateMenuTop(), 50);
+      timerId = setTimeout(() => {
+        // 最後の要素を削除した
+        if (oldScrollY.current !== 0 && oldSecondToLastTop.current) {
+          console.log("last");
+          setMenuTop({
+            type: "Document",
+            value:
+              oldSecondToLastTop.current + oldScrollY.current - menuTopMargin,
+          });
+          oldSecondToLastTop.current = null;
+          oldScrollY.current = 0;
+          return;
+          // 最後の要素以外を削除したときにviewPortが変更されたとき
+        } else if (oldScrollY.current !== 0) {
+          setMenuTop((top) => ({
+            type: "Document",
+            value: top.value + (window.scrollY - oldScrollY.current),
+          }));
+          oldScrollY.current = 0;
+        }
+        updateMenuTop({ type: "Document", value: window.scrollY });
+      }, 30);
     };
 
     document.addEventListener("scroll", handleScroll);
     return () => {
       document.removeEventListener("scroll", handleScroll);
     };
-  }, [updateMenuTop]);
+  }, [
+    changeMenuTopUsingViewTop,
+    menuTop,
+    menuTopMargin,
+    setMenuTop,
+    updateMenuTop,
+  ]);
 
   return (
     <Box minH="100vh" bgColor="gray.600">
@@ -128,12 +202,21 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
             {survey.items.map((item, index) => {
               return (
                 <SurveyItemEditor
+                  ref={
+                    index === survey.items.length - 2
+                      ? secondToLastCallbackRef
+                      : undefined
+                  }
                   key={item.id}
                   tabIndex={-1}
                   my={3}
                   item={item}
                   onChangeItem={changeItem}
-                  onDeleteItem={handleDelete}
+                  onDeleteItem={
+                    index === survey.items.length - 1
+                      ? handleDeleteLast
+                      : handleDelete
+                  }
                   setError={setError}
                   borderWidth="2px"
                   borderColor="transparent"
@@ -149,8 +232,8 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
         </Box>
 
         <SurveyEditorMenu
-          height={menuHeight}
-          top={menuTop}
+          h={`${menuHeight}px`}
+          animate={{ top: menuTop }}
           addSurveyItem={addItem}
         />
       </Flex>
