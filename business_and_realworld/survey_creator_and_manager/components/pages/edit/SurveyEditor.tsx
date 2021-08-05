@@ -1,12 +1,10 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/dist/client/router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useCallbackRefForDelayedUnmount } from "../../../hooks/useCallbackRefForDelayedUnmount";
 import { useSurvey } from "../../../hooks/useSurvey";
-import {
-  useSurveyEditorMenuTop,
-  ViewTop,
-} from "../../../hooks/useSurveyEditorMenuTop";
+import { useSurveyEditorMenuTop } from "../../../hooks/useSurveyEditorMenuTop";
 import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyEditorMenu } from "./SurveyEditorMenu";
@@ -31,13 +29,18 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const appHeaderHeight = 70;
   const menuMargin = 20;
   const menuTopMargin = appHeaderHeight + menuMargin;
-  const menuHeight = 300;
-  const { menuTop, updateMenuTop, changeMenuTopUsingViewTop, setMenuTop } =
-    useSurveyEditorMenuTop({
-      menuHeight,
-      menuTopMargin,
-      menuBottomMargin: menuMargin,
-    });
+  const menuHeight = 200;
+  const {
+    menuTop,
+    handleBlur,
+    handleFocus,
+    changeMenuTopAtNextScroll,
+    updateMenuTopAtNextScroll,
+  } = useSurveyEditorMenuTop({
+    menuHeight,
+    menuTopMargin,
+    menuBottomMargin: menuMargin,
+  });
 
   const handleCreateSurvey = async () => {
     await fetch(`/api/surveys/${survey.id}`, {
@@ -49,118 +52,24 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   };
 
   const secondToLastRef = useRef<HTMLDivElement | null>(null);
+  const secondToLastCallbackRef =
+    useCallbackRefForDelayedUnmount(secondToLastRef);
 
-  // 連続してelementが渡されたときには、連続した数と同じnullを渡されて初めてrefをnullに設定する
-  // elementが複数渡されるときには、対応する数-1のnullが渡されることを前提としているけど、間違ってるかも・・・
-  const mountCount = useRef(0);
-  const unmountCount = useRef(0);
-  const secondToLastCallbackRef = useCallback((e: HTMLDivElement | null) => {
-    if (e) {
-      secondToLastRef.current = e;
-      mountCount.current += 1;
-    } else {
-      unmountCount.current += 1;
-      if (mountCount.current === unmountCount.current) {
-        secondToLastRef.current = null;
-        mountCount.current = 0;
-        unmountCount.current = 0;
-      }
-    }
-  }, []);
-
-  const didDeleteLast = useRef(false);
-  const oldSecondToLastTop = useRef<number | null>(null);
-  const oldScrollY = useRef(0);
   const handleDeleteLast = (itemId: string) => {
-    didDeleteLast.current = true;
-    oldScrollY.current = window.scrollY;
-    oldSecondToLastTop.current =
-      secondToLastRef.current?.getBoundingClientRect().top ?? null;
-    deleteItem(itemId);
-  };
-  const handleDelete = (itemId: string) => {
-    deleteItem(itemId);
-    oldScrollY.current = window.scrollY;
-  };
-
-  const oldInterSectionObserver = useRef<IntersectionObserver>();
-  const handleBlur = () => {
-    oldInterSectionObserver.current?.disconnect();
-  };
-  const handleFocus: React.FocusEventHandler<HTMLDivElement> = ({
-    currentTarget,
-  }) => {
-    // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0].isIntersecting) {
-          return;
-        }
-        const menuViewTop: ViewTop = {
-          type: "Viewport",
-          value: entries[0].target.getBoundingClientRect().top,
-        };
-        changeMenuTopUsingViewTop(menuViewTop, {
-          type: "Document",
-          value: window.scrollY,
-        });
-      },
-      { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
+    // 最後の要素を削除するとdocumentの高さが変わって、scroll eventが発生するので最後から2番目の要素のtopにmenuを合わせる
+    changeMenuTopAtNextScroll(
+      (secondToLastRef.current?.getBoundingClientRect().top ?? 0) +
+        window.scrollY -
+        menuTopMargin
     );
-    observer.observe(currentTarget);
-    oldInterSectionObserver.current = observer;
-
-    const menuViewTop: ViewTop = {
-      type: "Viewport",
-      value: currentTarget.getBoundingClientRect().top,
-    };
-    changeMenuTopUsingViewTop(menuViewTop, {
-      type: "Document",
-      value: window.scrollY,
-    });
+    deleteItem(itemId);
   };
 
-  // スクロールとMenuTopを連動させる
-  useEffect(() => {
-    let timerId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      clearTimeout(timerId);
-      timerId = setTimeout(() => {
-        // 最後の要素を削除した
-        if (oldScrollY.current !== 0 && oldSecondToLastTop.current) {
-          console.log("last");
-          setMenuTop({
-            type: "Document",
-            value:
-              oldSecondToLastTop.current + oldScrollY.current - menuTopMargin,
-          });
-          oldSecondToLastTop.current = null;
-          oldScrollY.current = 0;
-          return;
-          // 最後の要素以外を削除したときにviewPortが変更されたとき
-        } else if (oldScrollY.current !== 0) {
-          setMenuTop((top) => ({
-            type: "Document",
-            value: top.value + (window.scrollY - oldScrollY.current),
-          }));
-          oldScrollY.current = 0;
-        }
-        updateMenuTop({ type: "Document", value: window.scrollY });
-      }, 30);
-    };
-
-    document.addEventListener("scroll", handleScroll);
-    return () => {
-      document.removeEventListener("scroll", handleScroll);
-    };
-  }, [
-    changeMenuTopUsingViewTop,
-    menuTop,
-    menuTopMargin,
-    setMenuTop,
-    updateMenuTop,
-  ]);
+  const handleDelete = (itemId: string) => {
+    // 最後の要素以外の削除でscroll eventが発生することがあるので、その時はスクロールされただけmenuを移動させる。
+    updateMenuTopAtNextScroll(window.scrollY);
+    deleteItem(itemId);
+  };
 
   return (
     <Box minH="100vh" bgColor="gray.600">
@@ -223,7 +132,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
                   _focusWithin={{ borderColor: "blue.500" }}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
-                  layout
+                  layout="position"
                   exit={{ opacity: 0 }}
                 />
               );
