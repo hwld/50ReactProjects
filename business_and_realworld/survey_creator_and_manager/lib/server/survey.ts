@@ -149,7 +149,10 @@ export const updateSurvey = async (survey: Survey): Promise<Survey> => {
     data: {
       title: survey.title,
       description: survey.description,
-      items: { upsert: surveyItemUpsertObjs },
+      items: {
+        upsert: surveyItemUpsertObjs,
+        deleteMany: { id: { notIn: survey.items.map((item) => item.id) } },
+      },
     },
     include: { items: { include: { choices: true } } },
   });
