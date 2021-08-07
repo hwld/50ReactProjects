@@ -63,7 +63,7 @@ export const useSurveyEditorMenuTop = ({
     [convertToMenuTop, setMenuTopToFitInViewport]
   );
 
-  // 現在のscroll値によってmenuTopを更新する
+  // scroll値によってmenuTopを更新する
   const updateMenuTop = useCallback(
     (viewportTop: number) => {
       setMenuTop((menuTop) => {
@@ -86,7 +86,9 @@ export const useSurveyEditorMenuTop = ({
         if (!entries[0].isIntersecting) {
           return;
         }
+
         const viewTop = entries[0].target.getBoundingClientRect().top;
+        console.log("observe", viewTop);
         changeMenuTopUsingViewTop(viewTop, window.scrollY);
       },
       { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
@@ -95,43 +97,17 @@ export const useSurveyEditorMenuTop = ({
     oldInterSectionObserver.current = observer;
 
     const viewTop = currentTarget.getBoundingClientRect().top;
+    console.log("focus", viewTop);
     changeMenuTopUsingViewTop(viewTop, window.scrollY);
-  };
-
-  // 次のscroll eventで指定されたmenuTopに変更する
-  const isChangeInNextScroll = useRef<{ menuTop: number } | null>(null);
-  const changeMenuTopAtNextScroll = (menuTop: number) => {
-    isChangeInNextScroll.current = { menuTop };
-  };
-
-  // 次のscroll eventで指定されたviewportTopと、その時点でのwindow.scrollYを使ってmenuTopを更新する
-  // 指定されたviewportTopよりも大きければmenuTopをその分上に、小さければその分下に移動させる。
-  const isUpdateInNextScroll = useRef<{ viewportTop: number } | null>(null);
-  const updateMenuTopAtNextScroll = (viewportTop: number) => {
-    isUpdateInNextScroll.current = { viewportTop };
   };
 
   // scrollとtopを連動させる
   useEffect(() => {
-    let timerId: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout;
 
     const handleScroll = () => {
-      clearTimeout(timerId);
-      timerId = setTimeout(() => {
-        if (isChangeInNextScroll.current) {
-          setMenuTop(isChangeInNextScroll.current.menuTop);
-          isChangeInNextScroll.current = null;
-        }
-
-        if (isUpdateInNextScroll.current) {
-          setMenuTop((top) => {
-            return (
-              top + (window.scrollY - isUpdateInNextScroll.current!.viewportTop)
-            );
-          });
-          isUpdateInNextScroll.current = null;
-        }
-
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
         updateMenuTop(window.scrollY);
       }, 30);
     };
@@ -146,7 +122,6 @@ export const useSurveyEditorMenuTop = ({
     menuTop: menuTop,
     handleBlur,
     handleFocus,
-    changeMenuTopAtNextScroll,
-    updateMenuTopAtNextScroll,
+    setMenuTop,
   };
 };

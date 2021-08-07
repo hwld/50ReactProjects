@@ -30,17 +30,12 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const menuMargin = 20;
   const menuTopMargin = appHeaderHeight + menuMargin;
   const menuHeight = 200;
-  const {
-    menuTop,
-    handleBlur,
-    handleFocus,
-    changeMenuTopAtNextScroll,
-    updateMenuTopAtNextScroll,
-  } = useSurveyEditorMenuTop({
-    menuHeight,
-    menuTopMargin,
-    menuBottomMargin: menuMargin,
-  });
+  const { menuTop, handleBlur, handleFocus, setMenuTop } =
+    useSurveyEditorMenuTop({
+      menuHeight,
+      menuTopMargin,
+      menuBottomMargin: menuMargin,
+    });
 
   const handleCreateSurvey = async () => {
     await fetch(`/api/surveys/${survey.id}`, {
@@ -55,20 +50,35 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const secondToLastCallbackRef =
     useCallbackRefForDelayedUnmount(secondToLastRef);
 
+  const didDeleteLast = useRef<{ nextMenuTop: number } | null>(null);
   const handleDeleteLast = (itemId: string) => {
-    // 最後の要素を削除するとdocumentの高さが変わって、scroll eventが発生するので最後から2番目の要素のtopにmenuを合わせる
-    changeMenuTopAtNextScroll(
-      (secondToLastRef.current?.getBoundingClientRect().top ?? 0) +
+    didDeleteLast.current = {
+      nextMenuTop:
+        (secondToLastRef.current?.getBoundingClientRect().top ?? 0) +
         window.scrollY -
-        menuTopMargin
-    );
+        menuTopMargin,
+    };
+
     deleteItem(itemId);
   };
 
+  const didDeleteNonLast = useRef<{ oldScrollY: number } | null>(null);
   const handleDelete = (itemId: string) => {
-    // 最後の要素以外の削除でscroll eventが発生することがあるので、その時はスクロールされただけmenuを移動させる。
-    updateMenuTopAtNextScroll(window.scrollY);
+    didDeleteNonLast.current = { oldScrollY: window.scrollY };
     deleteItem(itemId);
+  };
+
+  const handleExitComplete = () => {
+    if (didDeleteLast.current) {
+      setMenuTop(didDeleteLast.current.nextMenuTop);
+      didDeleteLast.current = null;
+    }
+    if (didDeleteNonLast.current) {
+      setMenuTop((top) => {
+        return top + (window.scrollY - didDeleteNonLast.current!.oldScrollY);
+      });
+      didDeleteNonLast.current = null;
+    }
   };
 
   return (
@@ -99,6 +109,9 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
             _focusWithin={{ borderColor: "blue.500" }}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            ref={
+              survey.items.length === 1 ? secondToLastCallbackRef : undefined
+            }
           >
             <SurveyHeaderInput
               title={survey.title}
@@ -107,7 +120,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
               onChangeDescription={changeDescription}
             />
           </Box>
-          <AnimatePresence>
+          <AnimatePresence onExitComplete={handleExitComplete}>
             {survey.items.map((item, index) => {
               return (
                 <SurveyItemEditor
@@ -117,7 +130,6 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
                       : undefined
                   }
                   key={item.id}
-                  tabIndex={-1}
                   my={3}
                   item={item}
                   onChangeItem={changeItem}
