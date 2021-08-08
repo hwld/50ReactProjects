@@ -3,8 +3,8 @@ import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/dist/client/router";
 import React, { useRef, useState } from "react";
 import { useCallbackRefForDelayedUnmount } from "../../../hooks/useCallbackRefForDelayedUnmount";
+import { useListMenuTop } from "../../../hooks/useListMenuTop";
 import { useSurvey } from "../../../hooks/useSurvey";
-import { useSurveyEditorMenuTop } from "../../../hooks/useSurveyEditorMenuTop";
 import { Survey } from "../../../type/survey";
 import { Header } from "../../common/Header";
 import { SurveyEditorMenu } from "./SurveyEditorMenu";
@@ -26,16 +26,27 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
   const router = useRouter();
   const [error, setError] = useState(false);
 
+  const secondToLastItemRef = useRef<HTMLDivElement | null>(null);
+  const secondToLastCallbackRef =
+    useCallbackRefForDelayedUnmount(secondToLastItemRef);
+
   const appHeaderHeight = 70;
   const menuMargin = 20;
   const menuTopMargin = appHeaderHeight + menuMargin;
   const menuHeight = 200;
-  const { menuTop, handleBlur, handleFocus, setMenuTop } =
-    useSurveyEditorMenuTop({
-      menuHeight,
-      menuTopMargin,
-      menuBottomMargin: menuMargin,
-    });
+  const {
+    menuTop,
+    handleBlurItem,
+    handleFocusItem,
+    handleBeforeDeleteLastItem,
+    handleBeforeDeleteNonLastItem,
+    handleAfterDeleteItem,
+  } = useListMenuTop({
+    menuHeight,
+    menuTopMargin,
+    menuBottomMargin: menuMargin,
+    secondToLastItemRef,
+  });
 
   const handleCreateSurvey = async () => {
     await fetch(`/api/surveys/${survey.id}`, {
@@ -46,39 +57,14 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
     router.push("/");
   };
 
-  const secondToLastRef = useRef<HTMLDivElement | null>(null);
-  const secondToLastCallbackRef =
-    useCallbackRefForDelayedUnmount(secondToLastRef);
-
-  const didDeleteLast = useRef<{ nextMenuTop: number } | null>(null);
   const handleDeleteLast = (itemId: string) => {
-    didDeleteLast.current = {
-      nextMenuTop:
-        (secondToLastRef.current?.getBoundingClientRect().top ?? 0) +
-        window.scrollY -
-        menuTopMargin,
-    };
-
+    handleBeforeDeleteLastItem();
     deleteItem(itemId);
   };
 
-  const didDeleteNonLast = useRef<{ oldScrollY: number } | null>(null);
   const handleDelete = (itemId: string) => {
-    didDeleteNonLast.current = { oldScrollY: window.scrollY };
+    handleBeforeDeleteNonLastItem();
     deleteItem(itemId);
-  };
-
-  const handleExitComplete = () => {
-    if (didDeleteLast.current) {
-      setMenuTop(didDeleteLast.current.nextMenuTop);
-      didDeleteLast.current = null;
-    }
-    if (didDeleteNonLast.current) {
-      setMenuTop((top) => {
-        return top + (window.scrollY - didDeleteNonLast.current!.oldScrollY);
-      });
-      didDeleteNonLast.current = null;
-    }
   };
 
   return (
@@ -107,8 +93,8 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
             borderWidth="2px"
             borderColor="transparent"
             _focusWithin={{ borderColor: "blue.500" }}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
+            onFocus={handleFocusItem}
+            onBlur={handleBlurItem}
             ref={
               survey.items.length === 1 ? secondToLastCallbackRef : undefined
             }
@@ -120,7 +106,7 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
               onChangeDescription={changeDescription}
             />
           </Box>
-          <AnimatePresence onExitComplete={handleExitComplete}>
+          <AnimatePresence onExitComplete={handleAfterDeleteItem}>
             {survey.items.map((item, index) => {
               return (
                 <SurveyItemEditor
@@ -142,8 +128,8 @@ const Component: React.FC<Props> = ({ initialSurvey }) => {
                   borderWidth="2px"
                   borderColor="transparent"
                   _focusWithin={{ borderColor: "blue.500" }}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
+                  onFocus={handleFocusItem}
+                  onBlur={handleBlurItem}
                   layout="position"
                   exit={{ opacity: 0 }}
                 />

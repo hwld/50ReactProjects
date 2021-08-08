@@ -1,17 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-type UseSurveyEditorMenuTopArgs = {
+type UseListMenuTopArgs = {
   menuHeight: number;
   // documentの一番上 + menuTopMarginが、menuTopの0になるようにする。
   menuTopMargin: number;
   menuBottomMargin: number;
+  secondToLastItemRef: MutableRefObject<HTMLElement | null>;
 };
 
-export const useSurveyEditorMenuTop = ({
+export const useListMenuTop = ({
   menuHeight,
   menuTopMargin,
   menuBottomMargin,
-}: UseSurveyEditorMenuTopArgs) => {
+  secondToLastItemRef,
+}: UseListMenuTopArgs) => {
   const [menuTop, setMenuTop] = useState(0);
 
   // viewTopからtopに変換
@@ -74,32 +82,59 @@ export const useSurveyEditorMenuTop = ({
   );
 
   const oldInterSectionObserver = useRef<IntersectionObserver>();
-  const handleBlur = () => {
+  const handleBlurItem = useCallback(() => {
     oldInterSectionObserver.current?.disconnect();
-  };
-  const handleFocus: React.FocusEventHandler<HTMLElement> = ({
-    currentTarget,
-  }) => {
-    // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0].isIntersecting) {
-          return;
-        }
+  }, []);
+  const handleFocusItem: React.FocusEventHandler<HTMLElement> = useCallback(
+    ({ currentTarget }) => {
+      // focusされた要素がviewPortに100％表示されたときにmenuを移動させる
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries[0].isIntersecting) {
+            return;
+          }
 
-        const viewTop = entries[0].target.getBoundingClientRect().top;
-        console.log("observe", viewTop);
-        changeMenuTopUsingViewTop(viewTop, window.scrollY);
-      },
-      { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
-    );
-    observer.observe(currentTarget);
-    oldInterSectionObserver.current = observer;
+          const viewTop = entries[0].target.getBoundingClientRect().top;
+          changeMenuTopUsingViewTop(viewTop, window.scrollY);
+        },
+        { rootMargin: `-${menuTopMargin}px 0px 0px 0px`, threshold: 1 }
+      );
+      observer.observe(currentTarget);
+      oldInterSectionObserver.current = observer;
 
-    const viewTop = currentTarget.getBoundingClientRect().top;
-    console.log("focus", viewTop);
-    changeMenuTopUsingViewTop(viewTop, window.scrollY);
-  };
+      const viewTop = currentTarget.getBoundingClientRect().top;
+      changeMenuTopUsingViewTop(viewTop, window.scrollY);
+    },
+    [changeMenuTopUsingViewTop, menuTopMargin]
+  );
+
+  const didDeleteLast = useRef<{ nextMenuTop: number } | null>(null);
+  const handleBeforeDeleteLastItem = useCallback(() => {
+    didDeleteLast.current = {
+      nextMenuTop:
+        (secondToLastItemRef.current?.getBoundingClientRect().top ?? 0) +
+        window.scrollY -
+        menuTopMargin,
+    };
+  }, [menuTopMargin, secondToLastItemRef]);
+
+  const didDeleteNonLast = useRef<{ oldScrollY: number } | null>(null);
+  const handleBeforeDeleteNonLastItem = useCallback(() => {
+    didDeleteNonLast.current = { oldScrollY: window.scrollY };
+  }, []);
+
+  const handleAfterDeleteItem = useCallback(() => {
+    if (didDeleteLast.current) {
+      setMenuTop(didDeleteLast.current.nextMenuTop);
+      didDeleteLast.current = null;
+    }
+    if (didDeleteNonLast.current) {
+      setMenuTop((top) => {
+        return top + (window.scrollY - didDeleteNonLast.current!.oldScrollY);
+      });
+      didDeleteNonLast.current = null;
+    }
+  }, []);
 
   // scrollとtopを連動させる
   useEffect(() => {
@@ -120,8 +155,10 @@ export const useSurveyEditorMenuTop = ({
 
   return {
     menuTop: menuTop,
-    handleBlur,
-    handleFocus,
-    setMenuTop,
+    handleBlurItem,
+    handleFocusItem,
+    handleBeforeDeleteLastItem,
+    handleBeforeDeleteNonLastItem,
+    handleAfterDeleteItem,
   };
 };
