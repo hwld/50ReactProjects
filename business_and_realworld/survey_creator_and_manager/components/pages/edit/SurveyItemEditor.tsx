@@ -116,6 +116,7 @@ const Component = forwardRef<HTMLDivElement, Props>(function SurveyItemEditor(
             borderColor="gray.300"
             variant="flushed"
             size="lg"
+            value={item.question}
             onChange={handleChangeQuestion}
           />
         </Box>

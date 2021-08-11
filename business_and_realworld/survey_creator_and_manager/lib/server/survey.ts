@@ -96,106 +96,127 @@ type SurveyItemCreateAndUpdateInput =
     Prisma.SurveyItemCreateWithoutSurveyInput;
 
 export const updateSurvey = async (survey: Survey): Promise<Survey> => {
-  const surveyItemUpsertObjs = survey.items.map(
-    (item): Prisma.SurveyItemUpsertWithWhereUniqueWithoutSurveyInput => {
-      switch (item.type) {
-        case "Radio":
-        case "Checkbox": {
-          return {
-            where: { id: item.id },
-            update: {
-              type: item.type,
-              question: item.question,
-              description: item.description,
-              choices: {
-                deleteMany: {},
-                create: item.choices.map((choice) => ({ choice })),
-              },
-              required: item.required,
+  const buildSurveyItemUpdate = (
+    item: SurveyItem
+  ): Prisma.SurveyItemUpdateArgs => {
+    switch (item.type) {
+      case "Radio":
+      case "Checkbox": {
+        return {
+          where: { id: item.id },
+          data: {
+            type: item.type,
+            question: item.question,
+            description: item.description,
+            choices: {
+              deleteMany: {},
+              create: item.choices.map((choice) => ({ choice })),
             },
-            create: {
-              type: item.type,
-              question: item.question,
-              description: item.description,
-              choices: {
-                create: item.choices.map((choice) => ({ choice })),
-              },
-              required: item.required,
-            },
-          };
-        }
-        case "TextInput": {
-          const upsertObj: SurveyItemCreateAndUpdateInput = {
+            required: item.required,
+          },
+        };
+      }
+      case "TextInput": {
+        return {
+          where: { id: item.id },
+          data: {
             type: item.type,
             question: item.question,
             description: item.description,
             required: item.required,
-          };
-          return {
-            where: { id: item.id },
-            update: upsertObj,
-            create: upsertObj,
-          };
-        }
-        default: {
-          assertNever(item);
-        }
+          },
+        };
+      }
+      default: {
+        assertNever(item);
       }
     }
-  );
+  };
 
-  await prisma.survey.update({
-    where: { id: survey.id },
-    data: {
-      title: survey.title,
-      description: survey.description,
-      items: {
-        upsert: surveyItemUpsertObjs,
-        deleteMany: { id: { notIn: survey.items.map((item) => item.id) } },
-      },
-    },
-    include: { items: { include: { choices: true } } },
-  });
+  const buildSurveyItemUpdates = (
+    items: SurveyItem[]
+  ): Prisma.SurveyItemUpdateArgs[] => {
+    return items.map((item) => buildSurveyItemUpdate(item));
+  };
 
-  return survey;
-};
-
-export const postSurvey = async (survey: Survey): Promise<Survey> => {
-  const surveyItemsCreateObj: Prisma.SurveyItemCreateWithoutSurveyInput[] =
-    survey.items.map((item) => {
-      switch (item.type) {
-        case "Radio":
-        case "Checkbox":
-          return {
+  const buildSurveyItemCreate = (
+    surveyId: string,
+    item: SurveyItem
+  ): Prisma.SurveyItemCreateArgs => {
+    switch (item.type) {
+      case "Radio":
+      case "Checkbox": {
+        return {
+          data: {
             type: item.type,
             question: item.question,
             description: item.description,
-            required: item.required,
             choices: {
               create: item.choices.map((choice) => ({ choice })),
             },
-          };
-        case "TextInput":
-          return {
+            required: item.required,
+            survey: { connect: { id: surveyId } },
+          },
+        };
+      }
+      case "TextInput": {
+        return {
+          data: {
             type: item.type,
             question: item.question,
             description: item.description,
             required: item.required,
-          };
-        default:
-          assertNever(item);
+            survey: { connect: { id: surveyId } },
+          },
+        };
       }
+      default: {
+        assertNever(item);
+      }
+    }
+  };
+
+  prisma.$transaction(async (prisma) => {
+    const existing = await prisma.survey.findFirst({
+      where: { id: survey.id },
+      include: { items: true },
     });
 
-  await prisma.survey.create({
-    data: {
-      title: survey.title,
-      description: survey.description,
-      items: {
-        create: surveyItemsCreateObj,
+    if (!existing) {
+      throw new Error("存在しないsurveyの更新");
+    }
+
+    // 渡されたsurveyItemのうち、idがdbに存在するものは更新する
+    const itemsToUpdate = survey.items.filter((item) =>
+      existing.items.map(({ id }) => id).includes(item.id)
+    );
+    // 渡されたsurveyItemのうち、更新しないものは作成する
+    const itemsToCreate = survey.items.filter(
+      (item) => !itemsToUpdate.map(({ id }) => id).includes(item.id)
+    );
+
+    await prisma.survey.update({
+      where: { id: survey.id },
+      data: {
+        items: {
+          update: buildSurveyItemUpdates(itemsToUpdate),
+        },
       },
-    },
-    include: { items: { include: { choices: true } } },
+    });
+
+    // 作成するsurveyItemはクライアント側で仮のidがつけられているため、削除するsurveyItemを決めるために
+    // 作成後のidを取得する
+    let createdIds: string[] = [];
+    for (const item of itemsToCreate) {
+      const createdItem = await prisma.surveyItem.create(
+        buildSurveyItemCreate(survey.id, item)
+      );
+      createdIds.push(createdItem.id);
+    }
+
+    // 渡されたsurveyItemの最終的なidのリスト
+    const ids = [...itemsToUpdate.map(({ id }) => id), ...createdIds];
+    await prisma.surveyItem.deleteMany({ where: { id: { notIn: ids } } });
   });
 
   return survey;
